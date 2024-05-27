@@ -6,101 +6,100 @@ const NOVEL_SERVICE_URL = 'http://localhost:3000/api/v1';
 const novels = [
   {
     id: '1',
-    name: 'ABC',
-    author: 'Quang',
-    url: 'https://picsum.photos/800',
-    categories: ['I', 'am', 'not', 'sure']
+    name: 'The Shadow Runner',
+    author: 'Jane Doe',
+    url: 'https://picsum.photos/800?random=1',
+    categories: ['fantasy', 'adventure', 'young adult']
   },
   {
     id: '2',
-    name: '1234',
-    url: 'https://picsum.photos/800',
-    author: 'Quang',
-    categories: ['I', 'am', 'not', 'sure']
+    name: 'A Byte of Love',
+    author: 'Li Wei',
+    url: 'https://picsum.photos/800?random=2',
+    categories: ['science fiction', 'romance', 'adult']
   },
   {
     id: '3',
-    name: 'others others',
-    author: 'Quang',
-    url: 'https://picsum.photos/800',
-    categories: ['I', 'am', 'not', 'sure']
+    name: 'Chronicles of a Chess Master',
+    author: 'Peter Ivanov',
+    url: 'https://picsum.photos/800?random=3',
+    categories: ['historical fiction', 'drama', 'adult']
   },
   {
     id: '4',
-    name: 'ABCD',
-    author: 'Quang',
-    url: 'https://picsum.photos/800',
-    categories: ['I', 'am', 'not', 'sure']
+    name: 'Haiku of a Broken Heart',
+    author: 'Hanako Nakamura',
+    url: 'https://picsum.photos/800?random=4',
+    categories: ['poetry', 'coming-of-age', 'young adult']
   },
   {
     id: '5',
-    name: '12345',
-    author: 'Quang',
-    url: 'https://picsum.photos/800',
-    categories: ['I', 'am', 'not', 'sure']
+    name: 'The Culinary Code',
+    author: 'Marco Rossi',
+    url: 'https://picsum.photos/800?random=5',
+    categories: ['mystery', 'thriller', 'adult']
   },
   {
     id: '6',
-    name: 'others',
-    author: 'Quang',
-    url: 'https://picsum.photos/800',
-    categories: ['I', 'am', 'not', 'sure']
+    name: 'The Call of the Wild (retold)',
+    author: 'Jack London (adapted by Sarah Johnson)',
+    url: 'https://picsum.photos/800?random=6',
+    categories: ['classics', 'adventure', 'all ages']
   },
   {
     id: '7',
-    name: 'others2',
-    author: 'Quang',
-    url: 'https://picsum.photos/800',
-    categories: ['I', 'am', 'not', 'sure']
+    name: 'Data & Destiny',
+    author: 'Anya Sharma',
+    url: 'https://picsum.photos/800?random=7',
+    categories: ['science fiction', 'dystopian', 'young adult']
   },
   {
     id: '8',
-    name: 'others3',
-    author: 'Quang',
-    url: 'https://picsum.photos/800',
-    categories: ['I', 'am', 'not', 'sure']
+    name: "The Emperor's Decree",
+    author: 'Wang Lin',
+    url: 'https://picsum.photos/800?random=8',
+    categories: ['historical fiction', 'political', 'adult']
   }
 ];
 
 const novelDetail = {
-  name: 'One of the novel name',
-  author: 'The ultimate author',
-  url: 'https://picsum.photos/800',
-  categories: ['novel', 'creepy', 'thriller', 'crime'],
-  description:
-    'A man fell into a deep dark hole indefinitely and see every different world below the groud for 2 second each.',
+  name: 'The Indigo Spell',
+  author: 'Isadora Moon',
+  url: 'https://picsum.photos/800?random=1',
+  categories: ['fantasy', 'magic', 'young adult'],
+  description: 'A young witch discovers a hidden power that could change the fate of her kingdom.',
   chapters: [
     {
       id: '1',
-      title: 'The first chapter'
+      title: 'The Awakening'
     },
     {
       id: '2',
-      title: 'The second chapter'
+      title: 'The Forbidden Forest'
     },
     {
       id: '3',
-      title: 'The third chapter'
+      title: 'The Secret Potion'
     },
     {
       id: '4',
-      title: 'The forth chapter'
+      title: 'The Shadow Master'
     },
     {
       id: '5',
-      title: 'The fifth chapter'
+      title: 'The Prophecy Revealed'
     },
     {
       id: '6',
-      title: 'The sixth chapter'
+      title: 'The Trial of Magic'
     },
     {
       id: '7',
-      title: 'The seventh chapter'
+      title: 'The Final Battle'
     },
     {
       id: '8',
-      title: 'The eighth chapter'
+      title: 'A New Dawn'
     }
   ]
 };
@@ -108,29 +107,38 @@ const novelDetail = {
 const recentItems = [
   {
     id: '1',
-    name: 'First recent novel',
-    author: 'Quang',
+    name: 'The Culinary Code',
+    author: 'Marco Rossi',
     chapter: {
       id: '1',
-      name: 'Chapter 1'
+      name: 'A Recipe for Murder'
     }
   },
   {
     id: '2',
-    name: 'Second recent novel',
-    author: 'Quang',
+    name: 'Haiku of a Broken Heart',
+    author: 'Hanako Nakamura',
     chapter: {
-      id: '3',
-      name: 'Chapter 3: Something'
+      id: '5',
+      name: 'Cherry Blossoms in the Rain'
     }
   },
   {
     id: '3',
-    name: 'Third recent novel',
-    author: 'Quang',
+    name: 'Data & Destiny',
+    author: 'Anya Sharma',
     chapter: {
-      id: '4',
-      name: 'Chapter 4'
+      id: '2',
+      name: 'The Rain That Never Stops'
+    }
+  },
+  {
+    id: '4',
+    name: 'The Shadow Runner',
+    author: 'Jane Doe',
+    chapter: {
+      id: '1',
+      name: 'The Stolen Amulet'
     }
   }
 ];
@@ -139,8 +147,8 @@ const chapterContent = {
   novel_id: '1',
   chapter_id: '1',
   author: 'Duy Quang',
-  novel_name: 'Lolita',
-  chapter_name: 'Part 1',
+  novel_name: 'Lolita', // Replace with actual novel name from novels
+  chapter_name: 'Part 1: The Lolita Haze', // More descriptive chapter title
   chapter_index: 1,
   total_chapter: 10,
   previous_chapter: null,
@@ -149,7 +157,7 @@ const chapterContent = {
     name: 'Part 2'
   },
   content:
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur lorem nulla, ullamcorper sed tristique eu, blandit in felis. Proin in malesuada erat, et blandit sem. Donec et augue nibh. Pellentesque semper velit nec tempor dictum. Suspendisse tortor est, commodo at ex quis, blandit imperdiet lacus. Aliquam id volutpat massa. Fusce luctus aliquam tortor, non pretium metus eleifend a. Morbi euismod porttitor bibendum. Morbi arcu velit, lobortis quis purus tristique, lobortis convallis lorem.\n\n  Aliquam vel varius nisl. Vestibulum vehicula id massa et convallis. Pellentesque venenatis vestibulum purus, at pretium nisi vehicula sit amet. Morbi quis aliquam ante. Mauris ut augue elit. Maecenas pellentesque ultrices congue. In hac habitasse platea dictumst. Nulla facilisi. Ut placerat ante nec eleifend blandit.\n\n Maecenas eget vulputate quam. Morbi lectus ipsum, accumsan ac euismod iaculis, laoreet sed justo. Aliquam egestas lacus varius, dignissim nibh vitae, dapibus odio. Duis quis gravida libero, quis pulvinar elit. Quisque eleifend ornare dolor, eget pharetra purus dapibus a. Cras placerat tellus blandit scelerisque aliquet. Nullam viverra, nulla ac interdum placerat, elit erat congue neque, sit amet iaculis tortor ex a justo. Vivamus varius, velit sit amet rutrum maximus, nulla nulla aliquet quam, vulputate sagittis quam metus id nisl. Ut nec aliquam mi. Aliquam rhoncus nisl libero, eu aliquet metus mollis sit amet. Ut et porttitor sem.'
+    "Humbert Humbert paced the worn carpet, a clammy sweat clinging to his brow. The heat shimmered off the asphalt outside, blurring the already distorted image of Dolores Haze skipping rope on the cracked sidewalk. Her red sundress billowed with each jump, revealing a glimpse of creamy skin beneath. A shiver, both thrilling and repulsive, ran down his spine. 'Isn't she lovely, Humbert?' cooed his landlady, Charlotte, her voice laced with a knowing smirk. Humbert forced a smile, the image of Lolita's innocent laughter a cruel counterpoint to the darkness churning within him." // Specific details, emotional tone, character interaction
 };
 
 export const handlers = [

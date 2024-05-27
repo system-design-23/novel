@@ -17,10 +17,12 @@ const NovelCard = ({ ...props }) => {
         style={{ backgroundImage: `url(${props.url})` }}
         className={cn(props.url ? 'h-[calc(100%-5rem)] rounded-t-lg bg-cover bg-center' : 'opacity-0')}
       ></div>
-      <div className='absolute bottom-0 left-0 flex h-20 w-full justify-between rounded-b-lg bg-gradient-to-tl from-slate-300 to-slate-50 p-4 align-middle hover:bg-gradient-to-tr hover:from-slate-300/50'>
-        <div className='self-center'>
-          <div className='text-lg font-semibold'>{props.name}</div>
-          <div className='text-sm font-normal text-slate-600 opacity-80'>{props.author}</div>
+      <div className='absolute bottom-0 left-0 flex h-20 w-full justify-between overflow-hidden rounded-b-lg bg-gradient-to-tl from-slate-300 to-slate-50 p-4 align-middle hover:bg-gradient-to-tr hover:from-slate-300/50'>
+        <div className='w-full self-center overflow-hidden'>
+          <div className='text-[1.1rem] font-semibold leading-5'>{props.name}</div>
+          <div className='overflow-hidden text-ellipsis text-nowrap text-sm font-normal text-slate-600 opacity-80'>
+            {props.author}
+          </div>
         </div>
         <ChevronRight className='self-center stroke-slate-600' />
       </div>

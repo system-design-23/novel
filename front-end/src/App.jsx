@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import './App.css';
+import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner';
 
 const CheckList = lazy(() => import('./pages/CheckList/CheckList'));
 const Homepage = lazy(() => import('./pages/Homepage/Homepage'));
@@ -14,13 +15,15 @@ function App() {
       <Suspense
         fallback={
           <div className='h-screen bg-slate-100'>
-            <p className='place-content-center'>Unimplemented</p>
+            <div className='h-full w-full place-content-center'>
+              <LoadingSpinner></LoadingSpinner>
+            </div>
           </div>
         }
       >
         <Routes>
           <Route element={<ConfigLayout></ConfigLayout>}>
-            <Route path='/' element={<Navigate to='/todos' replace />}></Route>
+            <Route path='/' element={<Navigate to='/home' replace />}></Route>
             <Route path='/home' element={<Homepage />}></Route>
             <Route path='/:novelId/detail' element={<NovelDetail />}></Route>
             <Route path='/todos' element={<CheckList />}></Route>
