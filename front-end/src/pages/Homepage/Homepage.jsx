@@ -23,11 +23,20 @@ const Homepage = ({ ...props }) => {
     };
   }, []);
 
+  const handleSearchFilterChange = (value) => {
+    console.log(value);
+    // handle search
+  };
+
   return (
     <div {...props} className={cn('h-full', props.className ?? '')}>
       <section className='min-h-full px-4 pb-12 pt-4'>
         <div className='mx-auto my-2 w-full pb-10'>
-          <SearchBar className='mx-auto w-full' placeholder='Search for a novel' />
+          <SearchBar
+            className='mx-auto w-full'
+            placeholder='Search for a novel'
+            onSearchFilterChange={handleSearchFilterChange}
+          />
         </div>
         <div className='flex flex-col-reverse lg:grid lg:grid-cols-[1fr_auto]'>
           <div className=''>

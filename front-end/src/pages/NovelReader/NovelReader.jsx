@@ -107,13 +107,13 @@ const NovelReader = () => {
       </section>
       <section className='h-full flex-grow overflow-y-auto p-4'>
         <pre
-          className='h-full w-full overflow-y-auto text-wrap rounded-lg p-4 font-read-sans'
+          className='h-full w-full overflow-y-auto text-wrap rounded-lg p-4 px-[10%] font-read-sans'
           style={convertPreferenceToStyle(preferences)}
         >
           {chapterDetail ? chapterDetail.content : ''}
         </pre>
       </section>
-      <section className='bg-primary absolute bottom-6 left-0 right-0 mx-auto flex w-fit justify-between rounded-full p-2 px-0 text-white'>
+      <section className='absolute bottom-6 left-0 right-0 mx-auto flex w-fit justify-between rounded-full bg-primary p-2 px-0 text-white'>
         <Link
           to={chapterDetail.previous_chapter ? `/${novelId}/read/${chapterDetail.previous_chapter.id}` : '#'}
           className='roudned-full pl-1 pr-2'
