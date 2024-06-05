@@ -29,7 +29,7 @@ const Homepage = ({ ...props }) => {
   };
 
   return (
-    <div {...props} className={cn('h-full', props.className ?? '')}>
+    <div {...props} className={cn('h-full', props ? props.className ?? '' : '')}>
       <section className='min-h-full px-4 pb-12 pt-4'>
         <div className='mx-auto my-2 w-full pb-10'>
           <SearchBar
@@ -38,7 +38,7 @@ const Homepage = ({ ...props }) => {
             onSearchFilterChange={handleSearchFilterChange}
           />
         </div>
-        <div className='flex flex-col-reverse lg:grid lg:grid-cols-[1fr_auto]'>
+        <div className='relative flex flex-col-reverse lg:grid lg:grid-cols-[1fr_auto]'>
           <div className=''>
             <div className='flex flex-wrap'>
               {novelList
@@ -55,7 +55,7 @@ const Homepage = ({ ...props }) => {
                 : [...Array(8)].map((_, index) => <CardLayout key={index} />)}
             </div>
           </div>
-          <RecentItems className='w-full' />
+          <RecentItems className='top-10 w-full lg:sticky' />
         </div>
       </section>
     </div>

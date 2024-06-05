@@ -4,6 +4,8 @@ import './App.css';
 import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner';
 
 const CheckList = lazy(() => import('./pages/CheckList/CheckList'));
+const LogIn = lazy(() => import('./pages/LogIn/LogIn'));
+const SignUp = lazy(() => import('./pages/SignUp/SignUp'));
 const Homepage = lazy(() => import('./pages/Homepage/Homepage'));
 const NovelDetail = lazy(() => import('./pages/NovelDetail/NovelDetail'));
 const NovelReader = lazy(() => import('./pages/NovelReader/NovelReader'));
@@ -22,6 +24,8 @@ function App() {
         }
       >
         <Routes>
+          <Route path='/login' element={<LogIn />}></Route>
+          <Route path='/signup' element={<SignUp />}></Route>
           <Route element={<ConfigLayout></ConfigLayout>}>
             <Route path='/' element={<Navigate to='/home' replace />}></Route>
             <Route path='/home' element={<Homepage />}></Route>

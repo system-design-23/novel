@@ -8,7 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../../components/Popove
 const SearchBar = ({ ...props }) => {
   return (
     <div className='relative'>
-      <Input {...props} className={cn('rounded-lg pl-40', props.className ?? '')}></Input>
+      <Input {...props} className={cn('rounded-lg pl-40', props ? props.className ?? '' : '')}></Input>
       <Search size={'1rem'} className='absolute right-4 top-1/2 -translate-y-1/2'></Search>
       <div className='absolute left-0 top-1/2 -translate-y-1/2'>
         <SearchFilter onSearchFilterChange={props.onSearchFilterChange} />
