@@ -4,13 +4,12 @@ import { cn } from '../../utils/utils';
 const ManageContent = () => {
   const [page, setPage] = useState('importSource');
   const handlePageChange = (e) => {
-    // console.log(value);
-    // handle page change
+    setPage(e.target.value);
   };
   return (
     <div className='p-4'>
       <h1 className='my-4 text-center text-2xl font-bold'>Manage Content</h1>
-      <div className='flex flex-col space-y-4 align-middle'>
+      <div className='flex h-full flex-col space-y-4 align-middle'>
         <section
           className={cn(
             'mx-auto flex h-fit w-fit flex-shrink justify-center space-x-4',
@@ -51,7 +50,22 @@ const ManageContent = () => {
             </label>
           </div>
         </section>
-        <section className='flex-grow'></section>
+        <section
+          className={cn(
+            'mx-auto hidden w-4/5 flex-grow rounded-lg bg-slate-50 p-6',
+            page === 'importSource' && 'block'
+          )}
+        >
+          <h2 className='font-semibold'>Import Source</h2>
+        </section>
+        <section
+          className={cn(
+            'mx-auto hidden w-4/5 flex-grow rounded-lg bg-slate-50 p-6',
+            page === 'exportSource' && 'block'
+          )}
+        >
+          <h2 className='font-semibold'>Export Source</h2>
+        </section>
       </div>
     </div>
   );
