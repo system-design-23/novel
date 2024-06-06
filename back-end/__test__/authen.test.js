@@ -4,7 +4,6 @@ const User = require("../src/db/models/user");
 const { fitler } = require("../src/router/authen");
 const browser = require("../src/db/domain/browser");
 
-
 describe("Authentication test", function () {
   async function deleteOldMock() {
     await User.deleteOne({ username: "admin_auth" });
@@ -20,7 +19,6 @@ describe("Authentication test", function () {
   afterAll(async () => {
     await deleteOldMock();
     await (await browser).close();
-    ;
     mongoose.disconnect();
   });
 

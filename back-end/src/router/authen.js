@@ -1,6 +1,11 @@
 const { Router } = require("express");
 const jwt = require("jsonwebtoken");
-const { refreshToken, login, signup, getInfo } = require("../controller/authen.js");
+const {
+  refreshToken,
+  login,
+  signup,
+  getInfo,
+} = require("../controller/authen.js");
 
 const authenRouter = Router();
 

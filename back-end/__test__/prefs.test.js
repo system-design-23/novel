@@ -10,7 +10,6 @@ const { setPref, delPref } = require("../src/controller/prefs");
 const browser = require("../src/db/domain/browser");
 const { novelManager } = require("../src/db/manager");
 
-
 describe("Read novel by Preference flow", function () {
   async function expectOnPrefs(length, topDomain) {
     let prefs = await Prefs.find({ user: req.auth.id })
@@ -49,7 +48,6 @@ describe("Read novel by Preference flow", function () {
     await deleteOldMock();
     mongoose.disconnect();
     await (await browser).close();
-    ;
   });
 
   let res,
@@ -95,12 +93,10 @@ describe("Read novel by Preference flow", function () {
     req.params = {
       novelId: "666338c08ce7d80488b8e7ac",
     };
-    req.query = {
-    };
+    req.query = {};
     await getNovelDetail(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
   }, 10000);
-
 
   test("Try to read Novel with a specified domain", async () => {
     req.params = {
@@ -114,7 +110,6 @@ describe("Read novel by Preference flow", function () {
     let novelDetail = res.send.mock.calls[0][0];
 
     expectSupplier(novelDetail.supplier, suppliers[0].domain_name);
-
   }, 10000);
 
   test("Try to set a Preference", async () => {
@@ -126,7 +121,6 @@ describe("Read novel by Preference flow", function () {
     expect(res.status).toHaveBeenCalledWith(200);
     await expectOnPrefs(1, suppliers[0].domain_name);
   }, 10000);
-
 
   test("Set 2 Preferences", async () => {
     req.body = {
@@ -157,6 +151,9 @@ describe("Read novel by Preference flow", function () {
   }, 10000);
 
   test("Try to read Novel with preference of a", async () => {
+    req.query = {
+      domain_name: suppliers[0].domain_name,
+    };
     req.params = {
       novelId: "666338c08ce7d80488b8e7ac",
     };
@@ -178,6 +175,5 @@ describe("Read novel by Preference flow", function () {
     let novelDetail = res.send.mock.calls[0][0];
 
     expectSupplier(novelDetail.supplier, suppliers[1].domain_name);
-
   }, 10000);
 });

@@ -40,7 +40,7 @@ async function getPref(req, res) {
     res.status(200);
     res.send({
       prefs: prefs,
-      others: others
+      others: others,
     });
   } catch (error) {
     res.send("Bad request");

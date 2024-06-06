@@ -130,7 +130,7 @@ async function getRecommendation(req, res) {
       .skip(offset)
       .limit(20)
       .populate("author");
-    let body = {}
+    let body = {};
     body.novels = await novelsToJson(fetchedNovels);
     body.info = {
       offset: offset,

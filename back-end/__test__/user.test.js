@@ -17,7 +17,6 @@ const UserRead = require("../src/db/models/userread");
 const Setting = require("../src/db/models/setting");
 const { novelManager } = require("../src/db/manager");
 
-
 describe("Read novel by Preference flow", function () {
   async function deleteOldMock() {
     let user = await User.findOne({ username: "mock_user" });

@@ -16,7 +16,6 @@ const Novel = require("../src/db/models/novel");
 const Supplier = require("../src/db/models/supplier");
 const { novelManager } = require("../src/db/manager");
 
-
 describe("Read novel by Preference flow", function () {
   async function deleteOldMock() {
     await User.deleteOne({ username: "mock_admin" });
@@ -48,7 +47,6 @@ describe("Read novel by Preference flow", function () {
     await deleteOldMock();
     mongoose.disconnect();
     await (await browser).close();
-    ;
   }, 10000);
 
   let res,

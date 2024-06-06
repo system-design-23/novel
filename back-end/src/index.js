@@ -8,7 +8,7 @@ const exportRouter = require("./router/export.js");
 const cors = require("cors");
 const browser = require("./db/domain/browser.js");
 
-process.on('SIGINT', async function () {
+process.on("SIGINT", async function () {
   await (await browser).close();
   process.exit();
 });

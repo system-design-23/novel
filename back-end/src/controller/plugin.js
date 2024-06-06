@@ -13,12 +13,11 @@ async function getAllSuppliers(req, res) {
     body.push({
       domain_name: sup.domain_name,
       url: sup.url,
-    })
+    });
   }
   res.status(200);
-  res.send(body)
+  res.send(body);
 }
-
 
 async function getImplementOfSuplier(req, res) {
   const { domain_name } = req.params;
@@ -137,5 +136,5 @@ module.exports = {
   getImplementOfFormatter,
   addFormatter,
   removeFormatter,
-  getAllSuppliers
+  getAllSuppliers,
 };

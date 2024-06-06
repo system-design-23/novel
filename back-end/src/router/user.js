@@ -10,7 +10,7 @@ const userRouter = Router();
 
 userRouter.get("/recent", getReadHistory);
 userRouter.get("/setting", getSettings);
-userRouter.use("/preference",prefsRouter)
+userRouter.use("/preference", prefsRouter);
 userRouter.post("/setting", setSettings);
 
 module.exports = userRouter;
