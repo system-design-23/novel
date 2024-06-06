@@ -59,6 +59,62 @@ const novels = [
     author: 'Wang Lin',
     url: 'https://picsum.photos/800?random=8',
     categories: ['historical fiction', 'political', 'adult']
+  },
+  {
+    id: '9',
+    name: 'The Shadow Runner',
+    author: 'Jane Doe',
+    url: 'https://picsum.photos/800?random=9',
+    categories: ['fantasy', 'adventure', 'young adult']
+  },
+  {
+    id: '10',
+    name: 'A Byte of Love',
+    author: 'Li Wei',
+    url: 'https://picsum.photos/800?random=10',
+    categories: ['science fiction', 'romance', 'adult']
+  },
+  {
+    id: '11',
+    name: 'Chronicles of a Chess Master',
+    author: 'Peter Ivanov',
+    url: 'https://picsum.photos/800?random=11',
+    categories: ['historical fiction', 'drama', 'adult']
+  },
+  {
+    id: '12',
+    name: 'Haiku of a Broken Heart',
+    author: 'Hanako Nakamura',
+    url: 'https://picsum.photos/800?random=12',
+    categories: ['poetry', 'coming-of-age', 'young adult']
+  },
+  {
+    id: '13',
+    name: 'The Culinary Code',
+    author: 'Marco Rossi',
+    url: 'https://picsum.photos/800?random=13',
+    categories: ['mystery', 'thriller', 'adult']
+  },
+  {
+    id: '14',
+    name: 'The Call of the Wild (retold)',
+    author: 'Jack London (adapted by Sarah Johnson)',
+    url: 'https://picsum.photos/800?random=14',
+    categories: ['classics', 'adventure', 'all ages']
+  },
+  {
+    id: '15',
+    name: 'Data & Destiny',
+    author: 'Anya Sharma',
+    url: 'https://picsum.photos/800?random=15',
+    categories: ['science fiction', 'dystopian', 'young adult']
+  },
+  {
+    id: '16',
+    name: "The Emperor's Decree",
+    author: 'Wang Lin',
+    url: 'https://picsum.photos/800?random=16',
+    categories: ['historical fiction', 'political', 'adult']
   }
 ];
 

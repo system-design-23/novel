@@ -7,7 +7,8 @@ export default {
         card: '3/4'
       },
       fontFamily: {
-        'read-sans': ['Inter']
+        'read-sans': ['Inter'],
+        'read-serif': ['Merriweather']
       },
       colors: {
         primary: '#16314A',

@@ -55,7 +55,7 @@ const Homepage = ({ ...props }) => {
                 : [...Array(8)].map((_, index) => <CardLayout key={index} />)}
             </div>
           </div>
-          <RecentItems className='top-10 max-w-[30%] flex-grow lg:sticky' />
+          <RecentItems className='top-16 flex-grow lg:sticky lg:max-w-[30%]' />
         </div>
       </section>
     </div>

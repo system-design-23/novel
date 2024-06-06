@@ -10,6 +10,7 @@ const Homepage = lazy(() => import('./pages/Homepage/Homepage'));
 const NovelDetail = lazy(() => import('./pages/NovelDetail/NovelDetail'));
 const NovelReader = lazy(() => import('./pages/NovelReader/NovelReader'));
 const ConfigLayout = lazy(() => import('./pages//ConfigLayout/ConfigLayout'));
+const ManageContent = lazy(() => import('./pages/ManageContent/ManageContent'));
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route path='/' element={<Navigate to='/home' replace />}></Route>
             <Route path='/home' element={<Homepage />}></Route>
             <Route path='/:novelId/detail' element={<NovelDetail />}></Route>
+            <Route path='/admin' element={<ManageContent />}></Route>
             <Route path='/todos' element={<CheckList />}></Route>
           </Route>
           <Route path='/:novelId/read/:chapterId' element={<NovelReader />}></Route>

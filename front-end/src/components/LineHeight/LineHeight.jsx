@@ -25,6 +25,18 @@ const options = [
   {
     value: '2em',
     label: '2'
+  },
+  {
+    value: '2.5em',
+    label: '2.5'
+  },
+  {
+    value: '3em',
+    label: '3'
+  },
+  {
+    value: '3.5em',
+    label: '3.5'
   }
 ];
 

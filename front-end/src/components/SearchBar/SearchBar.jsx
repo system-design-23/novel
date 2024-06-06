@@ -49,7 +49,7 @@ const SearchFilter = ({ onSearchFilterChange }) => {
           <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0' />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className='mr-4 w-[200px] rounded-lg bg-slate-50 p-0 align-middle'>
+      <PopoverContent align='start' className='mr-4 w-fit rounded-lg bg-slate-50 p-0 align-middle text-sm'>
         {options.map((filterName) => (
           <div
             key={filterName.value}

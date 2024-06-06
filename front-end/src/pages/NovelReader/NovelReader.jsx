@@ -1,11 +1,16 @@
 import { useState, useContext, useRef, useEffect } from 'react';
 import { PreferencesContext } from '../../contexts/Preferences';
-import { Button, ColorPicker } from '../../components';
+import { Button, ColorPicker, Select } from '../../components';
 import { convertPreferenceToStyle } from '../../utils/utils';
 import { AArrowDown, AArrowUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { getChapterContent } from '../../apis/novel';
 import LineHeight from '../../components/LineHeight/LineHeight';
+
+const fontOptions = [
+  { value: 'Merriweather', label: 'Serif' },
+  { value: 'Inter', label: 'Sans-serif' }
+];
 
 const NovelReader = () => {
   const [chapterDetail, setChapterDetail] = useState({});
@@ -29,6 +34,15 @@ const NovelReader = () => {
       fetching.current = false;
     };
   }, [novelId, chapterId]);
+
+  const handleFontChange = (value) => {
+    setPreferences((prev) => {
+      return {
+        ...prev,
+        fontFamily: value
+      };
+    });
+  };
 
   const handleFontResize = (increase) => {
     setPreferences((prev) => {
@@ -81,6 +95,12 @@ const NovelReader = () => {
         </div>
         {/* preferences section */}
         <div className='flex flex-nowrap justify-center space-x-2'>
+          <Select
+            className='self-center rounded-full border-none'
+            contentClassName='w-[150px] text-sm'
+            options={fontOptions}
+            onSelectChange={handleFontChange}
+          ></Select>
           <Button
             variant='secondary'
             rounded='full'
@@ -107,7 +127,7 @@ const NovelReader = () => {
       </section>
       <section className='h-full flex-grow overflow-y-auto p-4'>
         <pre
-          className='h-full w-full overflow-y-auto text-wrap rounded-lg p-4 px-[10%] font-read-sans'
+          className='h-full w-full overflow-y-auto text-wrap rounded-lg p-4 px-[10%] pb-20'
           style={convertPreferenceToStyle(preferences)}
         >
           {chapterDetail ? chapterDetail.content : ''}
