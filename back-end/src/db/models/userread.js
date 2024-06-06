@@ -9,6 +9,10 @@ const UserRead = new mongoose.Schema({
     type: mongoose.SchemaTypes.ObjectId,
     ref: "Chapter",
   },
+  novel: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "Novel",
+  },
   readAt: {
     type: Date,
     default: Date.now,

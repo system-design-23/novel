@@ -19,32 +19,18 @@ async function novelToJson(novel) {
   };
   return body;
 }
-async function novelDetailToJson({ novel, userId, domain_name }) {
-  let body = await novelToJson(novel);
-  await novel.populate("suppliers.supplier");
-  if (!domain_name) {
-    let domains = novel.suppliers.map((sup) => sup.supplier.domain_name);
-    domain_name = await defaultDomain(userId, domains);
-  }
-  let url = novel.suppliers.find(
-    (z) => z.supplier.domain_name === domain_name
-  ).url;
-  let crawler = await plugger.get(domain_name);
-  let desc = await crawler.crawlDesc(url);
-  body.description = desc;
-  body.supplier = domain_name;
-  body.suppliers = novel.suppliers.map((z) => z.supplier.domain_name);
-  return body;
-}
 
 async function defaultDomain(userId, domains) {
   if (!domains) {
     throw "List of domain should be defined";
   }
-  let sups = await Prefs.find({ user: userId }).sort({ order: -1 });
-  for (let sup of sups) {
-    if (domains.includes(sup.domain_name)) {
-      return sup.domain_name;
+  let prefs = await Prefs.find({ user: userId })
+    .sort({ order: -1 })
+    .populate("supplier");
+  for (let pref of prefs) {
+    let domain_name = pref.supplier.domain_name;
+    if (domains.includes(domain_name)) {
+      return domain_name;
     }
   }
   return domains[0];
@@ -54,5 +40,4 @@ module.exports = {
   novelsToJson,
   novelToJson,
   defaultDomain,
-  novelDetailToJson,
 };

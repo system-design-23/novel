@@ -5,26 +5,44 @@ const User = require("../src/db/models/user");
 const Prefs = require("../src/db/models/preference");
 const { getNovelDetail } = require("../src/controller/novel");
 const Novel = require("../src/db/models/novel");
-const supplier = require("../src/db/models/supplier");
+const Supplier = require("../src/db/models/supplier");
 const { setPref, delPref } = require("../src/controller/prefs");
 const browser = require("../src/db/domain/browser");
 
 describe("Read novel by Preference flow", function () {
-  beforeAll(async () => {
-    require("dotenv").config();
-    mongoose
-      .connect("mongodb://127.0.0.1:27017/novel")
-      .then(() => console.log("Novel database connected"))
-      .catch((err) => console.log(err));
+  async function expectOnPrefs(length, topDomain) {
+    let prefs = await Prefs.find({ user: req.auth.id })
+      .sort({ order: -1 })
+      .populate("supplier");
 
+    expect(prefs.length).toEqual(length);
+    if (topDomain) {
+      expect(prefs[0].supplier.domain_name).toEqual(topDomain);
+    }
+  }
+  function expectSupplier(domain_name, supplier) {
+    expect(domain_name).toEqual(supplier);
+  }
+
+  async function deleteOldMock() {
     let user = await User.findOne({ username: "admin_prefs" });
     if (user) {
       await Prefs.deleteMany({ user: user.id });
       await user.deleteOne();
     }
+  }
+
+  beforeAll(async () => {
+    require("dotenv").config();
+    mongoose
+      .connect("mongodb://127.0.0.1:27017/novel")
+      .then(() => console.log("Novel database connected"))
+      .catch((err) => console.error(err));
+    await deleteOldMock();
   });
 
   afterAll(async () => {
+    await deleteOldMock();
     mongoose.disconnect();
     (await browser).close();
   });
@@ -42,7 +60,7 @@ describe("Read novel by Preference flow", function () {
     req.body = {
       username: "admin_prefs",
       password: "admin_prefs",
-      role: "admin_prefs",
+      role: "admin",
       fullname: "admin_prefs",
     };
     await signup(req, res);
@@ -52,7 +70,7 @@ describe("Read novel by Preference flow", function () {
     req.headers = {
       authorization: "Bearer " + tokens.accessToken,
     };
-    req.originalUrl = "/u/";
+    req.originalUrl = "/u";
     res = {
       status: jest.fn(),
       send: jest.fn(),
@@ -75,24 +93,22 @@ describe("Read novel by Preference flow", function () {
     req.query = {
       domain_name: suppliers[0].domain_name,
     };
-    expect((await Prefs.find({ user: req.auth.id })).length).toEqual(0);
-
     await getNovelDetail(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
   }, 10000);
 
   test("Try to set a Preference", async () => {
-    req.query = {
+    req.body = {
       domain_name: suppliers[0].domain_name,
     };
     await setPref(req, res);
 
     expect(res.status).toHaveBeenCalledWith(200);
-    expect((await Prefs.find({ user: req.auth.id })).length).toEqual(1);
+    await expectOnPrefs(1, suppliers[0].domain_name);
   }, 10000);
 
   test("Try to delete a Preference.", async () => {
-    req.query = {
+    req.params = {
       domain_name: suppliers[0].domain_name,
     };
     await delPref(req, res);
@@ -101,32 +117,32 @@ describe("Read novel by Preference flow", function () {
     await delPref(req, res);
     expect(res.status).toHaveBeenCalledWith(400);
 
-    expect((await Prefs.find({ user: req.auth.id })).length).toEqual(0);
+    await expectOnPrefs(0);
   }, 10000);
 
   test("Set preference [1st:a,2nd:b] then try to call push b to top", async () => {
-    req.query = {
+    /* a->b */
+    req.body = {
       domain_name: suppliers[1].domain_name,
     };
     await setPref(req, res);
-    req.query = {
+    req.body = {
       domain_name: suppliers[0].domain_name,
     };
     await setPref(req, res);
-    expect((await Prefs.find({ user: req.auth.id })).length).toEqual(2);
+    await expectOnPrefs(2, suppliers[0].domain_name);
 
-    req.query = {
+    /* b->a */
+    req.body = {
       domain_name: suppliers[1].domain_name,
     };
     await setPref(req, res);
-    expect((await Prefs.find({ user: req.auth.id })).length).toEqual(2);
-
-    let top = await Prefs.findOne({ user: req.auth.id }).sort({
-      order: -1,
-    });
-    expect(top.supplier.toHexString()).toEqual(suppliers[1].id);
+    await expectOnPrefs(2, suppliers[1].domain_name);
   }, 10000);
   test("Try to read Novel preference of b", async () => {
+    req.query = {
+      domain_name: suppliers[1].domain_name,
+    };
     req.params = {
       novelId: "6661862bd90bdf5655428847",
     };
@@ -134,27 +150,27 @@ describe("Read novel by Preference flow", function () {
     expect(res.status).toHaveBeenCalledWith(200);
 
     let novelDetail = res.send.mock.calls[0][0];
-    expect(novelDetail.supplier).toEqual(suppliers[1].domain_name);
+    expectSupplier(novelDetail.supplier, suppliers[1].domain_name);
   }, 10000);
   test("Move a domain", async () => {
-    req.query = {
+    req.body = {
       domain_name: suppliers[0].domain_name,
     };
     await setPref(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
-    let top = await Prefs.findOne({ user: req.auth.id }).sort({
-      order: -1,
-    });
-    expect(top.supplier.toHexString()).toEqual(suppliers[0].id);
+    await expectOnPrefs(2, suppliers[0].domain_name);
   }, 10000);
 
   test("Try to read Novel with preference of a", async () => {
+    req.query = {
+      domain_name: suppliers[0].domain_name,
+    };
     req.params = {
       novelId: "6661862bd90bdf5655428847",
     };
     await getNovelDetail(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
     let novelDetail = res.send.mock.calls[0][0];
-    expect(novelDetail.supplier).toEqual(suppliers[0].domain_name);
+    expectSupplier(novelDetail.supplier, suppliers[0].domain_name);
   }, 10000);
 });

@@ -2,7 +2,7 @@ const Prefs = require("../db/models/preference");
 const Supplier = require("../db/models/supplier");
 
 async function delPref(req, res) {
-  const { domain_name } = req.query;
+  const { domain_name } = req.params;
   try {
     if (!domain_name) {
       throw "Domain should be defined";
@@ -26,7 +26,7 @@ async function delPref(req, res) {
 }
 
 async function setPref(req, res) {
-  let { domain_name, upper_domain } = req.query;
+  let { domain_name, upper_domain } = req.body;
   const auth = req.auth;
 
   try {

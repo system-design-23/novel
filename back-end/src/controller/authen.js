@@ -44,7 +44,7 @@ async function refreshToken(req, res) {
     });
     sendToken(res, user);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(401);
     res.send("Un-Authorzied.");
   }

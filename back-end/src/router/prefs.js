@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const { setPref, delPref } = require("../controller/prefs");
 const prefsRouter = Router();
-prefsRouter.put("/set", setPref);
-prefsRouter.put("/delete", delPref);
+prefsRouter.post("", setPref);
+prefsRouter.delete("/:domain_name", delPref);
 
 module.exports = prefsRouter;

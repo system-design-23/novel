@@ -23,6 +23,9 @@ class Plugger {
   }
   async includePlugin(domain_name, jsfile) {
     let plugins = await this.plugins;
+    if (plugins.includes(domain_name)) {
+      return null;
+    }
     try {
       fs.writeFileSync("./src/db/plug-in/" + domain_name + ".js", jsfile);
 
@@ -30,29 +33,44 @@ class Plugger {
       let crawler = new Crawler(await browser);
 
       plugins[domain_name] = crawler;
-      await _includeToDb(crawler);
+      let prog = {
+        log: console.log,
+        onLog: function (x) {
+          this.log = x;
+        },
+      };
+      _includeToDb(crawler, prog);
+      return prog;
     } catch (error) {
       console.error(error);
     }
+    return null;
   }
   async excludePlugin(domain_name) {
     let plugins = await this.plugins;
     try {
       let crawler = plugins[domain_name];
-      if (crawler) {
-        console.log("Okk");
-        delete plugins[domain_name];
-        /* unplug completely the module, using common js instead of ES6 
+      if (!crawler) {
+        return null;
+      }
+      delete plugins[domain_name];
+      /* unplug completely the module, using common js instead of ES6 
       becase ES6 makes the module static, can't be removed until the end of the app
        */
-        delete require.cache[
-          require.resolve("./plug-in/" + domain_name + ".js")
-        ];
-        await _excludeFromDb(crawler);
-      }
+      delete require.cache[require.resolve("./plug-in/" + domain_name + ".js")];
+      plugins[domain_name] = crawler;
+      let prog = {
+        log: console.log,
+        onLog: function (x) {
+          this.log = x;
+        },
+      };
+      _excludeFromDb(crawler, prog);
+      return prog;
     } catch (error) {
       console.error(error);
     }
+    return null;
   }
   async get(domain_name) {
     let plugins = await this.plugins;
@@ -63,7 +81,7 @@ class Plugger {
   }
 }
 
-async function _includeToDb(crawler) {
+async function _includeToDb(crawler, prog_log) {
   let url = crawler.url;
   let domain_name = crawler.domain_name;
 
@@ -73,7 +91,7 @@ async function _includeToDb(crawler) {
   });
   await supplier.save();
 
-  console.log("Start crawling from " + url);
+  prog_log("Start crawling from " + url);
   let cates = await crawler.crawlNovelType(url);
   let cached = new Set();
   for (let [key, value] of Object.entries(cates)) {
@@ -87,11 +105,11 @@ async function _includeToDb(crawler) {
       await _includeNovel(supplier, crawler, novelUrl);
     }
     await supplier.save();
-    console.log(
+    prog_log(
       "End parsing " + key + " in " + (new Date() - start) / 1000 + " seconds"
     );
   }
-  console.log("....................End.....................");
+  prog_log("....................End.....................");
 }
 
 async function _includeNovel(supplier, crawler, novelUrl) {
@@ -140,11 +158,13 @@ async function _includeNovel(supplier, crawler, novelUrl) {
   await novel.save();
 }
 
-async function _excludeFromDb(crawler) {
+async function _excludeFromDb(crawler, prog_log) {
   let supplier = await Supplier.findOne({ url: crawler.url })
     .populate("novels")
     .populate("chapters");
-  let novels = Novel.find({ suppliers: supplier.id });
+  let novels = await Novel.find({ suppliers: supplier.id });
+  prog_log(novels.length + "Novels estimated");
+  let prog = 0;
   for (let novel of novels) {
     for (let i = 0; i < novel.suppliers.length; i++) {
       let s = novel.suppliers[i];
@@ -158,8 +178,12 @@ async function _excludeFromDb(crawler) {
     } else {
       await novel.save();
     }
+    prog_log(++prog + "/" + novels.length);
   }
-  let chapters = Chapter.find({ suppliers: supplier.id });
+
+  let chapters = await Chapter.find({ suppliers: supplier.id });
+  prog_log(chapters.length + "Chapters estimated");
+  prog = 0;
 
   for (let chapter of chapters) {
     for (let i = 0; i < chapter.suppliers.length; i++) {
@@ -174,8 +198,10 @@ async function _excludeFromDb(crawler) {
     } else {
       await chapter.save();
     }
+    prog_log(++prog + "/" + chapters.length);
   }
   await supplier.deleteOne();
+  prog_log("....................End.....................");
 }
 const plugger = new Plugger();
 

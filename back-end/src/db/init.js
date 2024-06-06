@@ -11,7 +11,7 @@ mongoose
     console.log("Novel database connected");
     mongoose.connection.db.dropDatabase();
   })
-  .catch((err) => console.log(err));
+  .catch((err) => console.error(err));
 
 async function init() {
   let browser = await puppeteer.launch();

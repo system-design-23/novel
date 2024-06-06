@@ -1,33 +1,28 @@
 const { default: mongoose } = require("mongoose");
-const { getChapterDetail } = require("../src/controller/novel");
+const { getChapterDetail, getNovelDetail } = require("../src/controller/novel");
 const Chapter = require("../src/db/models/chapter");
 const Supplier = require("../src/db/models/supplier");
 const browser = require("../src/db/domain/browser");
+const Novel = require("../src/db/models/novel");
 
 describe("Supplier test", function () {
   beforeAll(() => {
     mongoose
       .connect("mongodb://127.0.0.1:27017/novel")
       .then(() => console.log("Novel database connected"))
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   });
 
   afterAll(async () => {
     mongoose.disconnect();
     (await browser).close();
   });
-  test("Test content of chapters for each supplier", async () => {
-    let chap = (
-      await Chapter.aggregate([
-        { $match: { "suppliers.1": { $exists: true } } },
-        { $sample: { size: 1 } },
-      ]).exec()
-    )[0];
+  test("Get content of a chapter for each supplier", async () => {
+    let chapter = await Chapter.findOne({
+      $where: "this.suppliers.length > 1",
+    }).populate(["suppliers.supplier", "novel"]);
 
-    chap = await Chapter.findOne({ _id: chap._id });
-    await chap.populate("suppliers.supplier");
-    await chap.populate("novel");
-    for (let z of chap.suppliers) {
+    for (let z of chapter.suppliers) {
       res = {
         status: jest.fn(),
         send: jest.fn(),
@@ -35,8 +30,8 @@ describe("Supplier test", function () {
       await getChapterDetail(
         {
           params: {
-            novelId: chap.novel.id,
-            chapterId: chap.id,
+            novelId: chapter.novel.id,
+            chapterId: chapter.id,
           },
           query: {
             domain_name: z.supplier.domain_name,
@@ -45,13 +40,31 @@ describe("Supplier test", function () {
         res
       );
       expect(res.status).toHaveBeenCalledWith(200);
-      console.log(
-        "------------------------" + z.url + "------------------------"
+    }
+  }, 10000);
+
+  test("Get content of a novel for each supplier", async () => {
+    let novel = await Novel.findOne({
+      $where: "this.suppliers.length > 1",
+    }).populate(["suppliers.supplier"]);
+
+    for (let z of novel.suppliers) {
+      res = {
+        status: jest.fn(),
+        send: jest.fn(),
+      };
+      await getNovelDetail(
+        {
+          params: {
+            novelId: novel.id,
+          },
+          query: {
+            domain_name: z.supplier.domain_name,
+          },
+        },
+        res
       );
-      let chapter = res.send.mock.calls[0][0];
-      chapter.content =
-        chapter.content.split(" ").slice(0, 50).join(" ") + "...";
-      console.log(res.send.mock.calls[0][0]);
+      expect(res.status).toHaveBeenCalledWith(200);
     }
   }, 10000);
 });

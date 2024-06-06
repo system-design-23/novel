@@ -12,7 +12,7 @@ describe("Novel usecase flow test", function () {
     mongoose
       .connect("mongodb://127.0.0.1:27017/novel")
       .then(() => console.log("Novel database connected"))
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   });
 
   afterAll(async () => {
@@ -41,8 +41,6 @@ describe("Novel usecase flow test", function () {
     };
     await findNovelsByName(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
-
-    let novels = res.send.mock.calls[0][0];
   }, 5000);
 
   test("Get the novel by author", async () => {
@@ -54,7 +52,6 @@ describe("Novel usecase flow test", function () {
     expect(res.status).toHaveBeenCalledWith(200);
 
     let novels = res.send.mock.calls[0][0];
-    console.log(novels);
   }, 5000);
   test("Get the novel detail", async () => {
     req.params = {

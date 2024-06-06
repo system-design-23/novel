@@ -10,9 +10,15 @@ async function fitler(req, res, next) {
   try {
     req.auth = await new Promise((resolve, reject) => {
       jwt.verify(token, process.env.SECRET, (err, user) => {
-        if (err) {
-          if (req.originalUrl.startsWith("/u/")) {
-            reject(err);
+        if (req.originalUrl.startsWith("/u")) {
+          if (err) {
+            reject("Un-Authorzied");
+            return;
+          }
+        }
+        if (req.originalUrl.startsWith("/admin")) {
+          if (err || user.role != "admin") {
+            reject("Un-Authorzied");
             return;
           }
         }
@@ -21,9 +27,8 @@ async function fitler(req, res, next) {
     });
     next();
   } catch (error) {
-    console.log(error);
     res.status(401);
-    res.send("Un-Authorzied.");
+    res.send(error);
   }
 }
 authenRouter.post("/refresh_token", refreshToken);

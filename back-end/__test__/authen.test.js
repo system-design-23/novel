@@ -4,16 +4,19 @@ const User = require("../src/db/models/user");
 const { fitler } = require("../src/router/authen");
 
 describe("Authentication test", function () {
+  async function deleteOldMock() {
+    await User.deleteOne({ username: "admin" });
+  }
   beforeAll(async () => {
     require("dotenv").config();
     mongoose
       .connect("mongodb://127.0.0.1:27017/novel")
       .then(() => console.log("Novel database connected"))
-      .catch((err) => console.log(err));
-    await User.deleteOne({ username: "admin" });
+      .catch((err) => console.error(err));
+    await deleteOldMock();
   });
-
   afterAll(async () => {
+    await deleteOldMock();
     mongoose.disconnect();
   });
 
@@ -75,23 +78,34 @@ describe("Authentication test", function () {
     await login(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
     tokens = res.send.mock.calls[0][0];
-    console.log(tokens);
   }, 3000);
-  test("Try to Grant access with the tokens.", async () => {
+  test("Access /admin with the admin tokens", async () => {
     req.headers = {
       authorization: "Bearer " + tokens.accessToken,
     };
-    req.originalUrl = "/u/";
+    req.originalUrl = "/admin";
     next = jest.fn();
     await fitler(req, res, next);
     expect(next).toHaveBeenCalledWith();
   }, 3000);
+
+  test("Access /u with the admin tokens", async () => {
+    req.headers = {
+      authorization: "Bearer " + tokens.accessToken,
+    };
+    req.originalUrl = "/u";
+    next = jest.fn();
+    await fitler(req, res, next);
+    expect(next).toHaveBeenCalledWith();
+  }, 3000);
+
   test("Try to Refresh the tokens.", async () => {
     req.body = tokens.refreshToken;
     await refreshToken(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
   }, 3000);
-  test("Try to Access in anonymous mode.", async () => {
+
+  test("Try to read novels in anonymous mode.", async () => {
     req.headers = {};
     req.originalUrl = "/novels/";
     req.next = jest.fn();
