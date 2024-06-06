@@ -5,13 +5,13 @@ import { Check, ChevronsUpDown, Menu, Search } from 'lucide-react';
 import { Button } from '..';
 import { Popover, PopoverContent, PopoverTrigger } from '../../components/Popover/Popover';
 
-const SearchBar = ({ ...props }) => {
+const SearchBar = ({ onSearchFilterChange, onSearchValueChange, ...rest }) => {
   return (
     <div className='relative'>
-      <Input {...props} className={cn('rounded-lg pl-40', props ? props.className ?? '' : '')}></Input>
+      <Input {...rest} className={cn('rounded-lg pl-40', rest ? rest.className ?? '' : '')}></Input>
       <Search size={'1rem'} className='absolute right-4 top-1/2 -translate-y-1/2'></Search>
-      <div className='absolute left-0 top-1/2 -translate-y-1/2'>
-        <SearchFilter onSearchFilterChange={props.onSearchFilterChange} />
+      <div className='rounded-large absolute left-0 top-1/2 -translate-y-1/2 rounded-r-none'>
+        <SearchFilter onSearchFilterChange={onSearchFilterChange} />
       </div>
     </div>
   );

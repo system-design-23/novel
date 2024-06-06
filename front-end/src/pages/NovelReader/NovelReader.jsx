@@ -1,5 +1,5 @@
 import { useState, useContext, useRef, useEffect } from 'react';
-import { PreferencesContext } from '../../contexts/preferences';
+import { PreferencesContext } from '../../contexts/Preferences';
 import { Button, ColorPicker } from '../../components';
 import { convertPreferenceToStyle } from '../../utils/utils';
 import { AArrowDown, AArrowUp, ChevronLeft, ChevronRight } from 'lucide-react';

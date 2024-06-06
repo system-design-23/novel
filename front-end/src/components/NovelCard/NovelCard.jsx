@@ -1,7 +1,7 @@
 import { ChevronRight } from 'lucide-react';
 import { cn } from '../../utils/utils';
 import { Link } from 'react-router-dom';
-import { Skeleton } from '../../components';
+import { Skeleton, LoadingSpinner } from '../../components';
 
 const NovelCard = ({ ...props }) => {
   return (
@@ -13,6 +13,9 @@ const NovelCard = ({ ...props }) => {
         ...(props ? props.className ?? '' : '')
       )}
     >
+      <div className={cn('absolute left-0 top-0 -z-10 flex h-[calc(100%-5rem)] w-full justify-center rounded-t-lg')}>
+        <LoadingSpinner className='size-1/5 self-center fill-slate-400'></LoadingSpinner>
+      </div>
       <div
         style={{ backgroundImage: `url(${props.url})` }}
         className={cn(props.url ? 'h-[calc(100%-5rem)] rounded-t-lg bg-cover bg-center' : 'opacity-0')}

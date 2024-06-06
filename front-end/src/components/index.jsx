@@ -5,6 +5,8 @@ import Button from './Button/Button';
 import RecentItems from './RecentItems/RecentItems';
 import { RecentItemLayout } from './RecentItems/RecentItems';
 import Input from './Input/Input';
+import Select from './Select/Select';
+import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 import ColorPicker from './ColorPicker/ColorPicker';
 import Skeleton from './Skeleton/Skeleton';
 import { CardLayout } from './NovelCard/NovelCard';
@@ -17,7 +19,9 @@ export {
   NovelCard,
   SearchBar,
   Skeleton,
+  LoadingSpinner,
   RecentItems,
   RecentItemLayout,
-  CardLayout
+  CardLayout,
+  Select
 };

@@ -4,55 +4,68 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { getRecentNovels } from '../../apis/novel';
 import Skeleton from '../Skeleton/Skeleton';
+import useAuth from '../../hooks/useAuth';
+import emptyImage from '../../assets/empty.png';
 
 const RecentItems = ({ ...props }) => {
+  const { user } = useAuth();
   const [recentItems, setRecentItems] = useState();
   const fetching = useRef(false);
   useEffect(() => {
-    const getRecentNovelItems = async () => {
-      const receiveNovelItems = await getRecentNovels();
+    const getRecentNovelItems = async (userId) => {
+      const receiveNovelItems = await getRecentNovels(userId);
       if (receiveNovelItems) {
         setRecentItems(receiveNovelItems);
       }
     };
-    if (fetching.current == false) {
+    if (fetching.current == false && user) {
       fetching.current = true;
-      getRecentNovelItems();
+      getRecentNovelItems(user.id);
     }
 
     return () => {
       fetching.current = false;
     };
-  }, []);
+  }, [user]);
 
   return (
     <div
       {...props}
       className={cn(
-        'max-h-[500px] w-full rounded-lg border-[1px] border-primary/10 bg-white/30 p-4 shadow-2xl shadow-slate-400/5 transition-all duration-100 hover:shadow-sky-600/10 ',
+        'flex max-h-[500px] flex-col rounded-lg border-[1px] border-primary/10 bg-white/30 p-4 shadow-2xl shadow-slate-400/5 transition-all duration-100 hover:shadow-sky-600/10',
         props ? props.className ?? '' : ''
       )}
     >
-      <h1 className='my-4 text-xl font-bold'>Recently Read</h1>
-      {recentItems
-        ? recentItems.map((item) => {
-            return <RecentItem key={item.novel_id} item={item}></RecentItem>;
+      <h1 className='my-4 ml-2 text-xl font-bold'>Recently Read</h1>
+      {user ? (
+        recentItems ? (
+          recentItems.map((item) => {
+            return <RecentItem key={`${item.id}-${item.chapter.id}`} item={item}></RecentItem>;
           })
-        : [...Array(3)].map((_, index) => <RecentItemLayout key={index} />)}
+        ) : (
+          <RecentItemLayout />
+        )
+      ) : (
+        <div className='align-center mx-auto flex w-1/2 flex-grow flex-col justify-center text-center'>
+          <p>Please login to see your recently read chapters</p>
+          <img src={emptyImage} className='mx-auto w-full' alt='empty'></img>
+        </div>
+      )}
     </div>
   );
 };
 
 export const RecentItemLayout = ({ ...props }) => {
   return (
-    <Skeleton {...props} className={cn('max-h-[500px] w-full min-w-72', props ? props.className ?? '' : '')}>
-      <Skeleton className=' my-2 flex w-full justify-between p-4'></Skeleton>
-    </Skeleton>
+    <div {...props} className={cn('max-h-[500px] w-full min-w-72', props ? props.className ?? '' : '')}>
+      {[...Array(3)].map((_, index) => (
+        <Skeleton key={index} className=' my-2 flex w-full justify-between p-4'></Skeleton>
+      ))}
+    </div>
   );
 };
 
-const RecentItem = ({ ...props }) => {
-  const item = props.item;
+const RecentItem = ({ item, ...props }) => {
   return (
     <div
       {...props}

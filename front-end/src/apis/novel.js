@@ -16,8 +16,8 @@ const getNovelDetail = async (novelId) => {
   }
 };
 
-const getRecentNovels = async () => {
-  const result = await axios.get(`${NOVEL_SERVICE_URL}/recent`);
+const getRecentNovels = async (userId) => {
+  const result = await axios.get(`${NOVEL_SERVICE_URL}/recent/${userId}`);
   if (result.status === 200) {
     return result.data;
   }

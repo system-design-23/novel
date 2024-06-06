@@ -173,7 +173,7 @@ export const handlers = [
       status: 200
     });
   }),
-  http.get(`${NOVEL_SERVICE_URL}/recent`, ({}) => {
+  http.get(`${NOVEL_SERVICE_URL}/recent/1`, ({}) => {
     delay(200);
     return HttpResponse.json(recentItems, {
       status: 200

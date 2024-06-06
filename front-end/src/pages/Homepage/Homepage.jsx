@@ -30,16 +30,16 @@ const Homepage = ({ ...props }) => {
 
   return (
     <div {...props} className={cn('h-full', props ? props.className ?? '' : '')}>
-      <section className='min-h-full px-4 pb-12 pt-4'>
+      <section className='relative min-h-full px-4 pb-12 pt-4'>
         <div className='mx-auto my-2 w-full pb-10'>
           <SearchBar
-            className='mx-auto w-full'
+            className='mx-auto w-full '
             placeholder='Search for a novel'
             onSearchFilterChange={handleSearchFilterChange}
           />
         </div>
-        <div className='relative flex flex-col-reverse lg:grid lg:grid-cols-[1fr_auto]'>
-          <div className=''>
+        <div className='relative flex flex-col-reverse lg:flex-row'>
+          <div className='flex-grow basis-3/5'>
             <div className='flex flex-wrap'>
               {novelList
                 ? novelList.map((novel) => (
@@ -55,7 +55,7 @@ const Homepage = ({ ...props }) => {
                 : [...Array(8)].map((_, index) => <CardLayout key={index} />)}
             </div>
           </div>
-          <RecentItems className='top-10 w-full lg:sticky' />
+          <RecentItems className='top-10 max-w-[30%] flex-grow lg:sticky' />
         </div>
       </section>
     </div>

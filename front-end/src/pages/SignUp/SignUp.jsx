@@ -7,7 +7,7 @@ const SignUp = ({ props }) => {
   const navigate = useNavigate();
   return (
     <div {...props} className={cn('flex h-screen justify-center', props ? props.className ?? '' : '')}>
-      <div className='-mt-20 w-fit self-center'>
+      <form className='-mt-20 w-fit self-center'>
         <img className='mx-auto my-6 w-3/5' src={logo} alt='logo'></img>
         <div className='h-fit w-1/3 min-w-[400px] rounded-lg bg-slate-50 p-6 shadow-lg shadow-slate-400/10'>
           <h1 className='text-xl font-bold'>Sign Up</h1>
@@ -35,7 +35,7 @@ const SignUp = ({ props }) => {
             or Log In
           </Button>
         </div>
-      </div>
+      </form>
     </div>
   );
 };
