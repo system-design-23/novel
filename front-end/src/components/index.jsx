@@ -11,6 +11,7 @@ import LoadingSpinner from './LoadingSpinner/LoadingSpinner';
 import ColorPicker from './ColorPicker/ColorPicker';
 import Skeleton from './Skeleton/Skeleton';
 import { CardLayout } from './NovelCard/NovelCard';
+import StrictModeDroppable from './StrictModeDroppable/StrictModeDroppable';
 
 export {
   Button,
@@ -25,5 +26,6 @@ export {
   RecentItems,
   RecentItemLayout,
   CardLayout,
-  Select
+  Select,
+  StrictModeDroppable
 };

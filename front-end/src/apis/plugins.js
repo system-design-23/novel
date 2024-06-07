@@ -23,3 +23,5 @@ const removePlugin = async (domainName) => {
     return result.data;
   }
 };
+
+export { getPlugins, addNewPlugin, removePlugin };

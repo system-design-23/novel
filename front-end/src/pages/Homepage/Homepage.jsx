@@ -42,7 +42,7 @@ const Homepage = ({ ...props }) => {
           <div className='flex-grow basis-3/5'>
             <div className='flex flex-wrap'>
               {novelList
-                ? novelList.map((novel) => (
+                ? novelList.novels.map((novel) => (
                     <NovelCard
                       key={novel.id}
                       id={novel.id}
