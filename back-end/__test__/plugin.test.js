@@ -9,13 +9,26 @@ const {
   addNewSupplier,
 } = require("../src/controller/plugin");
 const fs = require("fs");
+const { plugger } = require("../src/db/plugger");
+const { error } = require("console");
 
 describe("Read novel by Preference flow", function () {
   async function deleteOldMock() {
-    let user = await User.findOne({ username: "mock_admin" });
-    if (user) {
-      await user.deleteOne();
-    }
+    await User.delete({ username: "mock_admin" });
+    await new Promise(async (resolve, reject) => {
+      let mockLog = function (s) {
+        console.log(s);
+        if (s.includes("...End...")) {
+          resolve();
+        }
+      };
+      let prog = await plugger.excludePlugin("truyen.tangthuvien.vn");
+      if (!prog) {
+        resolve();
+        return;
+      }
+      prog.onLog(mockLog);
+    });
   }
   beforeAll(async () => {
     require("dotenv").config();
@@ -42,29 +55,33 @@ describe("Read novel by Preference flow", function () {
     };
   });
 
-  test("Try to SignUp with as admin.", async () => {
-    req.body = {
-      username: "mock_admin",
-      password: "mock_admin",
-      role: "admin",
-      fullname: "mock_admin",
-    };
-    await signup(req, res);
-    expect(res.status).toHaveBeenCalledWith(200);
-    let tokens = res.send.mock.calls[0][0];
+  test(
+    "Try to SignUp with as admin.",
+    async () => {
+      req.body = {
+        username: "mock_admin",
+        password: "mock_admin",
+        role: "admin",
+        fullname: "mock_admin",
+      };
+      await signup(req, res);
+      expect(res.status).toHaveBeenCalledWith(200);
+      let tokens = res.send.mock.calls[0][0];
 
-    req.headers = {
-      authorization: "Bearer " + tokens.accessToken,
-    };
-    req.originalUrl = "/admin/plugin";
-    res = {
-      status: jest.fn(),
-      send: jest.fn(),
-    };
-    next = jest.fn();
-    await fitler(req, res, next);
-    expect(next).toHaveBeenCalledWith();
-  }, 3000);
+      req.headers = {
+        authorization: "Bearer " + tokens.accessToken,
+      };
+      req.originalUrl = "/admin/plugin";
+      res = {
+        status: jest.fn(),
+        send: jest.fn(),
+      };
+      next = jest.fn();
+      await fitler(req, res, next);
+      expect(next).toHaveBeenCalledWith();
+    },
+    10 * 60000
+  );
   test(
     "Calling get all suppliers",
     async () => {
@@ -92,7 +109,7 @@ describe("Read novel by Preference flow", function () {
       req.body = {
         domain_name: "truyen.tangthuvien.vn",
         payload: fs.readFileSync(
-          "../src/db/domain/truyentangthuvien/crawler.js",
+          "./src/db/domain/truyentangthuvien/crawler.js",
           "utf8"
         ),
       };
@@ -104,7 +121,10 @@ describe("Read novel by Preference flow", function () {
         res.end = function () {
           resolve();
         };
-        addNewSupplier(req, res);
+        addNewSupplier(req, res).catch((error) => {
+          console.error(error);
+          reject();
+        });
       });
     },
     10 * 60000

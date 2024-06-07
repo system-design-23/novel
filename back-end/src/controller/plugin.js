@@ -30,8 +30,10 @@ async function addNewSupplier(req, res) {
   const { domain_name, payload } = req.body;
 
   let prog = await plugger.includePlugin(domain_name, payload);
+
   if (!prog) {
     res.status(400);
+
     res.send("Bad request");
     return;
   }
@@ -42,7 +44,7 @@ async function addNewSupplier(req, res) {
 
   prog.onLog((s) => {
     res.write(s);
-    if (s.includes("End")) {
+    if (s.includes("...End...")) {
       res.end();
     }
   });

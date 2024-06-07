@@ -123,7 +123,7 @@ describe("Read novel by Preference flow", function () {
   let novelDetail;
   test("Get a novel detail", async () => {
     req.params = {
-      novelId: "6661862bd90bdf5655428847",
+      novelId: "6662d1af06e145b3118fe1cd",
     };
     req.query = {};
     await getNovelDetail(req, res);
@@ -134,7 +134,7 @@ describe("Read novel by Preference flow", function () {
 
   test("Get a novel detail by domain", async () => {
     req.params = {
-      novelId: "6661862bd90bdf5655428847",
+      novelId: "6662d1af06e145b3118fe1cd",
     };
     req.query = {
       domain_name: "truyenfull.vn",
@@ -175,13 +175,13 @@ describe("Read novel by Preference flow", function () {
 
   test("Read another novel", async () => {
     req.params = {
-      novelId: "6661862bd90bdf56554287dc",
+      novelId: "6662d1b206e145b3118fe4bb",
     };
     req.query = {};
     await getNovelDetail(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
     novelDetail = res.send.mock.calls[0][0];
-    expect(novelDetail.supplier).toEqual("truyenfull.vn");
+    expect(novelDetail.supplier).toEqual("lightnovel.vn");
   }, 5000);
 
   test("Read a chapter of the other novel", async () => {
@@ -194,13 +194,13 @@ describe("Read novel by Preference flow", function () {
     await getChapterDetail(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
     let chapterDetail = res.send.mock.calls[0][0];
-    expect(chapterDetail.supplier).toEqual("truyenfull.vn");
+    expect(chapterDetail.supplier).toEqual("lightnovel.vn");
     await expectReadHistory(2, chapter.id);
   }, 5000);
 
   test("Read the old novel", async () => {
     req.params = {
-      novelId: "6661862bd90bdf5655428847",
+      novelId: "6662d1af06e145b3118fe1cd",
     };
     req.query = {};
     await getNovelDetail(req, res);

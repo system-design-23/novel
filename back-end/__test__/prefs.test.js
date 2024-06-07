@@ -83,12 +83,12 @@ describe("Read novel by Preference flow", function () {
   let suppliers;
   test("Try to read Novel without Preferences", async () => {
     let novel = await Novel.findById({
-      _id: "6661862bd90bdf5655428847",
+      _id: "6662d1af06e145b3118fe1cd",
     }).populate("suppliers.supplier");
     suppliers = novel.suppliers.map((z) => z.supplier);
 
     req.params = {
-      novelId: "6661862bd90bdf5655428847",
+      novelId: "6662d1af06e145b3118fe1cd",
     };
     req.query = {
       domain_name: suppliers[0].domain_name,
@@ -144,7 +144,7 @@ describe("Read novel by Preference flow", function () {
       domain_name: suppliers[1].domain_name,
     };
     req.params = {
-      novelId: "6661862bd90bdf5655428847",
+      novelId: "6662d1af06e145b3118fe1cd",
     };
     await getNovelDetail(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
@@ -166,7 +166,7 @@ describe("Read novel by Preference flow", function () {
       domain_name: suppliers[0].domain_name,
     };
     req.params = {
-      novelId: "6661862bd90bdf5655428847",
+      novelId: "6662d1af06e145b3118fe1cd",
     };
     await getNovelDetail(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
