@@ -120,7 +120,7 @@ describe("Read novel by Preference flow", function () {
     await expectOnPrefs(0);
   }, 10000);
 
-  test("Set preference [1st:a,2nd:b] then try to call push b to top", async () => {
+  test("Set preference [1st:a,2nd:b] then try to push b to top", async () => {
     /* a->b */
     req.body = {
       domain_name: suppliers[1].domain_name,

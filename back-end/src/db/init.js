@@ -4,6 +4,7 @@ const LightnovelCrawler = require("./domain/lightnovel/crawler.js");
 const { _includeNovel, _includeToDb } = require("./plugger.js");
 const TruyenfullCrawler = require("./domain/truyenfull/crawler.js");
 const { default: mongoose } = require("mongoose");
+const User = require("./models/user.js");
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/novel")
@@ -14,9 +15,15 @@ mongoose
   .catch((err) => console.error(err));
 
 async function init() {
+  await User.create({
+    username: "admin",
+    password: "admin",
+    role: "admin",
+    fullname: "admin",
+  });
   let browser = await puppeteer.launch();
   let crawler = new TruyenfullCrawler(browser);
-  await _includeToDb(crawler);
+  await _includeToDb(crawler, console.log);
   await dupCrawlFromOtherDomain(browser);
 
   mongoose.disconnect();

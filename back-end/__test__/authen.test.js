@@ -5,7 +5,7 @@ const { fitler } = require("../src/router/authen");
 
 describe("Authentication test", function () {
   async function deleteOldMock() {
-    await User.deleteOne({ username: "admin" });
+    await User.deleteOne({ username: "admin_auth" });
   }
   beforeAll(async () => {
     require("dotenv").config();
@@ -30,10 +30,10 @@ describe("Authentication test", function () {
   });
   test("Try to SignUp with Admin account.", async () => {
     req.body = {
-      username: "admin",
-      password: "admin",
+      username: "admin_auth",
+      password: "admin_auth",
       role: "admin",
-      fullname: "admin",
+      fullname: "admin_auth",
     };
     await signup(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
@@ -41,17 +41,17 @@ describe("Authentication test", function () {
 
   test("Try to ReSignUp with Admin account.", async () => {
     req.body = {
-      username: "admin",
-      password: "admin",
+      username: "admin_auth",
+      password: "admin_auth",
       role: "admin",
-      fullname: "admin",
+      fullname: "admin_auth",
     };
     await signup(req, res);
     expect(res.status).toHaveBeenCalledWith(400);
   }, 3000);
   test("Try to Login with wrong password.", async () => {
     req.body = {
-      username: "admin",
+      username: "admin_auth",
       password: "vcl",
     };
     await login(req, res);
@@ -62,7 +62,7 @@ describe("Authentication test", function () {
   test("Try to Login with wrong username.", async () => {
     req.body = {
       username: "vcl",
-      password: "admin",
+      password: "admin_auth",
     };
     await login(req, res);
     expect(res.status).toHaveBeenCalledWith(401);
@@ -72,8 +72,8 @@ describe("Authentication test", function () {
   let tokens;
   test("Try to Login with Admin account.", async () => {
     req.body = {
-      username: "admin",
-      password: "admin",
+      username: "admin_auth",
+      password: "admin_auth",
     };
     await login(req, res);
     expect(res.status).toHaveBeenCalledWith(200);

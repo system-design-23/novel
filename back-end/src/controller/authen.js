@@ -22,11 +22,14 @@ function sendToken(res, user) {
   res.status(200);
   let tokens = createToken(user);
   let body = {
+    userInfo: {
+      fullname: user.fullname,
+      role: user.role,
+    },
     accessToken: tokens[0],
     refreshToken: tokens[1],
     expiresIn: 10 * 60 * 60,
     tokenType: "Bearer",
-    authorization: user.role,
   };
   res.send(body);
 }
