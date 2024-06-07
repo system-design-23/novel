@@ -4,6 +4,7 @@ const Novel = require("./models/novel.js");
 const Author = require("./models/author.js");
 const Chapter = require("./models/chapter.js");
 const Supplier = require("./models/supplier.js");
+const Category = require("./models/category.js");
 
 class Plugger {
   constructor() {
@@ -129,7 +130,6 @@ async function _includeNovel(supplier, crawler, novelUrl) {
   if (!novel) {
     let name = novelData.name;
     let thumbnail = novelData.thumbnailUrl;
-    let categories = novelData.categories;
     let author = await Author.findOne({ name: novelData.author });
     if (!author) {
       author = new Author({ name: novelData.author });
@@ -141,8 +141,10 @@ async function _includeNovel(supplier, crawler, novelUrl) {
       author: author.id,
       thumbnail: thumbnail,
       url: novelUrl,
-      categories: categories,
     });
+    for (let category of novelData.categories) {
+      await Category.create({ name: category, novel: novel.id });
+    }
   }
   for (let [numChap, info] of Object.entries(chapters)) {
     let chapter = await Chapter.findOne({

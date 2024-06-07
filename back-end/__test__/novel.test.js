@@ -5,6 +5,7 @@ const {
   getNovelDetail,
   findNovelsByAuthor,
   getChapterDetail,
+  findNovelsByCategory,
 } = require("../src/controller/novel");
 const browser = require("../src/db/domain/browser");
 describe("Novel usecase flow test", function () {
@@ -35,7 +36,7 @@ describe("Novel usecase flow test", function () {
     let novels = res.send.mock.calls[0][0];
     novel = novels[5];
   }, 5000);
-  test("Get the novel by name", async () => {
+  test("Get all novels by name", async () => {
     req.query = {
       title: "Tiên",
     };
@@ -43,17 +44,26 @@ describe("Novel usecase flow test", function () {
     expect(res.status).toHaveBeenCalledWith(200);
   }, 5000);
 
-  test("Get the novel by author", async () => {
+  test("Get all novels by type", async () => {
     req.query = {
-      author: "Bông Lan",
+      category: "Tiên Hiệp",
+      offset: 1,
+    };
+    await findNovelsByCategory(req, res);
+    expect(res.status).toHaveBeenCalledWith(200);
+  }, 5000);
+
+  test("Get all novels by author", async () => {
+    req.query = {
+      author: "SS Hà Thần",
     };
     next = jest.fn();
     await findNovelsByAuthor(req, res, next);
     expect(res.status).toHaveBeenCalledWith(200);
-
     let novels = res.send.mock.calls[0][0];
+    console.log(novels);
   }, 5000);
-  test("Get the novel detail", async () => {
+  test("Get novel detail", async () => {
     req.params = {
       novelId: novel.id,
     };

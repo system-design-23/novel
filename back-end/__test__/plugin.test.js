@@ -11,10 +11,13 @@ const {
 const fs = require("fs");
 const { plugger } = require("../src/db/plugger");
 const { error } = require("console");
+const { getNovelDetail } = require("../src/controller/novel");
+const Novel = require("../src/db/models/novel");
+const Supplier = require("../src/db/models/supplier");
 
 describe("Read novel by Preference flow", function () {
   async function deleteOldMock() {
-    await User.delete({ username: "mock_admin" });
+    await User.deleteOne({ username: "mock_admin" });
     await new Promise(async (resolve, reject) => {
       let mockLog = function (s) {
         console.log(s);
@@ -126,6 +129,25 @@ describe("Read novel by Preference flow", function () {
           reject();
         });
       });
+    },
+    10 * 60000
+  );
+  test(
+    "Get a novel from 'truyen.tangthuvien.vn'",
+    async () => {
+      let supplier = await Supplier.findOne({
+        domain_name: "truyen.tangthuvien.vn",
+      });
+      let novel = await Novel.findOne({ "suppliers.supplier": supplier.id });
+      req.query = {};
+      req.params = {
+        novelId: novel.id,
+      };
+      await getNovelDetail(req, res);
+      expect(res.status).toHaveBeenCalledWith(200);
+
+      let novelDetail = res.send.mock.calls[0][0];
+      console.log(novelDetail);
     },
     10 * 60000
   );

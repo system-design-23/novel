@@ -23,7 +23,7 @@ async function init() {
   });
   let browser = await puppeteer.launch();
   let crawler = new TruyenfullCrawler(browser);
-  await _includeToDb(crawler, console.log);
+  await _includeToDb(crawler, console);
   await dupCrawlFromOtherDomain(browser);
 
   mongoose.disconnect();

@@ -6,7 +6,7 @@ const { novelToJson, novelsToJson, defaultDomain } = require("./utils.js");
 const Chapter = require("../db/models/chapter.js");
 const UserRead = require("../db/models/userread.js");
 const { plugger } = require("../db/plugger.js");
-
+const Category = require("../db/models/category.js");
 /* Update lượt xem của tiểu thuyết*/
 async function updateViews(novelId) {
   return Novel.updateOne({ _id: novelId }, { $inc: { views: 1 } });
@@ -82,6 +82,41 @@ async function findNovelsByAuthor(req, res, next) {
     const novels = await novelsToJson(fetchedNovels);
     res.status(200);
     res.send(novels);
+  } catch (err) {
+    console.error(err);
+    res.status(400);
+  }
+}
+
+async function findNovelsByCategory(req, res, next) {
+  let { category, offset } = req.query;
+  if (!category) {
+    next();
+    return;
+  }
+  if (!offset) {
+    offset = 0;
+  }
+  try {
+    const fetched = await Category.find({ name: category })
+      .skip(offset)
+      .limit(10)
+      .populate({
+        path: "novel",
+        populate: {
+          path: "author",
+        },
+      });
+    let body = {};
+    body.novels = await novelsToJson(fetched.map((z) => z.novel));
+    body.info = {
+      offset: offset,
+      length: fetched.length,
+      category: category,
+      total: await Category.countDocuments({ name: category }),
+    };
+    res.status(200);
+    res.send(body);
   } catch (err) {
     console.error(err);
     res.status(400);
@@ -261,4 +296,5 @@ module.exports = {
   findNovelsByAuthor,
   getChapterDetail,
   getRecommendation,
+  findNovelsByCategory,
 };

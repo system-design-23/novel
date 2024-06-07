@@ -1,3 +1,4 @@
+const Category = require("../db/models/category.js");
 const Novel = require("../db/models/novel.js");
 const Prefs = require("../db/models/preference.js");
 const { plugger } = require("../db/plugger.js");
@@ -10,12 +11,13 @@ async function novelsToJson(novels) {
   );
 }
 async function novelToJson(novel) {
+  let cates = await Category.find({ novel: novel.id });
   let body = {
     id: novel.id,
     name: novel.name,
     author: novel.author.name,
     url: novel.thumbnail,
-    categories: novel.categories,
+    categories: cates.map((c) => c.name),
   };
   return body;
 }

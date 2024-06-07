@@ -123,7 +123,7 @@ describe("Read novel by Preference flow", function () {
   let novelDetail;
   test("Get a novel detail", async () => {
     req.params = {
-      novelId: "6662d1af06e145b3118fe1cd",
+      novelId: "666338c08ce7d80488b8e7ac",
     };
     req.query = {};
     await getNovelDetail(req, res);
@@ -134,7 +134,7 @@ describe("Read novel by Preference flow", function () {
 
   test("Get a novel detail by domain", async () => {
     req.params = {
-      novelId: "6662d1af06e145b3118fe1cd",
+      novelId: "666338c08ce7d80488b8e7ac",
     };
     req.query = {
       domain_name: "truyenfull.vn",
@@ -175,7 +175,7 @@ describe("Read novel by Preference flow", function () {
 
   test("Read another novel", async () => {
     req.params = {
-      novelId: "6662d1b206e145b3118fe4bb",
+      novelId: "666338c38ce7d80488b8e934",
     };
     req.query = {};
     await getNovelDetail(req, res);
@@ -200,7 +200,7 @@ describe("Read novel by Preference flow", function () {
 
   test("Read the old novel", async () => {
     req.params = {
-      novelId: "6662d1af06e145b3118fe1cd",
+      novelId: "666338c08ce7d80488b8e7ac",
     };
     req.query = {};
     await getNovelDetail(req, res);

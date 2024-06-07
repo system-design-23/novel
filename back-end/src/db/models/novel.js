@@ -33,6 +33,5 @@ const Novel = new mongoose.Schema({
       },
     },
   ],
-  categories: [{ type: mongoose.SchemaTypes.String }],
 });
 module.exports = mongoose.model("Novel", Novel);

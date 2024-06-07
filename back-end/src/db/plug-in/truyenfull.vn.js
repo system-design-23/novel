@@ -74,21 +74,28 @@ class Crawler {
     for (let chapDiv of chapDivs) {
       chaps = {
         ...chaps,
-        ...(await chapDiv.evaluate((chapDiv) => {
-          let getChaps = {};
-          let lis = chapDiv.querySelectorAll("li");
-          for (li of lis) {
-            let a = li.querySelector("a");
-            let content = a.textContent;
-            let pos_sep = content.indexOf(":");
-            let numChap = (
-              pos_sep == -1 ? content : content.substring(0, pos_sep)
-            ).match(/\d+$/);
-            let title = content.substring(pos_sep + 1).trim();
-            getChaps[numChap] = { url: a.href, title: title };
-          }
-          return getChaps;
-        }, chapDiv)),
+        ...(await page.evaluate(
+          (chapDiv, limit) => {
+            let getChaps = {};
+            let lis = chapDiv.querySelectorAll("li");
+            for (li of lis) {
+              let a = li.querySelector("a");
+              let content = a.textContent;
+              let pos_sep = content.indexOf(":");
+              let numChap = (
+                pos_sep == -1 ? content : content.substring(0, pos_sep)
+              ).match(/\d+$/);
+              let title = content.substring(pos_sep + 1).trim();
+              getChaps[numChap] = { url: a.href, title: title };
+              if (Object.keys(getChaps).length >= limit) {
+                break;
+              }
+            }
+            return getChaps;
+          },
+          chapDiv,
+          limit - Object.keys(chaps).length
+        )),
       };
       if (Object.keys(chaps).length >= limit) {
         break;
@@ -124,10 +131,6 @@ class Crawler {
 
     /* crawl book's description */
     const div = await page.$('div.desc-text[itemprop="description"]');
-    if (!div) {
-      console.log(url);
-      console.log(this.url);
-    }
     const res = await page.evaluate((div) => {
       return div.textContent;
     }, div);
@@ -140,7 +143,7 @@ class Crawler {
     await page.goto(url, { waitUntil: "domcontentloaded" });
 
     /* crawl book's info */
-    const info = await page.$(".title-list.book-intro");
+    const infoDoc = await page.$(".title-list.book-intro");
     const res = await page.evaluate((info) => {
       let div = info.parentElement;
       let name = div.querySelector("h3.title[itemprop='name']").textContent;
@@ -165,7 +168,7 @@ class Crawler {
         thumbnailUrl: thumbnailUrl,
         categories: types,
       };
-    }, info);
+    }, infoDoc);
     if (res == null) {
       return null;
     }

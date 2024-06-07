@@ -85,7 +85,7 @@ class Crawler {
 
       while (child) {
         if (child.nodeType === Node.TEXT_NODE) {
-          if (child.textContent.includes("-------")) {
+          if (child.textContent.includes("donate")) {
             break;
           }
           content.push(child.textContent);
