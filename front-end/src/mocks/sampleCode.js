@@ -43,7 +43,7 @@ const sampleCode = `class Crawler {
       let res = [];
       let lis = div.querySelectorAll('li');
 
-      const limit = 10;
+      const limit = 5;
       for (li of lis) {
         let a = li.querySelector('div.book-mid-info').querySelector('a');
         res.push(a.href);
@@ -125,7 +125,7 @@ const sampleCode = `class Crawler {
   }
   async crawlNovel(url) {
     const page = await this.browser.newPage();
-    await page.goto(url);
+    await page.goto(url, { waitUntil: "domcontentloaded" });
 
     /* crawl book's info */
     let div = await page.$('div.book-information.cf');

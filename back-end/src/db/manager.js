@@ -7,7 +7,6 @@ const Supplier = require("./models/supplier.js");
 const Category = require("./models/category.js");
 const { default: mongoose } = require("mongoose");
 
-
 class NovelManager {
   constructor() {
     this.observers = [];
@@ -60,11 +59,13 @@ class NovelManager {
         },
       };
       let plugin = { domain_name, Crawler };
-      _includeToDb(new Crawler(await browser), prog).then(() => {
-        this.update(plugin);
-      }).catch((error) => {
-        console.error(error);
-      });
+      _includeToDb(new Crawler(await browser), prog)
+        .then(() => {
+          this.update(plugin);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
       return prog;
     } catch (error) {
       console.error(error);
@@ -93,7 +94,7 @@ class NovelManager {
 
       try {
         fs.unlinkSync("./src/db/plug-in/" + domain_name + ".js");
-      } catch (error) { }
+      } catch (error) {}
       let prog = {
         log: console.log,
         onLog: function (x) {
@@ -138,12 +139,12 @@ async function _includeToDb(crawler, prog) {
   let step = 0;
   let total = Object.keys(cates).length;
   for (let [key, value] of Object.entries(cates)) {
-    let this_prog = step++ / total * 100;
+    let this_prog = (step++ / total) * 100;
     prog.log(Math.floor(this_prog));
     let getNovelUrls = await crawler.crawlNovelsByType(value);
     for (let i = 0; i < getNovelUrls.length; i++) {
-      this_prog += (1 / getNovelUrls.length) / total * 100;
-      prog.log(Math.floor(this_prog))
+      this_prog += (1 / getNovelUrls.length / total) * 100;
+      prog.log(Math.floor(this_prog));
       let novelUrl = getNovelUrls[i];
       if (cached.has(novelUrl)) {
         continue;
@@ -227,7 +228,7 @@ async function _excludeFromDb(domain_name, prog) {
     } else {
       await novel.save();
     }
-    prog.log("" + Math.floor(++p / total * 100));
+    prog.log("" + Math.floor((++p / total) * 100));
   }
 
   for (let chapter of chapters) {
@@ -243,7 +244,7 @@ async function _excludeFromDb(domain_name, prog) {
     } else {
       await chapter.save();
     }
-    prog.log("" + Math.floor(++p / total * 100));
+    prog.log("" + Math.floor((++p / total) * 100));
   }
   await supplier.deleteOne();
   prog.log("End");
