@@ -2,9 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../utils/utils';
 import { Button, LoadingSpinner } from '../../components';
 import { getPlugins } from '../../apis/plugins';
+import Editor from 'react-simple-code-editor';
+import { highlight, languages } from 'prismjs/components/prism-core';
+import 'prismjs/components/prism-clike';
+import 'prismjs/components/prism-javascript';
+import 'prismjs/themes/prism.css';
+import { FilePlus } from 'lucide-react';
 
 const ImportSources = ({ className, ...rest }) => {
   const [visiblePlugins, setVisiblePlugins] = useState([]);
+  const [code, setCode] = useState('');
   const isFetching = useRef(false);
 
   useEffect(() => {
@@ -50,8 +57,33 @@ const ImportSources = ({ className, ...rest }) => {
             <LoadingSpinner />
           </div>
         )}
+        <div
+          className={cn(
+            'ml-auto h-12 w-fit rounded',
+            'border-2 border-slate-200 text-slate-800',
+            'flex select-none items-center justify-between overflow-hidden px-2'
+          )}
+        >
+          <button className='flex space-x-2 align-middle'>
+            <FilePlus size='1rem' className='self-center text-slate-800' />
+            <p className='self-center text-sm'> Add Source</p>
+          </button>
+        </div>
       </section>
-      <section className='mb-2 mt-4 aspect-video w-full rounded bg-white'></section>
+      <section className='mb-2 mt-4 h-fit w-full rounded-lg border-2 bg-white p-2'>
+        <div className='aspect-video w-full overflow-y-auto'>
+          <Editor
+            value={code}
+            onValueChange={(code) => setCode(code)}
+            highlight={(code) => highlight(code, languages.js)}
+            padding={10}
+            // className='max-h-16 overflow-y-auto'
+            // preClassName='focus-visible:ring-none border-0 ring-0 focus-within:outline-none focus:outline-none focus:ring-0 focus-visible:outline-none'
+            textareaClassName='focus-visible:ring-none border-0 ring-0 focus-within:outline-none focus:outline-none focus:ring-0 focus-visible:outline-none'
+            className='font-mono text-[14px]'
+          ></Editor>
+        </div>
+      </section>
       <section className='mt-4 flex justify-end space-x-2'>
         <Button variant='secondary'>Cancel</Button>
         <Button>Update</Button>
