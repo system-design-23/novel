@@ -67,6 +67,7 @@ describe("Novel usecase flow test", function () {
     await findNovelsByAuthor(req, res, next);
     expect(res.status).toHaveBeenCalledWith(200);
     let novels = res.send.mock.calls[0][0];
+    console.log(novels);
   }, 5000);
   test("Get novel detail", async () => {
     req.params = {
