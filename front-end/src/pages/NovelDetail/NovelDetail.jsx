@@ -9,7 +9,6 @@ const NovelDetail = ({ ...props }) => {
   const [novelDetail, setNovelDetail] = useState({});
   const { novelId } = useParams();
   const fetching = useRef(false);
-  const navigate = useNavigate();
   useEffect(() => {
     const getNovelInfo = async () => {
       const receiveNovelInfo = await getNovelDetail(novelId);
@@ -49,22 +48,35 @@ const NovelDetail = ({ ...props }) => {
         </div>
       </section>
       <section className='mx-auto max-w-[70%] rounded-lg bg-slate-50 p-6'>
-        {novelDetail.chapters &&
-          novelDetail.chapters.map((chapter) => (
-            <div key={chapter.id} className='my-2 flex flex-nowrap justify-between rounded-lg bg-slate-100 pl-4'>
-              <div className='font-semimbold self-center text-primary'>{chapter.title}</div>
-              <Button
-                variant='secondary'
-                className='space-x-2 self-center rounded-lg'
-                onClick={() => {
-                  navigate(`/${novelId}/read/${chapter.id}`);
-                }}
-              >
-                <ChevronRight size='0.8rem'></ChevronRight>
-              </Button>
-            </div>
-          ))}
+        {novelDetail.chapters && novelDetail.chapters.map((chapter) => <ChapterItem chapter={chapter}></ChapterItem>)}
       </section>
+    </div>
+  );
+};
+
+const ChapterItem = ({ chapter, ...props }) => {
+  const { novelId } = useParams();
+  const navigate = useNavigate();
+  return (
+    <div key={chapter.id} className='my-2 flex flex-nowrap justify-between rounded-lg bg-slate-100 pl-4' {...props}>
+      <div className='font-semimbold self-center text-primary'>{chapter.title}</div>
+      <div className='flex space-x-2'>
+        {/* <div className='h-fit content-center self-center rounded-full border-2 border-slate-200 px-2 py-1 text-[0.7rem]'>
+        Supplier1
+      </div>
+      <div className='h-fit content-center self-center rounded-full border-2 border-slate-200 px-2 py-1 text-[0.7rem]'>
+        Supplier2
+      </div> */}
+        <Button
+          variant='secondary'
+          className='space-x-2 self-center rounded-lg'
+          onClick={() => {
+            navigate(`/${novelId}/read/${chapter.id}`);
+          }}
+        >
+          <ChevronRight size='0.8rem'></ChevronRight>
+        </Button>
+      </div>
     </div>
   );
 };

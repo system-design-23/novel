@@ -40,9 +40,11 @@ const options = [
   }
 ];
 
-export default function LineHeight({ onLineHeightChange }) {
+export default function LineHeight({ onLineHeightChange, defaultValue }) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState('1.5em');
+  const [value, setValue] = React.useState(
+    options.find((option) => option.value == (defaultValue ?? '')) ?? options[3]
+  );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -52,19 +54,19 @@ export default function LineHeight({ onLineHeightChange }) {
           <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0' />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className='mr-4 w-[200px] rounded-lg bg-slate-50 p-0 align-middle'>
+      <PopoverContent className='w-[130px] rounded-lg bg-slate-50 p-0 align-middle'>
         {options.map((framework) => (
           <div
             key={framework.value}
-            className='space-4  m-2 flex h-fit cursor-pointer p-2 px-3 hover:bg-sky-200/20'
+            className='space-4  m-2 flex h-fit cursor-pointer rounded p-1 px-3 text-sm hover:bg-sky-200/20'
             onClick={() => {
               onLineHeightChange(framework.value);
-              setValue(framework.value);
+              setValue(framework);
               setOpen(false);
             }}
           >
             <Check
-              className={cn('mr-2 h-4 w-4 self-center ', value === framework.value ? 'opacity-100' : 'opacity-0')}
+              className={cn('mr-2 h-4 w-4 self-center ', value.value === framework.value ? 'opacity-100' : 'opacity-0')}
             />
             <p>{framework.label}</p>
           </div>

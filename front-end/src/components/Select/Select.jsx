@@ -5,9 +5,11 @@ import { cn } from '../../utils/utils';
 import { Button } from '..';
 import { Popover, PopoverContent, PopoverTrigger } from '../../components/Popover/Popover';
 
-export default function Select({ onSelectChange, options, className, contentClassName }) {
+export default function Select({ onSelectChange, defaultValue, options, className, contentClassName }) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState(options[0]);
+  const [value, setValue] = React.useState(
+    options.find((option) => option.value == (defaultValue ?? '')) ?? options[0]
+  );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

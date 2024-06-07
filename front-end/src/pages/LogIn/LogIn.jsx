@@ -25,9 +25,9 @@ const LogIn = ({ props }) => {
         <div className='h-fit w-1/3 min-w-[400px] rounded-lg bg-slate-50 p-6 shadow-lg shadow-slate-400/10'>
           <h1 className='text-xl font-bold'>Log In</h1>
           <label className='my-2 block text-sm font-medium'>Username</label>
-          <Input className='mb-4 w-full' placeholder='Username'></Input>
+          <Input className='mb-4 w-full' placeholder='Username' name='username'></Input>
           <label className='my-2 block text-sm font-medium'>Password</label>
-          <Input className='mb-4 w-full' type='password' placeholder='Password'></Input>
+          <Input className='mb-4 w-full' type='password' placeholder='Password' name='password'></Input>
           <Button type='submit' className='mt-4 w-full'>
             Log In
           </Button>

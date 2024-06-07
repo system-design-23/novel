@@ -2,6 +2,7 @@ import NovelCard from './NovelCard/NovelCard';
 import Header from './Header/Header';
 import SearchBar from './SearchBar/SearchBar';
 import Button from './Button/Button';
+import DropDown from './DropDown/DropDown';
 import RecentItems from './RecentItems/RecentItems';
 import { RecentItemLayout } from './RecentItems/RecentItems';
 import Input from './Input/Input';
@@ -14,6 +15,7 @@ import { CardLayout } from './NovelCard/NovelCard';
 export {
   Button,
   ColorPicker,
+  DropDown,
   Header,
   Input,
   NovelCard,

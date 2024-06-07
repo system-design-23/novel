@@ -12,15 +12,15 @@ const RecentItems = ({ ...props }) => {
   const [recentItems, setRecentItems] = useState();
   const fetching = useRef(false);
   useEffect(() => {
-    const getRecentNovelItems = async (userId) => {
-      const receiveNovelItems = await getRecentNovels(userId);
+    const getRecentNovelItems = async () => {
+      const receiveNovelItems = await getRecentNovels();
       if (receiveNovelItems) {
         setRecentItems(receiveNovelItems);
       }
     };
     if (fetching.current == false && user) {
       fetching.current = true;
-      getRecentNovelItems(user.id);
+      getRecentNovelItems();
     }
 
     return () => {
@@ -47,7 +47,7 @@ const RecentItems = ({ ...props }) => {
         )
       ) : (
         <div className='align-center mx-auto flex w-1/2 flex-grow flex-col justify-center text-center'>
-          <p>Please login to see your recently read chapters</p>
+          <p>Please log in to see your recently read chapters</p>
           <img src={emptyImage} className='mx-auto w-full' alt='empty'></img>
         </div>
       )}

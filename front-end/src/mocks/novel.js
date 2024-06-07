@@ -124,6 +124,8 @@ const novelDetail = {
   url: 'https://picsum.photos/800?random=1',
   categories: ['fantasy', 'magic', 'young adult'],
   description: 'A young witch discovers a hidden power that could change the fate of her kingdom.',
+  supplier: 'truyenfull.vn',
+  suppliers: ['truyenfull.vn', 'lightnovel.vn'],
   chapters: [
     {
       id: '1',
@@ -167,6 +169,7 @@ const recentItems = [
     author: 'Marco Rossi',
     chapter: {
       id: '1',
+      number: 1,
       name: 'A Recipe for Murder'
     }
   },
@@ -176,6 +179,7 @@ const recentItems = [
     author: 'Hanako Nakamura',
     chapter: {
       id: '5',
+      number: 5,
       name: 'Cherry Blossoms in the Rain'
     }
   },
@@ -185,6 +189,7 @@ const recentItems = [
     author: 'Anya Sharma',
     chapter: {
       id: '2',
+      number: 2,
       name: 'The Rain That Never Stops'
     }
   },
@@ -194,6 +199,7 @@ const recentItems = [
     author: 'Jane Doe',
     chapter: {
       id: '1',
+      number: 1,
       name: 'The Stolen Amulet'
     }
   }
@@ -208,6 +214,8 @@ const chapterContent = {
   chapter_index: 1,
   total_chapter: 10,
   previous_chapter: null,
+  supplier: 'truyenfull.vn',
+  suppliers: ['truyenfull.vn', 'lightnovel.vn'],
   next_chapter: {
     id: '2',
     name: 'Part 2'
@@ -216,6 +224,39 @@ const chapterContent = {
     "Humbert Humbert paced the worn carpet, a clammy sweat clinging to his brow. The heat shimmered off the asphalt outside, blurring the already distorted image of Dolores Haze skipping rope on the cracked sidewalk. Her red sundress billowed with each jump, revealing a glimpse of creamy skin beneath. A shiver, both thrilling and repulsive, ran down his spine. 'Isn't she lovely, Humbert?' cooed his landlady, Charlotte, her voice laced with a knowing smirk. Humbert forced a smile, the image of Lolita's innocent laughter a cruel counterpoint to the darkness churning within him." // Specific details, emotional tone, character interaction
 };
 
+const userSignUpResponse = {
+  accessToken:
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NjE5MDNhYTU4MmJhNGNhNmQxYTZlZSIsInVzZXJuYW1lIjoiYWRtaW4iLCJpYXQiOjE3MTc2Njk5NDYsImV4cCI6MTcxNzcwNTk0Nn0.MuCw-KOUpcHCGr8A8uKS4fHfnPA9Odm_-ekrMjM1uxI',
+  refreshToken:
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NjE5MDNhYTU4MmJhNGNhNmQxYTZlZSIsInVzZXJuYW1lIjoiYWRtaW4iLCJpYXQiOjE3MTc2Njk5NDYsImV4cCI6MTcxODI3NDc0Nn0.ef_7QzmCiXBlalGeln7Qa4qXEFkJFl_IK0WweAWbz14',
+  expiresIn: 36000,
+  tokenType: 'Bearer',
+  authorization: 'user'
+};
+
+const userLogInResponse = {
+  accessToken:
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NjE5MDNhYTU4MmJhNGNhNmQxYTZlZSIsInVzZXJuYW1lIjoiYWRtaW4iLCJpYXQiOjE3MTc2Njk5NDYsImV4cCI6MTcxNzcwNTk0Nn0.MuCw-KOUpcHCGr8A8uKS4fHfnPA9Odm_-ekrMjM1uxI',
+  refreshToken:
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NjE5MDNhYTU4MmJhNGNhNmQxYTZlZSIsInVzZXJuYW1lIjoiYWRtaW4iLCJpYXQiOjE3MTc2Njk5NDYsImV4cCI6MTcxODI3NDc0Nn0.ef_7QzmCiXBlalGeln7Qa4qXEFkJFl_IK0WweAWbz14',
+  expiresIn: 36000,
+  tokenType: 'Bearer',
+  authorization: 'admin'
+};
+
+const suppliers = [
+  {
+    supplier: 'https://truyenfull.vn/',
+    total_chapter: 0,
+    total_novel: 0
+  },
+  {
+    supplier: 'https://lightnovel.vn/',
+    total_chapter: 0,
+    total_novel: 0
+  }
+];
+
 export const handlers = [
   http.get(`${NOVEL_SERVICE_URL}/novels`, ({}) => {
     delay(200);
@@ -223,21 +264,45 @@ export const handlers = [
       status: 200
     });
   }),
-  http.get(`${NOVEL_SERVICE_URL}/1/detail`, ({}) => {
+  http.get(`${NOVEL_SERVICE_URL}/novels/detail/1`, ({}) => {
     delay(200);
     return HttpResponse.json(novelDetail, {
       status: 200
     });
   }),
-  http.get(`${NOVEL_SERVICE_URL}/recent/1`, ({}) => {
+  http.get(`${NOVEL_SERVICE_URL}/u/recent`, ({}) => {
     delay(200);
     return HttpResponse.json(recentItems, {
       status: 200
     });
   }),
-  http.get(`${NOVEL_SERVICE_URL}/detail/1/1`, ({}) => {
+  http.get(`${NOVEL_SERVICE_URL}/admin/recent`, ({}) => {
+    delay(200);
+    return HttpResponse.json(recentItems, {
+      status: 200
+    });
+  }),
+  http.get(`${NOVEL_SERVICE_URL}/novels/detail/1/1`, ({}) => {
     delay(200);
     return HttpResponse.json(chapterContent, {
+      status: 200
+    });
+  }),
+  http.post(`${NOVEL_SERVICE_URL}/auth/signup`, ({}) => {
+    delay(200);
+    return HttpResponse.json(userSignUpResponse, {
+      status: 200
+    });
+  }),
+  http.post(`${NOVEL_SERVICE_URL}/auth/login`, ({}) => {
+    delay(200);
+    return HttpResponse.json(userLogInResponse, {
+      status: 200
+    });
+  }),
+  http.get(`${NOVEL_SERVICE_URL}/admin/plugins`, ({}) => {
+    delay(200);
+    return HttpResponse.json(suppliers, {
       status: 200
     });
   })

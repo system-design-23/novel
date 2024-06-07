@@ -18,8 +18,8 @@ function App() {
       <Suspense
         fallback={
           <div className='h-screen bg-slate-100'>
-            <div className='h-full w-full place-content-center'>
-              <LoadingSpinner></LoadingSpinner>
+            <div className='flex h-full w-full justify-center'>
+              <LoadingSpinner className='self-center fill-primary/50'></LoadingSpinner>
             </div>
           </div>
         }
