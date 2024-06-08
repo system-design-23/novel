@@ -15,13 +15,14 @@ const fontOptions = [
 const NovelReader = () => {
   const [chapterDetail, setChapterDetail] = useState({});
   const [preferences, setPreferences] = useContext(PreferencesContext);
-  const { domain_name } = useSearchParams();
+  const [searchParams, _] = useSearchParams();
   const fetching = useRef(false);
   const { novelId = '', chapterId = '' } = useParams();
+  const domainName = searchParams.get('domain_name');
 
   useEffect(() => {
     const getChapterDetail = async () => {
-      const result = await getChapterContent(novelId, chapterId, domain_name);
+      const result = await getChapterContent(novelId, chapterId, domainName);
       if (result) {
         setChapterDetail(result);
       }
@@ -34,7 +35,7 @@ const NovelReader = () => {
     return () => {
       fetching.current = false;
     };
-  }, [novelId, chapterId, domain_name]);
+  }, [novelId, chapterId, domainName]);
 
   const handleFontChange = (value) => {
     setPreferences((prev) => {
@@ -145,8 +146,8 @@ const NovelReader = () => {
 
 const ChapterSection = ({ chapterDetail }) => {
   const [isListOpen, setListOpen] = useState(false);
-  const navigate = useNavigate();
   const { novelId = '' } = useParams();
+  const [_, setSearchParams] = useSearchParams();
   const supplierOptions = useMemo(() => {
     if (chapterDetail.suppliers) {
       return chapterDetail.suppliers.map((supplier) => {
@@ -157,12 +158,7 @@ const ChapterSection = ({ chapterDetail }) => {
   }, [chapterDetail]);
 
   const handleOptionSelect = (value) => {
-    navigate({
-      pathname: '',
-      search: `?${createSearchParams({
-        domain_name: value
-      })}`
-    });
+    setSearchParams(createSearchParams({ domain_name: value }));
   };
 
   if (supplierOptions) {

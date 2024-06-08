@@ -12,9 +12,9 @@ const ManageContent = () => {
     setPage(e.target.value);
   };
   return (
-    <div className='p-4'>
+    <div className='h-full overflow-y-auto p-4'>
       <h1 className='my-4 text-center text-2xl font-bold'>Manage Content</h1>
-      <div className='flex h-full flex-col space-y-4 align-middle'>
+      <div className='flex flex-col space-y-4 align-middle'>
         <section
           className={cn(
             'mx-auto flex h-fit w-fit flex-shrink justify-center space-x-1',

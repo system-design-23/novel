@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw';
 import { setupWorker } from 'msw/browser';
 import { delay } from '../utils/utils';
+import sampleCode from './sampleCode';
 
 const NOVEL_SERVICE_URL = 'http://localhost:3000/api/v1';
 const novels = {
@@ -115,6 +116,126 @@ const novels = {
     },
     {
       id: '16',
+      name: "The Emperor's Decree",
+      author: 'Wang Lin',
+      url: 'https://picsum.photos/800?random=16',
+      categories: ['historical fiction', 'political', 'adult']
+    }
+  ]
+};
+
+const novelsPage2 = {
+  current_page: 2,
+  total_pages: 10,
+  top_categories: ['fantasy', 'adventure', 'romance'],
+  novels: [
+    {
+      id: '17',
+      name: 'The Shadow Runner',
+      author: 'Jane Doe',
+      url: 'https://picsum.photos/800?random=1',
+      categories: ['fantasy', 'adventure', 'young adult']
+    },
+    {
+      id: '28',
+      name: 'A Byte of Love',
+      author: 'Li Wei',
+      url: 'https://picsum.photos/800?random=2',
+      categories: ['science fiction', 'romance', 'adult']
+    },
+    {
+      id: '39',
+      name: 'Chronicles of a Chess Master',
+      author: 'Peter Ivanov',
+      url: 'https://picsum.photos/800?random=3',
+      categories: ['historical fiction', 'drama', 'adult']
+    },
+    {
+      id: '49',
+      name: 'Haiku of a Broken Heart',
+      author: 'Hanako Nakamura',
+      url: 'https://picsum.photos/800?random=4',
+      categories: ['poetry', 'coming-of-age', 'young adult']
+    },
+    {
+      id: '59',
+      name: 'The Culinary Code',
+      author: 'Marco Rossi',
+      url: 'https://picsum.photos/800?random=5',
+      categories: ['mystery', 'thriller', 'adult']
+    },
+    {
+      id: '69',
+      name: 'The Call of the Wild (retold)',
+      author: 'Jack London (adapted by Sarah Johnson)',
+      url: 'https://picsum.photos/800?random=6',
+      categories: ['classics', 'adventure', 'all ages']
+    },
+    {
+      id: '79',
+      name: 'Data & Destiny',
+      author: 'Anya Sharma',
+      url: 'https://picsum.photos/800?random=7',
+      categories: ['science fiction', 'dystopian', 'young adult']
+    },
+    {
+      id: '89',
+      name: "The Emperor's Decree",
+      author: 'Wang Lin',
+      url: 'https://picsum.photos/800?random=8',
+      categories: ['historical fiction', 'political', 'adult']
+    },
+    {
+      id: '99',
+      name: 'The Shadow Runner',
+      author: 'Jane Doe',
+      url: 'https://picsum.photos/800?random=9',
+      categories: ['fantasy', 'adventure', 'young adult']
+    },
+    {
+      id: '109',
+      name: 'A Byte of Love',
+      author: 'Li Wei',
+      url: 'https://picsum.photos/800?random=10',
+      categories: ['science fiction', 'romance', 'adult']
+    },
+    {
+      id: '119',
+      name: 'Chronicles of a Chess Master',
+      author: 'Peter Ivanov',
+      url: 'https://picsum.photos/800?random=11',
+      categories: ['historical fiction', 'drama', 'adult']
+    },
+    {
+      id: '129',
+      name: 'Haiku of a Broken Heart',
+      author: 'Hanako Nakamura',
+      url: 'https://picsum.photos/800?random=12',
+      categories: ['poetry', 'coming-of-age', 'young adult']
+    },
+    {
+      id: '139',
+      name: 'The Culinary Code',
+      author: 'Marco Rossi',
+      url: 'https://picsum.photos/800?random=13',
+      categories: ['mystery', 'thriller', 'adult']
+    },
+    {
+      id: '149',
+      name: 'The Call of the Wild (retold)',
+      author: 'Jack London (adapted by Sarah Johnson)',
+      url: 'https://picsum.photos/800?random=14',
+      categories: ['classics', 'adventure', 'all ages']
+    },
+    {
+      id: '159',
+      name: 'Data & Destiny',
+      author: 'Anya Sharma',
+      url: 'https://picsum.photos/800?random=15',
+      categories: ['science fiction', 'dystopian', 'young adult']
+    },
+    {
+      id: '169',
       name: "The Emperor's Decree",
       author: 'Wang Lin',
       url: 'https://picsum.photos/800?random=16',
@@ -262,14 +383,31 @@ const suppliers = [
 ];
 
 export const handlers = [
-  http.get(`${NOVEL_SERVICE_URL}/novels`, ({}) => {
+  http.get(`${NOVEL_SERVICE_URL}/novels`, ({ request }) => {
     delay(200);
-    return HttpResponse.json(novels, {
+    const url = new URL(request.url);
+    const offset = url.searchParams.get('offset');
+    if (!offset || offset == 0) {
+      return HttpResponse.json(novels, {
+        status: 200
+      });
+    }
+    return HttpResponse.json(novelsPage2, {
       status: 200
     });
   }),
-  http.get(`${NOVEL_SERVICE_URL}/novels/detail/1`, ({}) => {
+  http.get(`${NOVEL_SERVICE_URL}/novels/detail/1`, ({ request }) => {
     delay(200);
+    const url = new URL(request.url);
+    const domain = url.searchParams.get('domain_name');
+    if (domain === 'lightnovel.vn') {
+      const tempNovel = Object.assign({}, novelDetail);
+      tempNovel.description = 'This is a sample description';
+      tempNovel.supplier = 'lightnovel.vn';
+      return HttpResponse.json(tempNovel, {
+        status: 200
+      });
+    }
     return HttpResponse.json(novelDetail, {
       status: 200
     });
@@ -307,6 +445,18 @@ export const handlers = [
   http.get(`${NOVEL_SERVICE_URL}/admin/plugins`, ({}) => {
     delay(200);
     return HttpResponse.json(suppliers, {
+      status: 200
+    });
+  }),
+  http.get(`${NOVEL_SERVICE_URL}/admin/plugins/truyenfull.vn`, async ({}) => {
+    delay(200);
+    return HttpResponse.json(sampleCode, {
+      status: 200
+    });
+  }),
+  http.post(`${NOVEL_SERVICE_URL}/admin/plugins/plug`, async ({}) => {
+    delay(500);
+    return HttpResponse.json([], {
       status: 200
     });
   })

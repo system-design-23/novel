@@ -1,27 +1,82 @@
 import { cn } from '../../utils/utils';
 import { NovelCard, SearchBar, RecentItems, CardLayout } from '../../components';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { getNovels } from '../../apis/novel';
 
 const Homepage = ({ ...props }) => {
   const [novelList, setNovelList] = useState(null);
-  const fetching = useRef(false);
+  const lastFetchedPageIndex = useRef(-1);
+  const isFetching = useRef(false);
+  const [pageOffset, setPageOffset] = useState(0);
+  const sentinelRef = useRef();
+
   useEffect(() => {
-    const getNovelList = async () => {
-      const receiveNovelList = await getNovels();
-      if (receiveNovelList) {
-        setNovelList(receiveNovelList);
+    let isMounted = true;
+
+    const getNovelList = async (currentPage) => {
+      isFetching.current = true;
+      try {
+        const receiveNovelList = await getNovels(currentPage);
+        if (receiveNovelList && isMounted) {
+          setNovelList((prev) => {
+            if (!prev) return receiveNovelList;
+            return {
+              ...prev,
+              novels: [...prev.novels, ...receiveNovelList.novels],
+              total_pages: receiveNovelList.total_pages
+            };
+          });
+          lastFetchedPageIndex.current = currentPage;
+        }
+      } finally {
+        if (isMounted) {
+          isFetching.current = false;
+        }
       }
     };
-    if (fetching.current == false) {
-      fetching.current = true;
-      getNovelList();
+
+    if (lastFetchedPageIndex.current < pageOffset && (!novelList || pageOffset < novelList.total_pages)) {
+      getNovelList(pageOffset);
     }
 
     return () => {
-      fetching.current = false;
+      isMounted = false;
+      isFetching.current = false;
     };
-  }, []);
+  }, [pageOffset]);
+
+  const handleIntersection = useCallback(
+    (entries) => {
+      const target = entries[0];
+      if (target.isIntersecting && !isFetching.current) {
+        setPageOffset((prev) => {
+          if (novelList && prev < novelList.total_pages - 1) {
+            return prev + 1;
+          }
+          return prev;
+        });
+      }
+    },
+    [novelList]
+  );
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleIntersection, {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1
+    });
+
+    if (sentinelRef.current) {
+      observer.observe(sentinelRef.current);
+    }
+
+    return () => {
+      if (sentinelRef.current) {
+        observer.unobserve(sentinelRef.current);
+      }
+    };
+  }, [handleIntersection]);
 
   const handleSearchFilterChange = (value) => {
     console.log(value);
@@ -30,7 +85,7 @@ const Homepage = ({ ...props }) => {
 
   return (
     <div {...props} className={cn('h-full', props ? props.className ?? '' : '')}>
-      <section className='relative min-h-full px-4 pb-12 pt-4'>
+      <section className='relative h-full overflow-y-auto px-4 pb-12 pt-4'>
         <div className='mx-auto my-2 w-full pb-10'>
           <SearchBar
             className='mx-auto w-full '
@@ -55,8 +110,9 @@ const Homepage = ({ ...props }) => {
                 : [...Array(8)].map((_, index) => <CardLayout key={index} />)}
             </div>
           </div>
-          <RecentItems className='top-16 flex-grow lg:sticky lg:max-w-[30%]' />
+          <RecentItems className='top-0 flex-grow lg:sticky lg:max-w-[30%]' />
         </div>
+        <div ref={sentinelRef} className='sentinel'></div>
       </section>
     </div>
   );

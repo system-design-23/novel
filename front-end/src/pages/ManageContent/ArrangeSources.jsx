@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../utils/utils';
 import { DragDropContext, Draggable } from 'react-beautiful-dnd';
-import { Button, LoadingSpinner, StrictModeDroppable } from '../../components';
+import { Button, StrictModeDroppable } from '../../components';
 import { getPlugins } from '../../apis/plugins';
 import { GripVertical } from 'lucide-react';
 
 const ArrangeSources = ({ className, ...rest }) => {
-  const [visiblePlugins, setVisiblePlugins] = useState([]);
+  const [visiblePlugins, setVisiblePlugins] = useState(null);
   const plugins = useRef(null);
   const isFetching = useRef(false);
 
@@ -54,13 +54,16 @@ const ArrangeSources = ({ className, ...rest }) => {
   };
 
   return (
-    <section className={cn('mx-auto hidden w-4/5 flex-grow rounded-lg bg-slate-50 p-6', className ?? '')} {...rest}>
+    <section
+      className={cn('mx-auto hidden h-fit w-4/5 flex-grow rounded-lg bg-slate-50 p-6', className ?? 'block')}
+      {...rest}
+    >
       <h2 className='mb-2 text-lg font-semibold'>Arrange Sources</h2>
       <p className='text-sm text-slate-600'>
         Drag and drop the items to arrange the prioritized order of novel sources.{' '}
       </p>
-      <section className='mt-5 h-full overflow-y-auto'>
-        {visiblePlugins.length > 0 ? (
+      <section className='mt-5 h-fit overflow-y-auto'>
+        {visiblePlugins && visiblePlugins.length > 0 ? (
           <DragDropContext onDragEnd={handleOnDragEnd}>
             <StrictModeDroppable droppableId='characters'>
               {(provided) => (
@@ -96,8 +99,8 @@ const ArrangeSources = ({ className, ...rest }) => {
             </StrictModeDroppable>
           </DragDropContext>
         ) : (
-          <div className='flex h-full items-center justify-center'>
-            <LoadingSpinner />
+          <div className='flex h-fit w-full justify-center p-4'>
+            <p className='animate-pulse text-slate-600'>Loading</p>
           </div>
         )}
       </section>
@@ -108,7 +111,7 @@ const ArrangeSources = ({ className, ...rest }) => {
             handleRollback();
           }}
         >
-          Cancel
+          Reset
         </Button>
         <Button>Update</Button>
       </section>

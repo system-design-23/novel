@@ -4,7 +4,8 @@ export default {
   theme: {
     extend: {
       aspectRatio: {
-        card: '3/4'
+        card: '3/4',
+        'code-view': '2/1'
       },
       fontFamily: {
         'read-sans': ['Inter'],

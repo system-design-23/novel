@@ -2,8 +2,8 @@ import axiosInstance from './axiosConfig';
 
 const NOVEL_SERVICE_URL = 'http://localhost:3000/api/v1';
 
-const getNovels = async () => {
-  const result = await axiosInstance.get(`${NOVEL_SERVICE_URL}/novels`);
+const getNovels = async (offset) => {
+  const result = await axiosInstance.get(`${NOVEL_SERVICE_URL}/novels${offset ? `?offset=${offset}` : ''}`);
   if (result.status === 200) {
     return result.data;
   }
