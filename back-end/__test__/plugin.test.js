@@ -5,11 +5,12 @@ const User = require("../src/db/models/user");
 const browser = require("../src/db/domain/browser");
 const {
   getAllSuppliers,
-  deleteSupplier,
-  addNewSupplier,
+  removeSupplier,
+  addSupplier,
+  getImplementOfSuplier,
 } = require("../src/controller/plugin");
 const fs = require("fs");
-const { plugger } = require("../src/db/plugger");
+const { code_plugger } = require("../src/db/plugger");
 const { error } = require("console");
 const { getNovelDetail } = require("../src/controller/novel");
 const Novel = require("../src/db/models/novel");
@@ -25,7 +26,7 @@ describe("Read novel by Preference flow", function () {
           resolve();
         }
       };
-      let prog = await plugger.excludePlugin("truyen.tangthuvien.vn");
+      let prog = await code_plugger.excludePlugin("truyen.tangthuvien.vn");
       if (!prog) {
         resolve();
         return;
@@ -101,7 +102,7 @@ describe("Read novel by Preference flow", function () {
       req.params = {
         domain_name: "vcl.vn",
       };
-      await deleteSupplier(req, res);
+      await removeSupplier(req, res);
       expect(res.status).toHaveBeenCalledWith(400);
     },
     10 * 60000
@@ -124,7 +125,7 @@ describe("Read novel by Preference flow", function () {
         res.end = function () {
           resolve();
         };
-        addNewSupplier(req, res).catch((error) => {
+        addSupplier(req, res).catch((error) => {
           console.error(error);
           reject();
         });
@@ -151,6 +152,21 @@ describe("Read novel by Preference flow", function () {
     },
     10 * 60000
   );
+
+  test(
+    "Get implementation from 'lightnovel.vn'",
+    async () => {
+      req.params = {
+        domain_name: "lightnovel.vn",
+      };
+      await getImplementOfSuplier(req, res);
+      expect(res.status).toHaveBeenCalledWith(200);
+
+      let code = res.send.mock.calls[0][0];
+      console.log(code);
+    },
+    10 * 60000
+  );
   test(
     "Calling unplug on 'truyen.tangthuvien.vn'",
     async () => {
@@ -165,7 +181,7 @@ describe("Read novel by Preference flow", function () {
         res.end = function () {
           resolve();
         };
-        deleteSupplier(req, res);
+        removeSupplier(req, res);
       });
     },
     10 * 60000

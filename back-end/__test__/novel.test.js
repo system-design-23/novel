@@ -46,7 +46,7 @@ describe("Novel usecase flow test", function () {
 
   test("Get all novels by type", async () => {
     req.query = {
-      category: "Tiên Hiệp",
+      genre: "Tiên Hiệp",
       offset: 1,
     };
     await findNovelsByCategory(req, res);

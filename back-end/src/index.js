@@ -5,6 +5,9 @@ const novelRouter = require("./router/novels.js");
 const userRouter = require("./router/user.js");
 const pluginRouter = require("./router/plugin.js");
 const prefsRouter = require("./router/prefs.js");
+const exportRouter = require("./router/export.js");
+const cors = require("cors");
+
 require("dotenv").config();
 
 const app = express();
@@ -18,6 +21,7 @@ mongoose
 
 app.use(express.json());
 app.use(express.text());
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(fitler);
@@ -26,3 +30,4 @@ app.use("/auth", authenRouter);
 app.use("/novels", novelRouter);
 app.use("/admin/plugins", pluginRouter);
 app.use("/preference", prefsRouter);
+app.use("/export", exportRouter);

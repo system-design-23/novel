@@ -212,11 +212,11 @@ async function _excludeFromDb(domain_name, prog) {
   await supplier.deleteOne();
   prog.log("....................End.....................");
 }
-const plugger = new Plugger();
+const code_plugger = new Plugger();
 
 module.exports = {
   _includeNovel,
   _includeToDb,
   _excludeFromDb,
-  plugger,
+  code_plugger,
 };

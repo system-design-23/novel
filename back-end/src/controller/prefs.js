@@ -26,48 +26,20 @@ async function delPref(req, res) {
 }
 
 async function setPref(req, res) {
-  let { domain_name, upper_domain } = req.body;
+  let { domain_names } = req.body;
   const auth = req.auth;
 
   try {
-    if (!domain_name) {
-      throw "Domain should be defined";
-    }
-    let supplier = await Supplier.findOne({ domain_name: domain_name });
-    let old = await Prefs.findOne({ user: auth.id, supplier: supplier.id });
-    if (old) {
-      await old.deleteOne();
-    }
-    let ord_of_pref;
-    if (!upper_domain) {
-      let top = await Prefs.findOne({ user: auth.id })
-        .sort({ order: -1 })
-        .populate("supplier");
-      ord_of_pref = top ? top.order + 1 : 0;
-    } else {
-      let upper_supplier = await Supplier.findOne({
-        domain_name: upper_domain,
-      });
-      let upper_pref = await Prefs.findOne({
+    await Prefs.deleteMany({ user: auth.id });
+    let ord = 0;
+    for (let domain_name of domain_names) {
+      let supplier = await Supplier.findOne({ domain_name: domain_name });
+      await Prefs.create({
         user: auth.id,
-        supplier: upper_supplier.id,
+        supplier: supplier.id,
+        order: ord--,
       });
-      ord_of_pref = upper_pref.order;
-      await Prefs.updateMany(
-        {
-          user: auth.id,
-          order: { $gte: upper_pref.order },
-        },
-        {
-          $inc: { order: 1 },
-        }
-      );
     }
-    await Prefs.create({
-      user: auth.id,
-      supplier: supplier.id,
-      order: ord_of_pref,
-    });
     res.send("Success");
     res.status(200);
   } catch (error) {
