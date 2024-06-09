@@ -117,7 +117,7 @@ async function removeFormatter(req, res) {
   res.status(400);
 }
 async function getImplementOfFormatter(req, res) {
-  const { format_name } = req.query;
+  const { format_name } = req.params;
   if (await format_plugger.get(format_name)) {
     let file = fs.readFileSync(
       "./src/format/plug-in/" + format_name + ".js",

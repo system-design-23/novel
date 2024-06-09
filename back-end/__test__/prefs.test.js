@@ -99,7 +99,7 @@ describe("Read novel by Preference flow", function () {
 
   test("Try to set a Preference", async () => {
     req.body = {
-      domain_name: suppliers[0].domain_name,
+      domain_names: [suppliers[0].domain_name],
     };
     await setPref(req, res);
 
@@ -120,21 +120,9 @@ describe("Read novel by Preference flow", function () {
     await expectOnPrefs(0);
   }, 10000);
 
-  test("Set preference [1st:a,2nd:b] then try to push b to top", async () => {
-    /* a->b */
+  test("Set 2 Preferences", async () => {
     req.body = {
-      domain_name: suppliers[1].domain_name,
-    };
-    await setPref(req, res);
-    req.body = {
-      domain_name: suppliers[0].domain_name,
-    };
-    await setPref(req, res);
-    await expectOnPrefs(2, suppliers[0].domain_name);
-
-    /* b->a */
-    req.body = {
-      domain_name: suppliers[1].domain_name,
+      domain_names: [suppliers[1].domain_name, suppliers[0].domain_name],
     };
     await setPref(req, res);
     await expectOnPrefs(2, suppliers[1].domain_name);
@@ -152,12 +140,11 @@ describe("Read novel by Preference flow", function () {
     let novelDetail = res.send.mock.calls[0][0];
     expectSupplier(novelDetail.supplier, suppliers[1].domain_name);
   }, 10000);
-  test("Move a domain", async () => {
+  test("Swapt 2 Preferences", async () => {
     req.body = {
-      domain_name: suppliers[0].domain_name,
+      domain_names: [suppliers[0].domain_name, suppliers[1].domain_name],
     };
     await setPref(req, res);
-    expect(res.status).toHaveBeenCalledWith(200);
     await expectOnPrefs(2, suppliers[0].domain_name);
   }, 10000);
 

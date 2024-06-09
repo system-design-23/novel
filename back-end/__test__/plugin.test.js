@@ -87,7 +87,7 @@ describe("Read novel by Preference flow", function () {
     10 * 60000
   );
   test(
-    "Calling get all suppliers",
+    "Get all suppliers",
     async () => {
       await getAllSuppliers(req, res);
       let body = res.send.mock.calls[0][0];
@@ -97,7 +97,7 @@ describe("Read novel by Preference flow", function () {
     10 * 60000
   );
   test(
-    "Calling unplug on a non-exist domain",
+    "Unplug on a non-exist domain",
     async () => {
       req.params = {
         domain_name: "vcl.vn",
@@ -108,7 +108,7 @@ describe("Read novel by Preference flow", function () {
     10 * 60000
   );
   test(
-    "Calling plug on a 'truyen.tangthuvien.vn'",
+    "Plug 'truyen.tangthuvien.vn'",
     async () => {
       req.body = {
         domain_name: "truyen.tangthuvien.vn",

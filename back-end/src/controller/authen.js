@@ -40,6 +40,7 @@ function sendToken(res, user) {
     refreshToken: tokens[1],
     expiresIn: 10 * 60 * 60,
     tokenType: "Bearer",
+    authorization: user.role,
   };
   res.send(body);
 }
@@ -81,6 +82,7 @@ async function login(req, res) {
 
 async function signup(req, res) {
   const { username, password, fullname, role } = req.body;
+  console.log(req.body);
   let user = await User.findOne({ username: username });
   if (user) {
     res.status(400);

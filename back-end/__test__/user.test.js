@@ -98,18 +98,9 @@ describe("Read novel by Preference flow", function () {
     expect(res.status).toHaveBeenCalledWith(401);
   }, 3000);
 
-  test("Set a Preferences", async () => {
+  test("Set a Preference", async () => {
     req.body = {
-      domain_name: "truyenfull.vn",
-    };
-    await setPref(req, res);
-    expect(res.status).toHaveBeenCalledWith(200);
-    req.body = {
-      domain_name: "lightnovel.vn",
-    };
-    res = {
-      status: jest.fn(),
-      send: jest.fn(),
+      domain_names: ["lightnovel.vn", "truyenfull.vn"],
     };
     await setPref(req, res);
     expect(res.status).toHaveBeenCalledWith(200);

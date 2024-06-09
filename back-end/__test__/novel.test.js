@@ -33,7 +33,7 @@ describe("Novel usecase flow test", function () {
   test("Take a novel from recommendation", async () => {
     await getRecommendation(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
-    let novels = res.send.mock.calls[0][0];
+    let novels = res.send.mock.calls[0][0].novels;
     novel = novels[5];
   }, 5000);
   test("Get all novels by name", async () => {
@@ -74,7 +74,7 @@ describe("Novel usecase flow test", function () {
     novelDetail = res.send.mock.calls[0][0];
   }, 5000);
   test("Get chapter detail", async () => {
-    chapter = novelDetail.chapters[0];
+    chapter = novelDetail.chapters[2];
     req.params = {
       novelId: novel.id,
       chapterId: chapter.id,
@@ -83,5 +83,6 @@ describe("Novel usecase flow test", function () {
     await getChapterDetail(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
     chapterDetail = res.send.mock.calls[0][0];
+    console.log(chapterDetail);
   }, 5000);
 });

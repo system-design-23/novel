@@ -4,7 +4,7 @@ const User = require("../src/db/models/user");
 const { fitler } = require("../src/router/authen");
 const { Helper } = require("../src/format/helper.js");
 const browser = require("../src/db/domain/browser.js");
-const { Formatter } = require("../src/format/plug-in/pdf.js");
+const { Formatter } = require("../src/format/vcl/pdf.js");
 const Chapter = require("../src/db/models/chapter.js");
 describe("Authentication test", function () {
   beforeAll(() => {

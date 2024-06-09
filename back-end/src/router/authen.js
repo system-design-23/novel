@@ -12,6 +12,9 @@ async function fitler(req, res, next) {
       jwt.verify(token, process.env.SECRET, (err, user) => {
         if (req.originalUrl.startsWith("/u")) {
           if (err) {
+            console.log(req.headers);
+            console.log(err);
+            console.log(err);
             reject("Un-Authorzied");
             return;
           }

@@ -10,10 +10,10 @@ const {
 } = require("../controller/plugin.js");
 const pluginRouter = Router();
 
-pluginRouter.get("/domain", getAllSuppliers);
-pluginRouter.get("/domain/:domain_name", getImplementOfSuplier);
-pluginRouter.post("/domain/plug", addSupplier);
-pluginRouter.delete("/domain/unplug/:domain_name", removeSupplier);
+pluginRouter.get("/supplier", getAllSuppliers);
+pluginRouter.get("/supplier/:domain_name", getImplementOfSuplier);
+pluginRouter.post("/supplier/plug", addSupplier);
+pluginRouter.delete("/supplier/unplug/:domain_name", removeSupplier);
 
 pluginRouter.get("format/:format_name", getImplementOfFormatter);
 pluginRouter.post("/format/plug", addFormatter);
