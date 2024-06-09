@@ -52,7 +52,7 @@ function deleteTempfile(tempfile) {
   setTimeout(() => {
     try {
       fs.unlink(tempfile);
-    } catch (error) { }
+    } catch (error) {}
   }, 1000 * 60 * 5);
 }
 async function downloadTempfile(req, res) {
@@ -68,7 +68,7 @@ async function downloadTempfile(req, res) {
     }
     try {
       fs.unlink(tempfile);
-    } catch (error) { }
+    } catch (error) {}
   });
 }
 module.exports = {
