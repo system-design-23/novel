@@ -114,6 +114,7 @@ async function removeFormatter(req, res) {
 
 async function getImplementOfFormatter(req, res) {
   const { format_name } = req.params;
+<<<<<<< HEAD
   try {
     let code = formatManager.findCode(format_name);
     if (code) {
@@ -125,6 +126,16 @@ async function getImplementOfFormatter(req, res) {
     }
   } catch (error) {
     console.error(error);
+=======
+  if (await format_plugger.get(format_name)) {
+    let file = fs.readFileSync(
+      "./src/format/plug-in/" + format_name + ".js",
+      "utf8"
+    );
+    res.status(200);
+    res.send(file);
+  } else {
+>>>>>>> 0febdf36 (refactor code)
     res.status(400);
     res.send("Bad request");
   }

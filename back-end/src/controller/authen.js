@@ -40,6 +40,7 @@ function sendToken(res, user) {
     refreshToken: tokens[1],
     expiresIn: 10 * 60 * 60,
     tokenType: "Bearer",
+    authorization: user.role,
   };
   res.send(body);
 }
