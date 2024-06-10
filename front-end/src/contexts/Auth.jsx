@@ -1,10 +1,23 @@
 import { createContext, useEffect, useState } from 'react';
-import { login as apiLogin } from '../apis/auth';
+import { login as apiLogin, validate } from '../apis/auth';
 
 export const AuthContext = createContext(null);
 
 const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    if (localStorage.getItem('accessToken')) {
+      const result = validate(localStorage.getItem('accessToken'));
+      if (result) {
+        setUser({ username: result.username, isAdmin: result.role === 'admin' });
+      } else {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        setUser(null);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     // const validate = async () => {

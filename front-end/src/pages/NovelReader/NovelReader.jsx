@@ -1,6 +1,6 @@
 import { useState, useContext, useRef, useEffect, useMemo } from 'react';
 import { PreferencesContext } from '../../contexts/Preferences';
-import { Button, ColorPicker, DropDown, Select } from '../../components';
+import { Button, ColorPicker, DropDown, LoadingSpinner, Select } from '../../components';
 import { cn, convertPreferenceToStyle } from '../../utils/utils';
 import { AArrowDown, AArrowUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link, createSearchParams, useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -136,7 +136,7 @@ const NovelReader = () => {
           className='h-full w-full overflow-y-auto text-wrap rounded-lg p-4 px-[10%] pb-20'
           style={convertPreferenceToStyle(preferences)}
         >
-          {chapterDetail ? chapterDetail.content : ''}
+          {chapterDetail.content ? <p>{chapterDetail.content}</p> : <LoadingSpinner></LoadingSpinner>}
         </pre>
       </section>
       <ChapterSection chapterDetail={chapterDetail}></ChapterSection>
@@ -174,10 +174,10 @@ const ChapterSection = ({ chapterDetail }) => {
           <path d='M0 10C5.52283 10 10 5.52285 10 0V10H0Z' />
         </svg>
         <Link
-          to={chapterDetail.previous_chapter ? `/${novelId}/read/${chapterDetail.previous_chapter.id}` : '#'}
+          to={chapterDetail.pre_chapter ? `/${novelId}/read/${chapterDetail.pre_chapter.id}` : '#'}
           className='roudned-full aspect-square self-center rounded-full p-2 hover:bg-slate-200/10'
         >
-          <ChevronLeft className={cn(!chapterDetail.previous_chapter ?? 'cursor-not-allowed opacity-50')}></ChevronLeft>
+          <ChevronLeft className={cn(!chapterDetail.pre_chapter ?? 'cursor-not-allowed opacity-50')}></ChevronLeft>
         </Link>
         <DropDown
           isOpen={isListOpen}

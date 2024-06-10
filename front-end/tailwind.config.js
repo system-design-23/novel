@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       aspectRatio: {
-        card: '3/4',
+        card: '215/322',
         'code-view': '2/1'
       },
       fontFamily: {

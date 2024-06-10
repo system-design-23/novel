@@ -8,8 +8,8 @@ import AuthContextProvider from './contexts/Auth.jsx';
 
 async function enableMocking() {
   if (process.env.NODE_ENV === 'development') {
-    const { server } = await import('./mocks/novel.js');
-    return server.start();
+    // const { server } = await import('./mocks/novel.js');
+    // return server.start();
   }
 }
 

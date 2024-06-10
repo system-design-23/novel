@@ -9,13 +9,9 @@ const SignUp = ({ props }) => {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    const result = await signup({
-      username: e.target[0].value,
-      password: e.target[2].value,
-      fullname: e.target[1].value
-    });
+    const result = await signup(e.target[0].value, e.target[2].value, e.target[1].value);
     if (result) {
-      navigate('/home');
+      navigate('/login');
     }
   };
 
