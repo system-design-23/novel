@@ -123,6 +123,7 @@ describe("Read novel by Preference flow", function () {
   }, 10000);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   test("Try to delete a Preference.", async () => {
     req.params = {
@@ -136,6 +137,8 @@ describe("Read novel by Preference flow", function () {
 
     await expectOnPrefs(0);
   }, 10000);
+=======
+>>>>>>> fc89e633 (dang test phan plugin export)
 
 >>>>>>> 0febdf36 (refactor code)
   test("Set 2 Preferences", async () => {

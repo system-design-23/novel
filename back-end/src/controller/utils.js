@@ -101,15 +101,15 @@ async function parseChapterInfo(chapter) {
   infoBody.next_chapter = !nextChap
     ? null
     : {
-        id: nextChap.id,
-        name: nextChap.title,
-      };
+      id: nextChap.id,
+      name: nextChap.title,
+    };
   infoBody.pre_chapter = !preChap
     ? null
     : {
-        id: preChap.id,
-        name: preChap.title,
-      };
+      id: preChap.id,
+      name: preChap.title,
+    };
 
   return infoBody;
 }

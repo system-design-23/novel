@@ -61,7 +61,6 @@ class FormatterManager {
     });
   }
   async plugIn(format_name, jsfile, dependency) {
-
     if (this.plugins.has(format_name)) {
       return false;
     }
@@ -104,7 +103,7 @@ class FormatterManager {
       });
       try {
         fs.unlinkSync("./src/format/plug-in/" + filename);
-      } catch (error) { }
+      } catch (error) {}
 
       for (let observer of this.observers) {
         observer.onPlugOut({ format_name });
@@ -121,7 +120,11 @@ class FormatterManager {
   findCode(format_name) {
     if (this.plugins.has(format_name)) {
       let file = fs.readFileSync(
-        "./src/format/plug-in/" + format_name + "." + this.dependencies(format_name) + ".js",
+        "./src/format/plug-in/" +
+          format_name +
+          "." +
+          this.dependencies(format_name) +
+          ".js",
         "utf8"
       );
       return file;
