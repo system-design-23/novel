@@ -1,10 +1,9 @@
+const { crawlerFactory } = require("../db/factory.js");
 const Category = require("../db/models/category.js");
 const Chapter = require("../db/models/chapter.js");
 const Novel = require("../db/models/novel.js");
 const Prefs = require("../db/models/preference.js");
 const Supplier = require("../db/models/supplier.js");
-const { code_plugger } = require("../db/plugger.js");
-
 async function novelsToJson(novels) {
   return Promise.all(
     novels.map(async (novel) => {
@@ -34,7 +33,7 @@ async function parseNovelContent({ novel, user, domain_name }) {
   let url = novel.suppliers.find(
     (z) => z.supplier.domain_name === domain_name
   ).url;
-  let crawler = await code_plugger.get(domain_name);
+  let crawler = await crawlerFactory.get(domain_name);
   let desc = await crawler.crawlDesc(url);
   body.description = desc;
   body.supplier = domain_name;
@@ -63,7 +62,7 @@ async function parseChapterContent({ chapter, user, domain_name }) {
     domain_name = await defaultDomain(user ? user.id : undefined, suppliers);
   }
   /* Lấy crawler tương ứng nguồn được chọn*/
-  let crawler = await code_plugger.get(domain_name);
+  let crawler = await crawlerFactory.get(domain_name);
 
   /* Tìm url tương ứng nguồn được chọn và cào */
   let url = chapter.suppliers.find(
@@ -102,15 +101,15 @@ async function parseChapterInfo(chapter) {
   infoBody.next_chapter = !nextChap
     ? null
     : {
-        id: nextChap.id,
-        name: nextChap.title,
-      };
+      id: nextChap.id,
+      name: nextChap.title,
+    };
   infoBody.pre_chapter = !preChap
     ? null
     : {
-        id: preChap.id,
-        name: preChap.title,
-      };
+      id: preChap.id,
+      name: preChap.title,
+    };
 
   return infoBody;
 }

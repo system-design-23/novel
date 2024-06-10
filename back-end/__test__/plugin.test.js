@@ -10,23 +10,23 @@ const {
   getImplementOfSuplier,
 } = require("../src/controller/plugin");
 const fs = require("fs");
-const { code_plugger } = require("../src/db/plugger");
 const { error } = require("console");
 const { getNovelDetail } = require("../src/controller/novel");
 const Novel = require("../src/db/models/novel");
 const Supplier = require("../src/db/models/supplier");
+const { novelManager } = require("../src/db/manager");
+
 
 describe("Read novel by Preference flow", function () {
   async function deleteOldMock() {
     await User.deleteOne({ username: "mock_admin" });
     await new Promise(async (resolve, reject) => {
       let mockLog = function (s) {
-        console.log(s);
-        if (s.includes("...End...")) {
+        if (s == "End") {
           resolve();
         }
       };
-      let prog = await code_plugger.excludePlugin("truyen.tangthuvien.vn");
+      let prog = await novelManager.plugOut("truyen.tangthuvien.vn");
       if (!prog) {
         resolve();
         return;
@@ -40,7 +40,7 @@ describe("Read novel by Preference flow", function () {
       .connect("mongodb://127.0.0.1:27017/novel")
       .then(() => console.log("Novel database connected"))
       .catch((err) => console.log(err));
-
+    await novelManager.initiated;
     await deleteOldMock();
   });
 
@@ -48,7 +48,7 @@ describe("Read novel by Preference flow", function () {
     await deleteOldMock();
     mongoose.disconnect();
     (await browser).close();
-  });
+  }, 10000);
 
   let res,
     req = {};
@@ -163,7 +163,6 @@ describe("Read novel by Preference flow", function () {
       expect(res.status).toHaveBeenCalledWith(200);
 
       let code = res.send.mock.calls[0][0];
-      console.log(code);
     },
     10 * 60000
   );

@@ -8,12 +8,16 @@ const {
   findNovelsByCategory,
 } = require("../src/controller/novel");
 const browser = require("../src/db/domain/browser");
+const { novelManager } = require("../src/db/manager");
+
 describe("Novel usecase flow test", function () {
-  beforeAll(() => {
+  beforeAll(async () => {
     mongoose
       .connect("mongodb://127.0.0.1:27017/novel")
       .then(() => console.log("Novel database connected"))
       .catch((err) => console.error(err));
+    await novelManager.initiated;
+
   });
 
   afterAll(async () => {
@@ -31,6 +35,9 @@ describe("Novel usecase flow test", function () {
   });
   let novel, novelDetail, chapter, chapterDetail;
   test("Take a novel from recommendation", async () => {
+    req.query = {
+      offset: 1
+    }
     await getRecommendation(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
     let novels = res.send.mock.calls[0][0].novels;

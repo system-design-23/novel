@@ -5,27 +5,45 @@ const Author = require("./models/author.js");
 const Chapter = require("./models/chapter.js");
 const Supplier = require("./models/supplier.js");
 const Category = require("./models/category.js");
+const { default: mongoose } = require("mongoose");
 
-class Plugger {
+
+class NovelManager {
   constructor() {
-    this.plugins = this.init();
+    this.observers = [];
+    this.initiated = this.init();
   }
   async init() {
+    this.plugins = new Map();
+    let dbReady = new Promise((resolve, reject) => {
+      mongoose.connection.on("connected", resolve);
+    });
+    await dbReady;
     let sups = await Supplier.find();
-    let plugins = {};
     for (let sup of sups) {
       let domain_name = sup.domain_name;
       let Crawler = require("./plug-in/" + domain_name + ".js");
-      let crawler = new Crawler(await browser);
-
-      plugins[domain_name] = crawler;
+      this.plugins.set(domain_name, Crawler);
+      this.update({ domain_name, Crawler });
     }
-    return plugins;
   }
-  async includePlugin(domain_name, jsfile) {
-    let plugins = await this.plugins;
+  update(plugin) {
+    for (let observer of this.observers) {
+      observer.onPlugIn(plugin);
+    }
+  }
+  observe(observer) {
+    this.observers.push(observer);
+    this.plugins.forEach((value, key) => {
+      observer.onPlugIn({ domain_name: key, Crawler: value });
+    });
+  }
 
-    if (domain_name in plugins) {
+  async plugIn(domain_name, jsfile) {
+    await this.initiated;
+
+    let plugins = this.plugins;
+    if (plugins.has(domain_name)) {
       return null;
     }
 
@@ -33,59 +51,76 @@ class Plugger {
       fs.writeFileSync("./src/db/plug-in/" + domain_name + ".js", jsfile);
 
       let Crawler = require("./plug-in/" + domain_name + ".js");
-      let crawler = new Crawler(await browser);
-      plugins[domain_name] = crawler;
+      plugins.set(domain_name, Crawler);
+
       let prog = {
         log: console.log,
         onLog: function (x) {
           this.log = x;
         },
       };
-      _includeToDb(crawler, prog);
-
+      let plugin = { domain_name, Crawler };
+      _includeToDb(new Crawler(await browser), prog).then(() => {
+        this.update(plugin);
+      }).catch((error) => {
+        console.error(error);
+      });
       return prog;
     } catch (error) {
       console.error(error);
     }
     return null;
   }
-  async excludePlugin(domain_name) {
-    let plugins = await this.plugins;
+  async plugOut(domain_name) {
+    await this.initiated;
+    let plugins = this.plugins;
     try {
-      let crawler = plugins[domain_name];
+      const Crawler = plugins.get(domain_name);
 
-      if (!crawler) {
+      if (!Crawler) {
         return null;
       }
-      delete plugins[domain_name];
+
+      for (let observer of this.observers) {
+        observer.onPlugOut({ domain_name, Crawler });
+      }
+
+      plugins.delete(domain_name);
       /* unplug completely the module, using common js instead of ES6 
       becase ES6 makes the module static, can't be removed until the end of the app
        */
       delete require.cache[require.resolve("./plug-in/" + domain_name + ".js")];
+
+      try {
+        fs.unlinkSync("./src/db/plug-in/" + domain_name + ".js");
+      } catch (error) { }
       let prog = {
         log: console.log,
         onLog: function (x) {
           this.log = x;
         },
       };
-
-      try {
-        fs.unlinkSync("./src/db/plug-in/" + domain_name + ".js");
-      } catch (error) {}
-
       _excludeFromDb(domain_name, prog);
+
       return prog;
     } catch (error) {
       console.error(error);
     }
     return null;
   }
-  async get(domain_name) {
-    let plugins = await this.plugins;
-    if (!domain_name) {
-      return Object.values(plugins)[0];
+  findAll() {
+    return this.plugins.keys();
+  }
+
+  findCode(domain_name) {
+    if (this.plugins.has(domain_name)) {
+      let file = fs.readFileSync(
+        "./src/db/plug-in/" + domain_name + ".js",
+        "utf8"
+      );
+      return file;
     }
-    return plugins[domain_name];
+    return null;
   }
 }
 
@@ -98,13 +133,18 @@ async function _includeToDb(crawler, prog) {
     domain_name: domain_name,
   });
 
-  prog.log("Start crawling from " + url);
   let cates = await crawler.crawlNovelType(url);
   let cached = new Set();
+  let step = 0;
+  let total = Object.keys(cates).length;
   for (let [key, value] of Object.entries(cates)) {
+    let this_prog = step++ / total * 100;
+    prog.log(Math.floor(this_prog));
     let getNovelUrls = await crawler.crawlNovelsByType(value);
-    let start = new Date();
-    for (let novelUrl of getNovelUrls) {
+    for (let i = 0; i < getNovelUrls.length; i++) {
+      this_prog += (1 / getNovelUrls.length) / total * 100;
+      prog.log(Math.floor(this_prog))
+      let novelUrl = getNovelUrls[i];
       if (cached.has(novelUrl)) {
         continue;
       }
@@ -112,11 +152,8 @@ async function _includeToDb(crawler, prog) {
       await _includeNovel(supplier, crawler, novelUrl);
     }
     await supplier.save();
-    prog.log(
-      "End parsing " + key + " in " + (new Date() - start) / 1000 + " seconds"
-    );
   }
-  prog.log("....................End.....................");
+  prog.log("End");
 }
 
 async function _includeNovel(supplier, crawler, novelUrl) {
@@ -172,8 +209,11 @@ async function _excludeFromDb(domain_name, prog) {
     return;
   }
   let novels = await Novel.find({ "suppliers.supplier": supplier.id });
-  prog.log(novels.length + " novels estimated");
+  let chapters = await Chapter.find({ "suppliers.supplier": supplier.id });
+  let total = novels.length + chapters.length;
   let p = 0;
+  prog.log("0");
+
   for (let novel of novels) {
     for (let i = 0; i < novel.suppliers.length; i++) {
       let s = novel.suppliers[i];
@@ -187,12 +227,8 @@ async function _excludeFromDb(domain_name, prog) {
     } else {
       await novel.save();
     }
-    prog.log(++p + "/" + novels.length);
+    prog.log("" + Math.floor(++p / total * 100));
   }
-
-  let chapters = await Chapter.find({ "suppliers.supplier": supplier.id });
-  prog.log(chapters.length + " chapters estimated");
-  p = 0;
 
   for (let chapter of chapters) {
     for (let i = 0; i < chapter.suppliers.length; i++) {
@@ -207,16 +243,16 @@ async function _excludeFromDb(domain_name, prog) {
     } else {
       await chapter.save();
     }
-    prog.log(++p + "/" + chapters.length);
+    prog.log("" + Math.floor(++p / total * 100));
   }
   await supplier.deleteOne();
-  prog.log("....................End.....................");
+  prog.log("End");
 }
-const code_plugger = new Plugger();
+const novelManager = new NovelManager();
 
 module.exports = {
   _includeNovel,
   _includeToDb,
   _excludeFromDb,
-  code_plugger,
+  novelManager,
 };

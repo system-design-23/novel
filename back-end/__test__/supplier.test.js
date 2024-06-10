@@ -4,13 +4,16 @@ const Chapter = require("../src/db/models/chapter");
 const Supplier = require("../src/db/models/supplier");
 const browser = require("../src/db/domain/browser");
 const Novel = require("../src/db/models/novel");
+const { novelManager } = require("../src/db/manager");
 
 describe("Supplier test", function () {
-  beforeAll(() => {
+  beforeAll(async () => {
     mongoose
       .connect("mongodb://127.0.0.1:27017/novel")
       .then(() => console.log("Novel database connected"))
       .catch((err) => console.error(err));
+    await novelManager.initiated;
+
   });
 
   afterAll(async () => {

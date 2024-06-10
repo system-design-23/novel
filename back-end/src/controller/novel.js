@@ -123,14 +123,22 @@ async function findNovelsByName(req, res, next) {
 }
 
 async function getRecommendation(req, res) {
+  const { offset } = req.query;
   try {
     const fetchedNovels = await Novel.find()
       .sort({ views: -1 })
+      .skip(offset)
       .limit(20)
       .populate("author");
-    const novels = await novelsToJson(fetchedNovels);
+    let body = {}
+    body.novels = await novelsToJson(fetchedNovels);
+    body.info = {
+      offset: offset,
+      length: fetchedNovels.length,
+      total: await Novel.countDocuments(),
+    };
     res.status(200);
-    res.send({ novels: novels });
+    res.send(body);
   } catch (err) {
     console.error(err);
     res.status(400);

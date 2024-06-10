@@ -1,11 +1,12 @@
-const { format_plugger } = require("../format/plugger.js");
 const { Helper } = require("../format/helper.js");
 const fs = require("fs");
 const Chapter = require("../db/models/chapter.js");
+const { formatManager } = require("../format/manager.js");
+const { formatFactory } = require("../format/factory.js");
 
 async function getAllFormat(req, res) {
   try {
-    let formats = await format_plugger.findAll();
+    let formats = formatManager.findAll();
     res.status(200);
     res.send(formats);
   } catch (error) {
@@ -18,7 +19,7 @@ async function getAllFormat(req, res) {
 async function exportWithFormat(req, res) {
   const { file_format, chapterId, supplier } = req.body;
   try {
-    let formatter = await format_plugger.get(file_format);
+    let formatter = formatFactory.get(file_format);
     if (!formatter) {
       res.status(400);
       res.send("Format is not supported");
@@ -51,7 +52,7 @@ function deleteTempfile(tempfile) {
   setTimeout(() => {
     try {
       fs.unlink(tempfile);
-    } catch (error) {}
+    } catch (error) { }
   }, 1000 * 60 * 5);
 }
 async function downloadTempfile(req, res) {
@@ -67,7 +68,7 @@ async function downloadTempfile(req, res) {
     }
     try {
       fs.unlink(tempfile);
-    } catch (error) {}
+    } catch (error) { }
   });
 }
 module.exports = {

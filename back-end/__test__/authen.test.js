@@ -61,7 +61,7 @@ describe("Authentication test", function () {
 
   test("Try to Login with wrong username.", async () => {
     req.body = {
-      username: "vcl",
+      username: "zzzzzzzzzzzzzzzzzzzzzzz",
       password: "admin_auth",
     };
     await login(req, res);

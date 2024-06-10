@@ -15,6 +15,8 @@ const {
 } = require("../src/controller/user");
 const UserRead = require("../src/db/models/userread");
 const Setting = require("../src/db/models/setting");
+const { novelManager } = require("../src/db/manager");
+
 
 describe("Read novel by Preference flow", function () {
   async function deleteOldMock() {
@@ -48,6 +50,7 @@ describe("Read novel by Preference flow", function () {
       .connect("mongodb://127.0.0.1:27017/novel")
       .then(() => console.log("Novel database connected"))
       .catch((err) => console.log(err));
+    await novelManager.initiated;
 
     await deleteOldMock();
   });

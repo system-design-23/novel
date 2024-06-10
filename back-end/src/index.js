@@ -4,7 +4,6 @@ const { authenRouter, fitler } = require("./router/authen.js");
 const novelRouter = require("./router/novels.js");
 const userRouter = require("./router/user.js");
 const pluginRouter = require("./router/plugin.js");
-const prefsRouter = require("./router/prefs.js");
 const exportRouter = require("./router/export.js");
 const cors = require("cors");
 
@@ -29,5 +28,4 @@ app.use("/u", userRouter);
 app.use("/auth", authenRouter);
 app.use("/novels", novelRouter);
 app.use("/admin/plugins", pluginRouter);
-app.use("/preference", prefsRouter);
 app.use("/export", exportRouter);

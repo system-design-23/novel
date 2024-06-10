@@ -8,6 +8,8 @@ const Novel = require("../src/db/models/novel");
 const Supplier = require("../src/db/models/supplier");
 const { setPref, delPref } = require("../src/controller/prefs");
 const browser = require("../src/db/domain/browser");
+const { novelManager } = require("../src/db/manager");
+
 
 describe("Read novel by Preference flow", function () {
   async function expectOnPrefs(length, topDomain) {
@@ -38,6 +40,8 @@ describe("Read novel by Preference flow", function () {
       .connect("mongodb://127.0.0.1:27017/novel")
       .then(() => console.log("Novel database connected"))
       .catch((err) => console.error(err));
+    await novelManager.initiated;
+
     await deleteOldMock();
   });
 
@@ -107,18 +111,6 @@ describe("Read novel by Preference flow", function () {
     await expectOnPrefs(1, suppliers[0].domain_name);
   }, 10000);
 
-  test("Try to delete a Preference.", async () => {
-    req.params = {
-      domain_name: suppliers[0].domain_name,
-    };
-    await delPref(req, res);
-    expect(res.status).toHaveBeenCalledWith(200);
-
-    await delPref(req, res);
-    expect(res.status).toHaveBeenCalledWith(400);
-
-    await expectOnPrefs(0);
-  }, 10000);
 
   test("Set 2 Preferences", async () => {
     req.body = {

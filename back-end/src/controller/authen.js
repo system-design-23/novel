@@ -80,6 +80,34 @@ async function login(req, res) {
   sendToken(res, user);
 }
 
+async function getInfo(req, res) {
+  const header = req.headers["authorization"];
+  const token = header ? header.split(" ")[1] : undefined;
+  try {
+    let user = await new Promise((resolve, reject) => {
+      jwt.verify(token, process.env.SECRET, (err, user) => {
+        if (req.originalUrl.startsWith("/u")) {
+          if (err) {
+            reject("Un-Authorzied");
+            return;
+          }
+        }
+        if (req.originalUrl.startsWith("/admin")) {
+          if (err || user.role != "admin") {
+            reject("Un-Authorzied");
+            return;
+          }
+        }
+        resolve(user);
+      });
+    });
+    res.send({fullname:user.fullname,role:user.role});
+    res.status(200);
+  } catch (error) {
+    res.status(401);
+    res.send(error);
+  }
+}
 async function signup(req, res) {
   const { username, password, fullname, role } = req.body;
   console.log(req.body);
@@ -98,4 +126,4 @@ async function signup(req, res) {
   sendToken(res, user);
 }
 
-module.exports = { login, signup, refreshToken };
+module.exports = { login, signup, refreshToken,getInfo };

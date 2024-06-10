@@ -1,29 +1,6 @@
+const { novelManager } = require("../db/manager");
 const Prefs = require("../db/models/preference");
 const Supplier = require("../db/models/supplier");
-
-async function delPref(req, res) {
-  const { domain_name } = req.params;
-  try {
-    if (!domain_name) {
-      throw "Domain should be defined";
-    }
-    let sup = await Supplier.findOne({ domain_name: domain_name });
-    const auth = req.auth;
-
-    let old = await Prefs.findOne({ user: auth.id, supplier: sup.id });
-    if (old) {
-      await old.deleteOne();
-      res.send("Success");
-      res.status(200);
-    } else {
-      res.send("Preference does not exist");
-      res.status(400);
-    }
-  } catch (error) {
-    res.send("Bad request");
-    res.status(400);
-  }
-}
 
 async function setPref(req, res) {
   let { domain_names } = req.body;
@@ -48,5 +25,28 @@ async function setPref(req, res) {
     console.error(error);
   }
 }
+async function getPref(req, res) {
+  const auth = req.auth;
 
-module.exports = { setPref, delPref };
+  try {
+    let prefs = (await Prefs.find({ user: auth.id })).map((p) => p.supplier);
+    let domain_names = novelManager.findAll();
+    let others = [];
+    for (let domain_name of domain_names) {
+      if (!prefs.includes(domain_name)) {
+        others.push(domain_name);
+      }
+    }
+    res.status(200);
+    res.send({
+      prefs: prefs,
+      others: others
+    });
+  } catch (error) {
+    res.send("Bad request");
+    res.status(400);
+    console.error(error);
+  }
+}
+
+module.exports = { setPref, getPref };

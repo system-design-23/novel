@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const jwt = require("jsonwebtoken");
-const { refreshToken, login, signup } = require("../controller/authen.js");
+const { refreshToken, login, signup, getInfo } = require("../controller/authen.js");
 
 const authenRouter = Router();
 
@@ -36,6 +36,7 @@ async function fitler(req, res, next) {
 }
 authenRouter.post("/refresh_token", refreshToken);
 authenRouter.post("/login", login);
+authenRouter.get("/info", getInfo);
 authenRouter.post("/signup", signup);
 authenRouter.post("/logout", (req, res) => {
   res.status(200).send("Logout successfully");
