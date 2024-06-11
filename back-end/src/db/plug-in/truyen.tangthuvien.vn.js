@@ -136,6 +136,10 @@ class Crawler {
     const res = await page.evaluate((div) => {
       let divInfo = div.querySelector("div.book-info");
       let name = divInfo.querySelector("h1").textContent;
+      //remove chinese
+      name = name.replace(/[\u4e00-\u9fa5]/g, '').trim();
+      name = name.replace(/ -\s*$/, '').trim();
+      
       let thumbnailUrl = div
         .querySelector("div.book-img")
         .querySelector("img").src;
