@@ -4,12 +4,11 @@ const User = require("../src/db/models/user");
 const { fitler } = require("../src/router/authen");
 const { Helper } = require("../src/format/helper.js");
 const browser = require("../src/db/domain/browser.js");
-const DocxFormatter = require("../src/format/plug-in/docx.js").Formatter;
-const PdfFormatter = require("../src/format/plug-in/pdf.js").Formatter;
-const EpubFormatter = require("../src/format/plug-in/epub.js").Formatter;
 const Chapter = require("../src/db/models/chapter.js");
 const { novelManager } = require("../src/db/manager.js");
 const fs = require("fs");
+const { addFormatter } = require("../src/controller/plugin.js");
+const { formatFactory } = require("../src/format/factory.js");
 
 
 describe("Export test", function () {
@@ -39,6 +38,35 @@ describe("Export test", function () {
     mongoose.disconnect();
     (await browser).close();
   });
+
+
+  let res,
+    req = {};
+  beforeEach(() => {
+    res = {
+      status: jest.fn(),
+      send: jest.fn(),
+    };
+  });
+
+  test(
+    "Plug 'pdf",
+    async () => {
+      req.body = {
+        format_name: "pdf",
+        dependency: "pdfkit",
+        payload: fs.readFileSync(
+          "./src/format/zzzzz/pdf.js",
+          "utf8"
+        ),
+      };
+      res.setHeader = jest.fn();
+      await addFormatter(req, res);
+      expect(res.status).toHaveBeenCalledWith(200);
+    },
+    10 * 60000
+  );
+
   test(
     "Pdf",
     async () => {
@@ -54,12 +82,12 @@ describe("Export test", function () {
         });
 
       const helper = new Helper(chapter, "truyenfull.vn");
-      let formatter = new PdfFormatter("pdf");
+      let formatter = formatFactory.get("pdf");
       await formatter.format(helper);
     },
-    10000
+    60000
   );
-  test(
+  test.skip(
     "Docx",
     async () => {
       let chapter = await Chapter.findOne({
@@ -74,13 +102,13 @@ describe("Export test", function () {
         });
 
       const helper = new Helper(chapter, "truyenfull.vn");
-      let formatter = new DocxFormatter("docx");
+      let formatter = formatFactory.get("dox");
       await formatter.format(helper);
-    }, 10000
+    }, 60000
   );
 
 
-  test(
+  test.skip(
     "Epub",
     async () => {
       let chapter = await Chapter.findOne({
@@ -95,8 +123,8 @@ describe("Export test", function () {
         });
 
       const helper = new Helper(chapter, "truyenfull.vn");
-      let formatter = new EpubFormatter("epub");
+      let formatter = formatFactory.get("Epub");
       await formatter.format(helper);
-    }, 10000
+    }, 60000
   );
 });

@@ -84,9 +84,9 @@ async function removeSupplier(req, res) {
 }
 
 async function addFormatter(req, res) {
-  const { format_name, payload } = req.body;
+  const { format_name, dependency, payload } = req.body;
   try {
-    if (await formatManager.plugIn(format_name, payload)) {
+    if (await formatManager.plugIn(format_name, payload, dependency)) {
       res.send("Success");
       res.status(200);
       return;

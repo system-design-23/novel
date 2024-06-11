@@ -20,9 +20,9 @@ class FormatterManager {
       this.update({ format_name, Formatter });
     }
   }
-  async install(package) {
+  async install(dependency) {
     let promise = new Promise((resolve, reject) => {
-      exec(`npm install ${package}`, (error, stdout, stderr) => {
+      exec(`npm install ${dependency}`, (error, stdout, stderr) => {
         if (error) {
           console.error(error);
           reject();
@@ -34,9 +34,9 @@ class FormatterManager {
     });
     await promise;
   }
-  async uninstall(package) {
+  async uninstall(dependency) {
     let promise = new Promise((resolve, reject) => {
-      exec(`npm uninstall ${package}`, (error, stdout, stderr) => {
+      exec(`npm uninstall ${dependency}`, (error, stdout, stderr) => {
         if (error) {
           console.error(error);
           reject();

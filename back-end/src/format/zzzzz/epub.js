@@ -3,25 +3,25 @@ const Epub = require('epub-gen');
 const fs = require("fs");
 
 class Formatter {
-   constructor(format_name) {
-      this.format_name = format_name;
-   }
+  constructor(format_name) {
+    this.format_name = format_name;
+  }
 
-   async format(helper) {
-      let tempfile = "./src/format/temp/" + uuidv4() + "." + this.format_name;
-      let novel = await helper.getNovelDetail();
-      let chapter = await helper.getChapterDetail();
+  async format(helper) {
+    let tempfile = "./src/format/temp/" + uuidv4() + "." + this.format_name;
+    let novel = await helper.getNovelDetail();
+    let chapter = await helper.getChapterDetail();
 
-      const fontPathRegular = "./src/format/font/Roboto-Regular.ttf";
-      const fontPathBold = './src/format/font/Roboto-Bold.ttf';
+    const fontPathRegular = "./src/format/font/Roboto-Regular.ttf";
+    const fontPathBold = './src/format/font/Roboto-Bold.ttf';
 
 
-      const options = {
-         title: novel.name,
-         author: novel.author,
-         content: [
-            {
-               data: `
+    const options = {
+      title: novel.name,
+      author: novel.author,
+      content: [
+        {
+          data: `
           <html>
             <head>
               <meta charset="UTF-8">
@@ -64,12 +64,12 @@ class Formatter {
             </body>
           </html>
         `,
-            }
-         ]
-      };
-      await new Epub(options, tempfile).promise;
-      return tempfile;
-   }
+        }
+      ]
+    };
+    await new Epub(options, tempfile).promise;
+    return tempfile;
+  }
 }
 
-module.exports = { Formatter };
+module.exports = Formatter;
