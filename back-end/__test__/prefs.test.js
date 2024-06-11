@@ -95,10 +95,25 @@ describe("Read novel by Preference flow", function () {
       novelId: "666338c08ce7d80488b8e7ac",
     };
     req.query = {
+    };
+    await getNovelDetail(req, res);
+    expect(res.status).toHaveBeenCalledWith(200);
+  }, 10000);
+
+
+  test("Try to read Novel with a specified domain", async () => {
+    req.params = {
+      novelId: "666338c08ce7d80488b8e7ac",
+    };
+    req.query = {
       domain_name: suppliers[0].domain_name,
     };
     await getNovelDetail(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
+    let novelDetail = res.send.mock.calls[0][0];
+
+    expectSupplier(novelDetail.supplier, suppliers[0].domain_name);
+
   }, 10000);
 
   test("Try to set a Preference", async () => {
@@ -119,20 +134,20 @@ describe("Read novel by Preference flow", function () {
     await setPref(req, res);
     await expectOnPrefs(2, suppliers[1].domain_name);
   }, 10000);
-  test("Try to read Novel preference of b", async () => {
-    req.query = {
-      domain_name: suppliers[1].domain_name,
-    };
+
+  test("Try to read Novel base on preference", async () => {
     req.params = {
       novelId: "666338c08ce7d80488b8e7ac",
     };
+    req.query = {};
     await getNovelDetail(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
 
     let novelDetail = res.send.mock.calls[0][0];
     expectSupplier(novelDetail.supplier, suppliers[1].domain_name);
   }, 10000);
-  test("Swapt 2 Preferences", async () => {
+
+  test("Swap 2 Preferences", async () => {
     req.body = {
       domain_names: [suppliers[0].domain_name, suppliers[1].domain_name],
     };
@@ -141,9 +156,6 @@ describe("Read novel by Preference flow", function () {
   }, 10000);
 
   test("Try to read Novel with preference of a", async () => {
-    req.query = {
-      domain_name: suppliers[0].domain_name,
-    };
     req.params = {
       novelId: "666338c08ce7d80488b8e7ac",
     };
@@ -151,5 +163,20 @@ describe("Read novel by Preference flow", function () {
     expect(res.status).toHaveBeenCalledWith(200);
     let novelDetail = res.send.mock.calls[0][0];
     expectSupplier(novelDetail.supplier, suppliers[0].domain_name);
+  }, 10000);
+
+  test("Try to read Novel with a specified domain", async () => {
+    req.params = {
+      novelId: "666338c08ce7d80488b8e7ac",
+    };
+    req.query = {
+      domain_name: suppliers[1].domain_name,
+    };
+    await getNovelDetail(req, res);
+    expect(res.status).toHaveBeenCalledWith(200);
+    let novelDetail = res.send.mock.calls[0][0];
+
+    expectSupplier(novelDetail.supplier, suppliers[1].domain_name);
+
   }, 10000);
 });
