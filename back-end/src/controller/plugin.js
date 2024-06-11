@@ -101,7 +101,7 @@ async function removeFormatter(req, res) {
   const { format_name } = req.params;
 
   try {
-    if (await formatManager.plugOut(format_name, payload)) {
+    if (await formatManager.plugOut(format_name)) {
       res.send("Success");
       res.status(200);
       return;

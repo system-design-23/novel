@@ -7,13 +7,14 @@ const browser = require("../src/db/domain/browser.js");
 const Chapter = require("../src/db/models/chapter.js");
 const { novelManager } = require("../src/db/manager.js");
 const fs = require("fs");
-const { addFormatter } = require("../src/controller/plugin.js");
+const { addFormatter, removeFormatter } = require("../src/controller/plugin.js");
 const { formatFactory } = require("../src/format/factory.js");
+const { formatManager } = require("../src/format/manager.js");
 
 
 describe("Export test", function () {
 
-  function cleanUpTemp() {
+  async function cleanUp() {
     fs.readdir("./src/format/temp", (err, files) => {
       if (err) throw err;
 
@@ -23,6 +24,7 @@ describe("Export test", function () {
         });
       }
     });
+    await formatManager.plugOut("docx");
   }
 
   beforeAll(async () => {
@@ -31,7 +33,7 @@ describe("Export test", function () {
       .then(() => console.log("Novel database connected"))
       .catch((err) => console.error(err));
     await novelManager.initiated;
-    cleanUpTemp();
+    await cleanUp();
   });
 
   afterAll(async () => {
@@ -50,25 +52,7 @@ describe("Export test", function () {
   });
 
   test(
-    "Plug 'pdf",
-    async () => {
-      req.body = {
-        format_name: "pdf",
-        dependency: "pdfkit",
-        payload: fs.readFileSync(
-          "./src/format/zzzzz/pdf.js",
-          "utf8"
-        ),
-      };
-      res.setHeader = jest.fn();
-      await addFormatter(req, res);
-      expect(res.status).toHaveBeenCalledWith(200);
-    },
-    10 * 60000
-  );
-
-  test(
-    "Pdf",
+    "Export Pdf",
     async () => {
       let chapter = await Chapter.findOne({
         _id: "666338c08ce7d80488b8e7c6",
@@ -87,8 +71,25 @@ describe("Export test", function () {
     },
     60000
   );
-  test.skip(
-    "Docx",
+  test(
+    "Plug Docx",
+    async () => {
+      req.body = {
+        format_name: "docx",
+        dependency: "docx",
+        payload: fs.readFileSync(
+          "./src/format/zzzzz/docx.js",
+          "utf8"
+        ),
+      };
+      res.setHeader = jest.fn();
+      await addFormatter(req, res);
+      expect(res.status).toHaveBeenCalledWith(200);
+    },
+    10 * 60000
+  );
+  test(
+    "Export Docx",
     async () => {
       let chapter = await Chapter.findOne({
         _id: "666338c08ce7d80488b8e7c6",
@@ -102,29 +103,21 @@ describe("Export test", function () {
         });
 
       const helper = new Helper(chapter, "truyenfull.vn");
-      let formatter = formatFactory.get("dox");
+      let formatter = formatFactory.get("docx");
       await formatter.format(helper);
     }, 60000
   );
 
 
-  test.skip(
-    "Epub",
+  test(
+    "Calling unplug on 'docx'",
     async () => {
-      let chapter = await Chapter.findOne({
-        _id: "666338c08ce7d80488b8e7c6",
-      })
-        .populate("suppliers.supplier")
-        .populate({
-          path: "novel",
-          populate: {
-            path: "author",
-          },
-        });
-
-      const helper = new Helper(chapter, "truyenfull.vn");
-      let formatter = formatFactory.get("Epub");
-      await formatter.format(helper);
-    }, 60000
+      req.params = {
+        format_name: "docx",
+      };
+      await removeFormatter(req, res);
+      expect(res.status).toHaveBeenCalledWith(200);
+    },
+    10 * 60000
   );
 });

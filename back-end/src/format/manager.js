@@ -14,6 +14,7 @@ class FormatterManager {
       let filename_splits = file_name.split(".");
       let format_name = filename_splits[0];
       let dependency = filename_splits[1];
+      console.log(format_name, dependency);
       let Formatter = require("./plug-in/" + file_name);
       this.plugins.set(format_name, Formatter);
       this.dependencies.set(format_name, dependency);
@@ -55,8 +56,8 @@ class FormatterManager {
   }
   observe(observer) {
     this.observers.push(observer);
-    this.plugins.forEach((plugin) => {
-      observer.onPlugIn(plugin);
+    this.plugins.forEach((Formatter, format_name) => {
+      observer.onPlugIn({ format_name, Formatter });
     });
   }
   async plugIn(format_name, jsfile, dependency) {
