@@ -42,43 +42,30 @@ userRouter.get("/recent", async (req, res) => {
 });
 
 
-userRouter.get("/attributes", async (req, res) => {
-  const auth = req.auth;
-  try {
-    let user = await User.findById(auth.id);
-    if (!user) {
-      res.status(404).send("User not found");
-      return;
+userRouter.get("/get_attributes", async (req, res) => {
+  fs.readFile("attr.json", "utf8", (error, attributes) => {
+    if (error) {
+      console.error(error);
+      res.status(500).send("Internal error, try again.");
+    } else {
+      res.setHeader("Content-Type", "application/json");
+      res.send(attributes);
     }
-
-    let attributes = user.attributes;
-    res.status(200).json(attributes);
-  } catch (error) {
-    console.log(error);
-    res.status(400).send("Internal error, try again.");
-  }
+  });
 });
 
-userRouter.post("/attributes", async (req, res) => {
-  const auth = req.auth;
-  try {
-    const attributes = req.body;
+userRouter.post("/save_attributes", async (req, res) => {
+  const attributes = req.body;
 
-    let user = await User.findById(auth.id);
-    if (!user) {
-      res.status(404).send("User not found");
-      return;
-    }
-
-    user.attributes = attributes;
-
-    await user.save();
-
-    res.status(200).json({ message: 'Attributes saved successfully' });
-  } catch (error) {
-    console.log(error);
-    res.status(400).send("Internal error, try again.");
-  }
+  fs.writeFile('attr.json', JSON.stringify(attributes), (error) => {
+      if (error) {
+          console.error(error);
+          res.status(500).send("Internal error, try again.");
+      } else {
+          console.log("File saved successfully");
+          res.send("File saved successfully");
+      }
+  });
 });
 
 
