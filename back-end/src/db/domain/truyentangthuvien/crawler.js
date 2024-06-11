@@ -113,6 +113,9 @@ class Crawler {
           let numChap = (
             pos_sep == -1 ? content : content.substring(0, pos_sep).trim()
           ).match(/\d+$/);
+          
+          if(numChap === null) continue;
+
           let title = content.substring(pos_sep + 1).trim();
           getChaps[numChap] = { url: a.href, title: title };
 

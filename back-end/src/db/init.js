@@ -21,6 +21,7 @@ async function init() {
   let browser2 = await puppeteer.launch();
   let crawler2 = new TangThuVienCrawler(browser2);
   let crawlers = [crawler2];
+  
   for(let crawler of crawlers){
     await _includeToDb(crawler);
   }
