@@ -73,7 +73,7 @@ class Crawler {
   
   
   async crawlChapter(page, limit) {
-    const chapDivs = await page.$$("#divtab.list-chapter ul");
+    const chapDivs = await page.$$("#divtab.list-chapter ul.w3-ul");
     let chaps = {};
     for (let chapDiv of chapDivs) {
       chaps = {
@@ -85,6 +85,7 @@ class Crawler {
             let a = li.querySelector("a");
             let content = a.textContent;
             let pos_sep = content.indexOf(":");
+            
             let numChap = (
               pos_sep == -1 ? content : content.substring(0, pos_sep)
             ).match(/\d+$/);

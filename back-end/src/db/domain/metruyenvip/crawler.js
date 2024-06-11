@@ -73,7 +73,7 @@ class Crawler {
   
   
   async crawlChapter(page, limit) {
-    const chapDivs = await page.$$("#divtab.list-chapter ul");
+    const chapDivs = await page.$$("#divtab.list-chapter ul.w3-ul");
     let chaps = {};
     for (let chapDiv of chapDivs) {
       chaps = {
