@@ -86,22 +86,14 @@ async function getInfo(req, res) {
   try {
     let user = await new Promise((resolve, reject) => {
       jwt.verify(token, process.env.SECRET, (err, user) => {
-        if (req.originalUrl.startsWith("/u")) {
-          if (err) {
-            reject("Un-Authorzied");
-            return;
-          }
-        }
-        if (req.originalUrl.startsWith("/admin")) {
-          if (err || user.role != "admin") {
-            reject("Un-Authorzied");
-            return;
-          }
+        if (err) {
+          reject("Invalid token");
+          return;
         }
         resolve(user);
       });
     });
-    res.send({fullname:user.fullname,role:user.role});
+    res.send({ fullname: user.fullname, role: user.role });
     res.status(200);
   } catch (error) {
     res.status(401);
@@ -126,4 +118,4 @@ async function signup(req, res) {
   sendToken(res, user);
 }
 
-module.exports = { login, signup, refreshToken,getInfo };
+module.exports = { login, signup, refreshToken, getInfo };
