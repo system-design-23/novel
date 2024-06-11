@@ -84,11 +84,15 @@ class Crawler {
           for (li of lis) {
             let a = li.querySelector("a");
             let content = a.textContent;
-            let pos_sep = content.indexOf(":");
             
-            let numChap = (
-              pos_sep == -1 ? content : content.substring(0, pos_sep)
-            ).match(/\d+$/);
+            const match = content.match(/\d+/);
+            let numChap;
+            let pos_sep;
+            if (match) {
+              numChap = parseInt(match[0], 10);
+              pos_sep = match.index + match[0].length;
+            }
+            
             let title = content.substring(pos_sep + 1).trim();
             getChaps[numChap] = { url: a.href, title: title };
           }

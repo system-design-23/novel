@@ -123,9 +123,7 @@ async function _includeNovel(supplier, crawler, novelUrl) {
     });
   }
   for (let [numChap, info] of Object.entries(chapters)) {
-    console.log(numChap);
-    console.log(novel.name);
-    console.log(info.title);
+    console.log(novel.name+"  -  "+numChap+"  :  "+ info.title);
     let chapter = await Chapter.findOne({
       number: Number(numChap),
       novel: novel.id,
