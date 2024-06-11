@@ -103,6 +103,17 @@ describe("Read novel by Preference flow", function () {
       novelId: "666338c08ce7d80488b8e7ac",
     };
     req.query = {
+    };
+    await getNovelDetail(req, res);
+    expect(res.status).toHaveBeenCalledWith(200);
+  }, 10000);
+
+
+  test("Try to read Novel with a specified domain", async () => {
+    req.params = {
+      novelId: "666338c08ce7d80488b8e7ac",
+    };
+    req.query = {
       domain_name: suppliers[0].domain_name,
     };
     await getNovelDetail(req, res);
@@ -161,11 +172,16 @@ describe("Read novel by Preference flow", function () {
     expectSupplier(novelDetail.supplier, suppliers[1].domain_name);
   }, 10000);
 <<<<<<< HEAD
+<<<<<<< HEAD
 
   test("Swap 2 Preferences", async () => {
 =======
   test("Swapt 2 Preferences", async () => {
 >>>>>>> 0febdf36 (refactor code)
+=======
+
+  test("Swap 2 Preferences", async () => {
+>>>>>>> 0b26abfa (tích hợp phần export vô plugin ok)
     req.body = {
       domain_names: [suppliers[0].domain_name, suppliers[1].domain_name],
     };
@@ -174,9 +190,6 @@ describe("Read novel by Preference flow", function () {
   }, 10000);
 
   test("Try to read Novel with preference of a", async () => {
-    req.query = {
-      domain_name: suppliers[0].domain_name,
-    };
     req.params = {
       novelId: "666338c08ce7d80488b8e7ac",
     };
@@ -198,5 +211,9 @@ describe("Read novel by Preference flow", function () {
     let novelDetail = res.send.mock.calls[0][0];
 
     expectSupplier(novelDetail.supplier, suppliers[1].domain_name);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0b26abfa (tích hợp phần export vô plugin ok)
   }, 10000);
 });
