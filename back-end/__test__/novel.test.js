@@ -22,7 +22,8 @@ describe("Novel usecase flow test", function () {
 
   afterAll(async () => {
     mongoose.disconnect();
-    (await browser).close();
+    await (await browser).close();
+    ;
   });
 
   let res, req;

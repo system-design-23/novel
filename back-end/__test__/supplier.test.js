@@ -18,7 +18,8 @@ describe("Supplier test", function () {
 
   afterAll(async () => {
     mongoose.disconnect();
-    (await browser).close();
+    await (await browser).close();
+    ;
   });
   test("Get content of a chapter for each supplier", async () => {
     let chapter = await Chapter.findOne({

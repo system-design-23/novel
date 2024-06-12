@@ -38,7 +38,8 @@ describe("Export test", function () {
 
   afterAll(async () => {
     mongoose.disconnect();
-    (await browser).close();
+    await (await browser).close();
+    ;
   });
 
 

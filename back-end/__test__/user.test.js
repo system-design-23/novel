@@ -58,7 +58,7 @@ describe("Read novel by Preference flow", function () {
   afterAll(async () => {
     await deleteOldMock();
     mongoose.disconnect();
-    (await browser).close();
+    await (await browser).close();
   });
 
   let res,

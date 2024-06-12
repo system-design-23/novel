@@ -6,6 +6,12 @@ const userRouter = require("./router/user.js");
 const pluginRouter = require("./router/plugin.js");
 const exportRouter = require("./router/export.js");
 const cors = require("cors");
+const browser = require("./db/domain/browser.js");
+
+process.on('SIGINT', async function () {
+  await (await browser).close();
+  process.exit();
+});
 
 require("dotenv").config();
 
