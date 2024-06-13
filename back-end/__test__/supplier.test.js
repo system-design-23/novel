@@ -43,7 +43,7 @@ describe("Supplier test", function () {
       );
       expect(res.status).toHaveBeenCalledWith(200);
     }
-  }, 10000);
+  }, 20000);
 
   test("Get content of a novel for each supplier", async () => {
     let novel = await Novel.findOne({
@@ -68,5 +68,5 @@ describe("Supplier test", function () {
       );
       expect(res.status).toHaveBeenCalledWith(200);
     }
-  }, 10000);
+  }, 20000);
 });

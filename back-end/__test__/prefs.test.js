@@ -83,15 +83,15 @@ describe("Read novel by Preference flow", function () {
     expect(next).toHaveBeenCalledWith();
   }, 3000);
 
-  let suppliers;
+  let suppliers, novelId;
   test("Try to read Novel without Preferences", async () => {
-    let novel = await Novel.findById({
-      _id: "666338c08ce7d80488b8e7ac",
-    }).populate("suppliers.supplier");
+    let novel = await Novel.findOne({ $where: 'this.suppliers.length > 1' })
+      .populate("suppliers.supplier");
+    novelId = novel.id;
     suppliers = novel.suppliers.map((z) => z.supplier);
 
     req.params = {
-      novelId: "666338c08ce7d80488b8e7ac",
+      novelId: novelId,
     };
     req.query = {};
     await getNovelDetail(req, res);
@@ -111,7 +111,7 @@ describe("Read novel by Preference flow", function () {
 
   test("Try to read Novel with a specified domain", async () => {
     req.params = {
-      novelId: "666338c08ce7d80488b8e7ac",
+      novelId: novelId,
     };
     req.query = {
       domain_name: suppliers[0].domain_name,
@@ -162,7 +162,7 @@ describe("Read novel by Preference flow", function () {
 
   test("Try to read Novel base on preference", async () => {
     req.params = {
-      novelId: "666338c08ce7d80488b8e7ac",
+      novelId: novelId,
     };
     req.query = {};
     await getNovelDetail(req, res);
@@ -191,7 +191,7 @@ describe("Read novel by Preference flow", function () {
 
   test("Try to read Novel with preference of a", async () => {
     req.params = {
-      novelId: "666338c08ce7d80488b8e7ac",
+      novelId: novelId,
     };
     await getNovelDetail(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
@@ -201,7 +201,7 @@ describe("Read novel by Preference flow", function () {
 
   test("Try to read Novel with a specified domain", async () => {
     req.params = {
-      novelId: "666338c08ce7d80488b8e7ac",
+      novelId: novelId,
     };
     req.query = {
       domain_name: suppliers[1].domain_name,

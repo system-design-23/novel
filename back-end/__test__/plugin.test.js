@@ -20,17 +20,15 @@ describe("Read novel by Preference flow", function () {
   async function deleteOldMock() {
     await User.deleteOne({ username: "mock_admin" });
     await new Promise(async (resolve, reject) => {
-      let mockLog = function (s) {
-        if (s == "End") {
-          resolve();
-        }
-      };
-      let prog = await novelManager.plugOut("truyen.tangthuvien.vn");
-      if (!prog) {
+      let progress_id = await novelManager.plugOut("truyen.tangthuvien.vn");
+      if (!progress_id) {
         resolve();
         return;
       }
-      prog.onLog(mockLog);
+      let prog = novelManager.findProgress(progress_id);
+      prog.onEnd(() => {
+        resolve();
+      });
     });
   }
   beforeAll(async () => {
@@ -116,17 +114,13 @@ describe("Read novel by Preference flow", function () {
           "utf8"
         ),
       };
-      res.setHeader = jest.fn();
-      res.write = function (s) {
-        console.log(s);
-      };
-      await new Promise((resolve, reject) => {
-        res.end = function () {
+      await addSupplier(req, res);
+      let progress_id = res.send.mock.calls[0][0];
+
+      let prog = novelManager.findProgress(progress_id);
+      await new Promise(async (resolve, reject) => {
+        prog.onEnd(() => {
           resolve();
-        };
-        addSupplier(req, res).catch((error) => {
-          console.error(error);
-          reject();
         });
       });
     },
@@ -171,15 +165,14 @@ describe("Read novel by Preference flow", function () {
       req.params = {
         domain_name: "truyen.tangthuvien.vn",
       };
-      res.setHeader = jest.fn();
-      res.write = function (s) {
-        console.log(s);
-      };
-      await new Promise((resolve, reject) => {
-        res.end = function () {
+      await removeSupplier(req, res);
+      let progress_id = res.send.mock.calls[0][0];
+
+      let prog = novelManager.findProgress(progress_id);
+      await new Promise(async (resolve, reject) => {
+        prog.onEnd(() => {
           resolve();
-        };
-        removeSupplier(req, res);
+        });
       });
     },
     10 * 60000

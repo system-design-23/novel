@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer");
 const Supplier = require("./models/supplier");
 const LightnovelCrawler = require("./domain/lightnovel/crawler.js");
-const { _includeNovel, _includeToDb } = require("./plugger.js");
+const { _includeNovel, _includeToDb } = require("./manager.js");
 const TruyenfullCrawler = require("./domain/truyenfull/crawler.js");
 const { default: mongoose } = require("mongoose");
 const User = require("./models/user.js");
@@ -53,10 +53,10 @@ async function dupCrawlFromOtherDomain(browser) {
     await _includeNovel(supplier, crawler, novelUrl);
     console.log(
       "End parsing " +
-        novelUrl +
-        " in " +
-        (new Date() - start) / 1000 +
-        " seconds"
+      novelUrl +
+      " in " +
+      (new Date() - start) / 1000 +
+      " seconds"
     );
   }
   console.log("....................End.....................");

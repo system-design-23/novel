@@ -6,6 +6,50 @@ const fs = require("fs");
 const { novelManager } = require("../db/manager.js");
 const { formatManager } = require("../format/manager.js");
 
+async function getAddingProgress(req, res) {
+  const { progress_id } = req.query;
+  let prog = await novelManager.findProgress(progress_id);
+  if (!prog) {
+    res.status(400);
+    res.send("Bad request");
+    return;
+  }
+
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders();
+  prog.onLog((s) => {
+    res.write(s);
+  });
+  prog.onEnd(() => {
+    res.end();
+  });
+}
+async function addSupplier(req, res) {
+  const { domain_name, payload } = req.body;
+  let progress_id = await novelManager.plugIn(domain_name, payload);
+  if (!progress_id) {
+    res.status(400);
+    res.send("Bad request");
+    return;
+  }
+  res.status(200);
+  res.send(progress_id);
+}
+async function removeSupplier(req, res) {
+  const { domain_name } = req.params;
+
+  let progress_id = await novelManager.plugOut(domain_name);
+  if (!progress_id) {
+    res.status(400);
+    res.send("Bad request");
+    return;
+  }
+  res.status(200);
+  res.send(progress_id);
+}
+
 async function getAllSuppliers(req, res) {
   let sups = await Supplier.find();
   let body = [];
@@ -36,51 +80,6 @@ async function getImplementOfSuplier(req, res) {
     res.status(400);
     res.send("Bad request");
   }
-}
-/* SSE */
-async function addSupplier(req, res) {
-  const { domain_name, payload } = req.body;
-
-  let prog = await novelManager.plugIn(domain_name, payload);
-
-  if (!prog) {
-    res.status(400);
-
-    res.send("Bad request");
-    return;
-  }
-
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
-
-  prog.onLog((s) => {
-    res.write(s);
-    if (s == "End") {
-      res.end();
-    }
-  });
-}
-async function removeSupplier(req, res) {
-  const { domain_name } = req.params;
-
-  let prog = await novelManager.plugOut(domain_name);
-  if (!prog) {
-    res.status(400);
-    res.send("Bad request");
-    return;
-  }
-
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
-
-  prog.onLog((s) => {
-    res.write(s);
-    if (s == "End") {
-      res.end();
-    }
-  });
 }
 
 async function addFormatter(req, res) {
@@ -155,8 +154,13 @@ module.exports = {
   addFormatter,
   removeFormatter,
 <<<<<<< HEAD
+<<<<<<< HEAD
   getAllSuppliers,
 =======
   getAllSuppliers
 >>>>>>> fc89e633 (dang test phan plugin export)
+=======
+  getAllSuppliers,
+  getAddingProgress
+>>>>>>> a07962dc (server sent event)
 };

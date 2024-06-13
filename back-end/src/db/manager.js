@@ -5,12 +5,13 @@ const Author = require("./models/author.js");
 const Chapter = require("./models/chapter.js");
 const Supplier = require("./models/supplier.js");
 const Category = require("./models/category.js");
-const { default: mongoose } = require("mongoose");
+const { v4: uuidv4 } = require("uuid");
 
 class NovelManager {
   constructor() {
     this.observers = [];
     this.initiated = this.init();
+    this.progress_store = new Map();
   }
   async init() {
     this.plugins = new Map();
@@ -52,12 +53,7 @@ class NovelManager {
       let Crawler = require("./plug-in/" + domain_name + ".js");
       plugins.set(domain_name, Crawler);
 
-      let prog = {
-        log: console.log,
-        onLog: function (x) {
-          this.log = x;
-        },
-      };
+      let prog = new Progress();
       let plugin = { domain_name, Crawler };
       _includeToDb(new Crawler(await browser), prog)
         .then(() => {
@@ -103,7 +99,7 @@ class NovelManager {
       };
       _excludeFromDb(domain_name, prog);
 
-      return prog;
+      return progress_id;
     } catch (error) {
       console.error(error);
     }
@@ -122,6 +118,10 @@ class NovelManager {
       return file;
     }
     return null;
+  }
+
+  findProgress(progress_id) {
+    return this.progress_store.get(progress_id);
   }
 }
 
@@ -155,7 +155,6 @@ async function _includeToDb(crawler, prog) {
     }
     await supplier.save();
   }
-  console.log("End");
   prog.log("End");
 }
 
@@ -216,7 +215,6 @@ async function _excludeFromDb(domain_name, prog) {
   let total = novels.length + chapters.length;
   let p = 0;
   prog.log("0");
-  console.log("0");
 
   for (let novel of novels) {
     for (let i = 0; i < novel.suppliers.length; i++) {
@@ -251,7 +249,6 @@ async function _excludeFromDb(domain_name, prog) {
   }
   await supplier.deleteOne();
   prog.log("End");
-  console.log("End");
 }
 const novelManager = new NovelManager();
 

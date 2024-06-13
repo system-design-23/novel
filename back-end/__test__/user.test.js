@@ -115,8 +115,10 @@ describe("Read novel by Preference flow", function () {
 
   let novelDetail;
   test("Get a novel detail", async () => {
+    let novel = await Novel.findOne({ $where: 'this.suppliers.length > 1' })
+      .populate("suppliers.supplier");
     req.params = {
-      novelId: "666338c08ce7d80488b8e7ac",
+      novelId: novel.id,
     };
     req.query = {};
     await getNovelDetail(req, res);
@@ -127,7 +129,7 @@ describe("Read novel by Preference flow", function () {
 
   test("Get a novel detail by domain", async () => {
     req.params = {
-      novelId: "666338c08ce7d80488b8e7ac",
+      novelId: novelDetail.id,
     };
     req.query = {
       domain_name: "truyenfull.vn",
@@ -167,8 +169,13 @@ describe("Read novel by Preference flow", function () {
   }, 5000);
 
   test("Read another novel", async () => {
+    let novel = await Novel.findOne({
+      _id: { $ne: novelDetail.id },
+      $where: 'this.suppliers.length > 1'
+    })
+      .populate("suppliers.supplier");
     req.params = {
-      novelId: "666338c38ce7d80488b8e934",
+      novelId: novel.id,
     };
     req.query = {};
     await getNovelDetail(req, res);
@@ -193,7 +200,7 @@ describe("Read novel by Preference flow", function () {
 
   test("Read the old novel", async () => {
     req.params = {
-      novelId: "666338c08ce7d80488b8e7ac",
+      novelId: novelDetail.id,
     };
     req.query = {};
     await getNovelDetail(req, res);
