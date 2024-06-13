@@ -1,3 +1,0 @@
-- Khởi tạo db bằng lệnh npm run db trước khi chạy server
-- thư mục domain chứa code cào sẵn của mấy nguồn truyện
-- Crawler "lightnovel.vn" dùng để cào bổ sung thêm một nguồn khác cho 1 vài truyện truyện.
