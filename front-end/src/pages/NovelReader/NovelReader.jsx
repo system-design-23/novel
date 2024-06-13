@@ -1,21 +1,28 @@
-import { useState, useContext, useRef, useEffect } from 'react';
-import { PreferencesContext } from '../../contexts/preferences';
-import { Button, ColorPicker } from '../../components';
-import { convertPreferenceToStyle } from '../../utils/utils';
+import { useState, useContext, useRef, useEffect, useMemo } from 'react';
+import { PreferencesContext } from '../../contexts/Preferences';
+import { Button, ColorPicker, DropDown, LoadingSpinner, Select } from '../../components';
+import { cn, convertPreferenceToStyle } from '../../utils/utils';
 import { AArrowDown, AArrowUp, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, createSearchParams, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { getChapterContent } from '../../apis/novel';
 import LineHeight from '../../components/LineHeight/LineHeight';
+
+const fontOptions = [
+  { value: 'Merriweather', label: 'Serif' },
+  { value: 'Inter', label: 'Sans-serif' }
+];
 
 const NovelReader = () => {
   const [chapterDetail, setChapterDetail] = useState({});
   const [preferences, setPreferences] = useContext(PreferencesContext);
+  const [searchParams, _] = useSearchParams();
   const fetching = useRef(false);
   const { novelId = '', chapterId = '' } = useParams();
+  const domainName = searchParams.get('domain_name');
 
   useEffect(() => {
     const getChapterDetail = async () => {
-      const result = await getChapterContent(novelId, chapterId);
+      const result = await getChapterContent(novelId, chapterId, domainName);
       if (result) {
         setChapterDetail(result);
       }
@@ -28,7 +35,16 @@ const NovelReader = () => {
     return () => {
       fetching.current = false;
     };
-  }, [novelId, chapterId]);
+  }, [novelId, chapterId, domainName]);
+
+  const handleFontChange = (value) => {
+    setPreferences((prev) => {
+      return {
+        ...prev,
+        fontFamily: value
+      };
+    });
+  };
 
   const handleFontResize = (increase) => {
     setPreferences((prev) => {
@@ -69,7 +85,7 @@ const NovelReader = () => {
   return (
     <div className='relative flex h-screen w-screen flex-col bg-slate-200'>
       <section className='max-w-screen flex justify-between overflow-x-auto overflow-y-hidden p-4'>
-        <div className='flex h-fit flex-nowrap space-x-4 align-middle'>
+        <div className='flex h-fit flex-grow flex-nowrap space-x-4 text-nowrap pr-4 align-middle'>
           <Link className='self-center' to={chapterDetail ? `/${chapterDetail.novel_id}/detail` : '/home'}>
             <ChevronLeft />
           </Link>
@@ -80,7 +96,14 @@ const NovelReader = () => {
           </div>
         </div>
         {/* preferences section */}
-        <div className='flex flex-nowrap justify-center space-x-2'>
+        <div className='flex min-w-[50%] flex-nowrap justify-end space-x-2 overflow-x-auto'>
+          <Select
+            className='self-center rounded-full border-none'
+            contentClassName='w-[150px] text-sm'
+            options={fontOptions}
+            onSelectChange={handleFontChange}
+            defaultValue={preferences.fontFamily}
+          ></Select>
           <Button
             variant='secondary'
             rounded='full'
@@ -100,36 +123,101 @@ const NovelReader = () => {
           >
             <AArrowDown />
           </Button>
-          <LineHeight onLineHeightChange={switchLineSpread}></LineHeight>
-          <ColorPicker defaultValue='#000000' onColorChange={handleBackgroundColorChange}></ColorPicker>
-          <ColorPicker defaultValue='#ffffff' onColorChange={handleForegroundColorChange}></ColorPicker>
+          <LineHeight defaultValue={preferences.lineHeight} onLineHeightChange={switchLineSpread}></LineHeight>
+          <ColorPicker
+            defaultValue={preferences.backgroundColor}
+            onColorChange={handleBackgroundColorChange}
+          ></ColorPicker>
+          <ColorPicker defaultValue={preferences.color} onColorChange={handleForegroundColorChange}></ColorPicker>
         </div>
       </section>
       <section className='h-full flex-grow overflow-y-auto p-4'>
         <pre
-          className='h-full w-full overflow-y-auto text-wrap rounded-lg p-4 font-read-sans'
+          className='h-full w-full overflow-y-auto text-wrap rounded-lg p-4 px-[10%] pb-20'
           style={convertPreferenceToStyle(preferences)}
         >
-          {chapterDetail ? chapterDetail.content : ''}
+          {chapterDetail.content ? <p>{chapterDetail.content}</p> : <LoadingSpinner></LoadingSpinner>}
         </pre>
       </section>
-      <section className='bg-primary absolute bottom-6 left-0 right-0 mx-auto flex w-fit justify-between rounded-full p-2 px-0 text-white'>
-        <Link
-          to={chapterDetail.previous_chapter ? `/${novelId}/read/${chapterDetail.previous_chapter.id}` : '#'}
-          className='roudned-full pl-1 pr-2'
-        >
-          {chapterDetail.previous_chapter && <ChevronLeft></ChevronLeft>}
-        </Link>
-        <div className='px-4'>{chapterDetail.chapter_name ?? 'Current Chapter'}</div>
-        <Link
-          to={chapterDetail.next_chapter ? `/${novelId}/read/${chapterDetail.next_chapter.id}` : '#'}
-          className='roudned-full pl-2 pr-1'
-        >
-          {chapterDetail.next_chapter && <ChevronRight></ChevronRight>}
-        </Link>
-      </section>
+      <ChapterSection chapterDetail={chapterDetail}></ChapterSection>
     </div>
   );
+};
+
+const ChapterSection = ({ chapterDetail }) => {
+  const [isListOpen, setListOpen] = useState(false);
+  const { novelId = '' } = useParams();
+  const [_, setSearchParams] = useSearchParams();
+  const supplierOptions = useMemo(() => {
+    if (chapterDetail.suppliers) {
+      return chapterDetail.suppliers.map((supplier) => {
+        return { value: supplier, label: supplier };
+      });
+    }
+    return [];
+  }, [chapterDetail]);
+
+  const handleOptionSelect = (value) => {
+    setSearchParams(createSearchParams({ domain_name: value }));
+  };
+
+  if (supplierOptions) {
+    return (
+      <section className='absolute bottom-4 left-0 right-0 mx-auto flex w-fit justify-between rounded-t-3xl bg-slate-200 p-2 align-middle'>
+        <svg
+          width='10'
+          height='10'
+          viewBox='0 0 10 10'
+          className='absolute bottom-0 left-0 h-6 w-6 origin-center -translate-x-full fill-slate-200'
+          xmlns='http://www.w3.org/2000/svg'
+        >
+          <path d='M0 10C5.52283 10 10 5.52285 10 0V10H0Z' />
+        </svg>
+        <Link
+          to={chapterDetail.pre_chapter ? `/${novelId}/read/${chapterDetail.pre_chapter.id}` : '#'}
+          className='roudned-full aspect-square self-center rounded-full p-2 hover:bg-slate-200/10'
+        >
+          <ChevronLeft className={cn(!chapterDetail.pre_chapter ?? 'cursor-not-allowed opacity-50')}></ChevronLeft>
+        </Link>
+        <DropDown
+          isOpen={isListOpen}
+          onOpenChange={setListOpen}
+          options={supplierOptions}
+          onOptionSelect={handleOptionSelect}
+          sideOffset={15}
+          className='text-sm'
+          popupHeader='Select Novel Source'
+        >
+          <div
+            className='relative flex cursor-pointer flex-col justify-center px-4 align-middle'
+            role='combobox'
+            aria-expanded={open}
+          >
+            <p className='absolute -bottom-3 left-0 right-0 mx-auto w-fit origin-top rounded-full border-[1px] border-primary/60 px-4 text-center text-[0.7rem] text-primary/60 hover:bg-slate-300'>
+              {chapterDetail.supplier ?? 'Unknown Source'}
+            </p>
+            <p className='text-center text-sm'>{chapterDetail.chapter_name ?? 'Current Chapter'}</p>
+          </div>
+        </DropDown>
+        <Link
+          to={chapterDetail.next_chapter ? `/${novelId}/read/${chapterDetail.next_chapter.id}` : '#'}
+          className='roudned-full aspect-square self-center rounded-full p-2 hover:bg-slate-200/10'
+        >
+          <ChevronRight className={cn(!chapterDetail.next_chapter ?? 'cursor-not-allowed opacity-50')}></ChevronRight>
+        </Link>
+        <svg
+          width='10'
+          height='10'
+          viewBox='0 0 10 10'
+          className='absolute bottom-0 right-0 h-6 w-6 origin-center translate-x-full fill-slate-200'
+          xmlns='http://www.w3.org/2000/svg'
+        >
+          <path d='M0 0V10H10C4.47717 10 0 5.52286 0 0Z' />
+        </svg>
+      </section>
+    );
+  }
+  return null;
 };
 
 export default NovelReader;

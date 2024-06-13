@@ -1,6 +1,7 @@
+import { memo } from 'react';
 import { cn } from '../../utils/utils';
 
-const LoadingSpinner = ({ className = '' }) => {
+const LoadingSpinner = memo(({ className = '' }) => {
   return (
     <svg
       width='24'
@@ -16,6 +17,6 @@ const LoadingSpinner = ({ className = '' }) => {
       />
     </svg>
   );
-};
+});
 
 export default LoadingSpinner;

@@ -4,10 +4,12 @@ export default {
   theme: {
     extend: {
       aspectRatio: {
-        card: '3/4'
+        card: '215/322',
+        'code-view': '2/1'
       },
       fontFamily: {
-        'read-sans': ['Inter']
+        'read-sans': ['Inter'],
+        'read-serif': ['Merriweather']
       },
       colors: {
         primary: '#16314A',

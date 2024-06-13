@@ -9,7 +9,7 @@ const ColorPicker = ({ onColorChange, defaultValue, ...props }) => {
         'inline-flex items-center justify-center whitespace-nowrap rounded-md hover:scale-[1.03] active:scale-[0.97] ',
         ' ring-offset-background focus-visible:ring-ring text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2',
         ' focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ',
-        'bg-secondary text-secondary-foreground hover:bg-secondary/80 aspect-square h-10 overflow-hidden rounded-full p-2'
+        'text-secondary-foreground aspect-square h-10 w-10 overflow-hidden rounded-full bg-secondary p-2 hover:bg-secondary/80'
       )}
       {...props}
     >
