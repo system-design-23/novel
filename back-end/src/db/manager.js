@@ -141,6 +141,7 @@ async function _includeToDb(crawler, prog) {
   for (let [key, value] of Object.entries(cates)) {
     let this_prog = (step++ / total) * 100;
     prog.log(Math.floor(this_prog));
+    console.log(Math.floor(this_prog));
     let getNovelUrls = await crawler.crawlNovelsByType(value);
     for (let i = 0; i < getNovelUrls.length; i++) {
       this_prog += (1 / getNovelUrls.length / total) * 100;
@@ -154,6 +155,7 @@ async function _includeToDb(crawler, prog) {
     }
     await supplier.save();
   }
+  console.log("End");
   prog.log("End");
 }
 
@@ -214,6 +216,7 @@ async function _excludeFromDb(domain_name, prog) {
   let total = novels.length + chapters.length;
   let p = 0;
   prog.log("0");
+  console.log("0");
 
   for (let novel of novels) {
     for (let i = 0; i < novel.suppliers.length; i++) {
@@ -248,6 +251,7 @@ async function _excludeFromDb(domain_name, prog) {
   }
   await supplier.deleteOne();
   prog.log("End");
+  console.log("End");
 }
 const novelManager = new NovelManager();
 

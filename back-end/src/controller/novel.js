@@ -76,12 +76,8 @@ async function findNovelsByCategory(req, res, next) {
       });
     let body = {};
     body.novels = await novelsToJson(fetched.map((z) => z.novel));
-    body.info = {
-      offset: offset,
-      length: fetched.length,
-      category: genre,
-      total: await Category.countDocuments({ name: genre }),
-    };
+    body.current_page = Math.floor((offset + fetched.length) / 20);
+    body.total_pages = Math.ceil((await Category.countDocuments({ name: genre })) / 20)
     res.status(200);
     res.send(body);
   } catch (err) {
@@ -104,16 +100,12 @@ async function findNovelsByName(req, res, next) {
   try {
     const fetchedNovels = await Novel.find(query)
       .skip(offset)
-      .limit(10)
+      .limit(20)
       .populate("author");
     let body = {};
     body.novels = await novelsToJson(fetchedNovels);
-    body.info = {
-      offset: offset,
-      length: fetchedNovels.length,
-      title: title,
-      total: await Novel.countDocuments(query),
-    };
+    body.current_page = Math.floor((offset + fetchedNovels.length) / 20);
+    body.total_pages = Math.ceil((await Novel.countDocuments(query)) / 20);
     res.status(200);
     res.send(body);
   } catch (err) {
@@ -132,11 +124,8 @@ async function getRecommendation(req, res) {
       .populate("author");
     let body = {};
     body.novels = await novelsToJson(fetchedNovels);
-    body.info = {
-      offset: offset,
-      length: fetchedNovels.length,
-      total: await Novel.countDocuments(),
-    };
+    body.current_page = Math.floor((offset + fetchedNovels.length) / 20);
+    body.total_pages = Math.ceil((await Novel.countDocuments()) / 20);
     res.status(200);
     res.send(body);
   } catch (err) {
