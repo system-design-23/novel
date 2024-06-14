@@ -36,8 +36,9 @@ async function exportWithFormat(req, res) {
       });
     const helper = new Helper(chapter, supplier);
     let tempfile = await formatter.format(helper);
+    let paths = tempfile.split("/");
     res.send({
-      tempfile: tempfile,
+      tempfile: paths[paths.length - 1],
       timeout: "5 minutes",
     });
     deleteTempfile(tempfile);

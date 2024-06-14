@@ -52,9 +52,7 @@ describe("Export test", function () {
   });
 
   test("Export Pdf", async () => {
-    let chapter = await Chapter.findOne({
-      _id: "666338c08ce7d80488b8e7c6",
-    })
+    let chapter = await Chapter.findOne()
       .populate("suppliers.supplier")
       .populate({
         path: "novel",
@@ -82,9 +80,7 @@ describe("Export test", function () {
     10 * 60000
   );
   test("Export Docx", async () => {
-    let chapter = await Chapter.findOne({
-      _id: "666338c08ce7d80488b8e7c6",
-    })
+    let chapter = await Chapter.findOne()
       .populate("suppliers.supplier")
       .populate({
         path: "novel",
