@@ -53,10 +53,10 @@ async function dupCrawlFromOtherDomain(browser) {
     await _includeNovel(supplier, crawler, novelUrl);
     console.log(
       "End parsing " +
-      novelUrl +
-      " in " +
-      (new Date() - start) / 1000 +
-      " seconds"
+        novelUrl +
+        " in " +
+        (new Date() - start) / 1000 +
+        " seconds"
     );
   }
   console.log("....................End.....................");

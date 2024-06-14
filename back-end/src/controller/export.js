@@ -19,7 +19,7 @@ async function getAllFormat(req, res) {
 async function exportWithFormat(req, res) {
   const { file_format, chapterId, supplier } = req.body;
   try {
-    let formatter = formatFactory.get(file_format);
+    let formatter = formatFactory.create(file_format);
     if (!formatter) {
       res.status(400);
       res.send("Format is not supported");

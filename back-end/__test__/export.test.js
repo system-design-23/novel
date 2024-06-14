@@ -64,7 +64,7 @@ describe("Export test", function () {
       });
 
     const helper = new Helper(chapter, "truyenfull.vn");
-    let formatter = formatFactory.get("pdf");
+    let formatter = formatFactory.create("pdf");
     await formatter.format(helper);
   }, 60000);
   test(
@@ -94,7 +94,7 @@ describe("Export test", function () {
       });
 
     const helper = new Helper(chapter, "truyenfull.vn");
-    let formatter = formatFactory.get("docx");
+    let formatter = formatFactory.create("docx");
     await formatter.format(helper);
   }, 60000);
 
