@@ -20,7 +20,6 @@ class Crawler {
           let container = dropdown.nextElementSibling;
           let listItems = {};
           let links = container.querySelectorAll("a");
-
           let limit = 5;
           for (let link of links) {
             listItems[link.textContent.trim()] = link.href;
@@ -28,12 +27,10 @@ class Crawler {
               break;
             }
           }
-
           return listItems;
         }
         return null;
       }, dropdown);
-
       if (get != null) {
         await page.close();
         return get;
@@ -84,7 +81,6 @@ class Crawler {
           for (li of lis) {
             let a = li.querySelector("a");
             let content = a.textContent;
-
             const match = content.match(/\d+/);
             let numChap;
             let pos_sep;
@@ -160,7 +156,6 @@ class Crawler {
       let categories = Array.from(infoDiv[1].querySelectorAll("a")).map(
         (a) => a.textContent
       );
-
       return {
         name: name,
         author: author,
@@ -201,7 +196,6 @@ class Crawler {
       if (nextPage == null) {
         break;
       }
-
       await page.goto(nextPage, {
         waitUntil: "domcontentloaded",
       });
