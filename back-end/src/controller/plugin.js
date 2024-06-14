@@ -31,7 +31,11 @@ async function addSupplier(req, res) {
   let progress_id = await novelManager.plugIn(domain_name, payload);
   if (!progress_id) {
     res.status(400);
-    res.send("Bad request");
+    res.send("Internal Error in Server, see log");
+    return;
+  } else if (progress_id.startsWith("Error")) {
+    res.status(400);
+    res.send(progress_id);
     return;
   }
   res.status(200);

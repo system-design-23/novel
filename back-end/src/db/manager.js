@@ -45,13 +45,16 @@ class NovelManager {
 
     let plugins = this.plugins;
     if (plugins.has(domain_name)) {
-      return null;
+      return "Error: Domain name exists";
     }
 
     try {
       fs.writeFileSync("./src/db/plug-in/" + domain_name + ".js", jsfile);
 
       let Crawler = require("./plug-in/" + domain_name + ".js");
+      if (Crawler.domain_name != domain_name) {
+        return "Error: Domain name should match the host specified in implementation";
+      }
       plugins.set(domain_name, Crawler);
 
       let prog = new Progress();

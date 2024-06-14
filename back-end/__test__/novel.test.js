@@ -66,7 +66,7 @@ describe("Novel usecase flow test", function () {
     next = jest.fn();
     await findNovelsByAuthor(req, res, next);
     expect(res.status).toHaveBeenCalledWith(200);
-    let novels = res.send.mock.calls[0][0];
+    let novels = res.send.mock.calls[0][0].novels;
     console.log(novels);
   }, 5000);
   test("Get novel detail", async () => {

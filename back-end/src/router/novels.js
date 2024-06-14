@@ -5,9 +5,11 @@ const {
   getRecommendation,
   getNovelDetail,
   getChapterDetail,
+  findNovelsByCategory,
 } = require("../controller/novel");
 const novelRouter = Router();
 novelRouter.get("", findNovelsByAuthor);
+novelRouter.get("", findNovelsByCategory);
 novelRouter.get("", findNovelsByName);
 novelRouter.get("", getRecommendation);
 novelRouter.get("/detail/:novelId", getNovelDetail);
