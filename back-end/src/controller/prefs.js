@@ -29,7 +29,7 @@ async function getPref(req, res) {
   const auth = req.auth;
 
   try {
-    let prefs = (await Prefs.find({ user: auth.id })).map((p) => p.supplier);
+    let prefs = (await Prefs.find({ user: auth.id }).populate("supplier")).map((p) => p.supplier.domain_name);
     let domain_names = novelManager.findAll();
     let others = [];
     for (let domain_name of domain_names) {
