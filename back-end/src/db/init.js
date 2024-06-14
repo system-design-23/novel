@@ -7,7 +7,7 @@ const { default: mongoose } = require("mongoose");
 const User = require("./models/user.js");
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/novel")
+  .connect(process.env.DB_HOST)
   .then(() => {
     console.log("Novel database connected");
     mongoose.connection.db.dropDatabase();

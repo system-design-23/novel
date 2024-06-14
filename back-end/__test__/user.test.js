@@ -46,7 +46,7 @@ describe("Read novel by Preference flow", function () {
   beforeAll(async () => {
     require("dotenv").config();
     mongoose
-      .connect("mongodb://127.0.0.1:27017/novel")
+      .connect(process.env.DB_HOST)
       .then(() => console.log("Novel database connected"))
       .catch((err) => console.log(err));
     await novelManager.initiated;
@@ -115,8 +115,9 @@ describe("Read novel by Preference flow", function () {
 
   let novelDetail;
   test("Get a novel detail", async () => {
-    let novel = await Novel.findOne({ $where: 'this.suppliers.length > 1' })
-      .populate("suppliers.supplier");
+    let novel = await Novel.findOne({
+      $where: "this.suppliers.length > 1",
+    }).populate("suppliers.supplier");
     req.params = {
       novelId: novel.id,
     };
@@ -171,9 +172,8 @@ describe("Read novel by Preference flow", function () {
   test("Read another novel", async () => {
     let novel = await Novel.findOne({
       _id: { $ne: novelDetail.id },
-      $where: 'this.suppliers.length > 1'
-    })
-      .populate("suppliers.supplier");
+      $where: "this.suppliers.length > 1",
+    }).populate("suppliers.supplier");
     req.params = {
       novelId: novel.id,
     };

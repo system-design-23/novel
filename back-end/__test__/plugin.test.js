@@ -11,13 +11,13 @@ const {
 } = require("../src/controller/plugin");
 const fs = require("fs");
 const { error } = require("console");
-const { getNovelDetail } = require("../src/controller/novel");
+const { getNovelDetail, getChapterDetail } = require("../src/controller/novel");
 const Novel = require("../src/db/models/novel");
 const Supplier = require("../src/db/models/supplier");
 const { novelManager } = require("../src/db/manager");
 const Chapter = require("../src/db/models/chapter");
 
-describe("Read novel by Preference flow", function () {
+describe("PLugin flow", function () {
   async function deleteOldMock() {
     await User.deleteOne({ username: "mock_admin" });
     await new Promise(async (resolve, reject) => {
@@ -35,7 +35,7 @@ describe("Read novel by Preference flow", function () {
   beforeAll(async () => {
     require("dotenv").config();
     mongoose
-      .connect("mongodb://127.0.0.1:27017/novel")
+      .connect(process.env.DB_HOST)
       .then(() => console.log("Novel database connected"))
       .catch((err) => console.log(err));
     await novelManager.initiated;
@@ -140,6 +140,28 @@ describe("Read novel by Preference flow", function () {
       };
       console.log(novel.id);
       await getNovelDetail(req, res);
+      expect(res.status).toHaveBeenCalledWith(200);
+
+      let novelDetail = res.send.mock.calls[0][0];
+      console.log(novelDetail);
+    },
+    10 * 60000
+  );
+  test(
+    "Get a chapter from 'truyen.tangthuvien.vn'",
+    async () => {
+      let supplier = await Supplier.findOne({
+        domain_name: "truyen.tangthuvien.vn",
+      });
+      let chapter = await Chapter.findOne({
+        "suppliers.supplier": supplier.id,
+      }).populate("novel");
+      req.query = {};
+      req.params = {
+        chapterId: chapter.id,
+        novelId: chapter.novel.id,
+      };
+      await getChapterDetail(req, res);
       expect(res.status).toHaveBeenCalledWith(200);
 
       let novelDetail = res.send.mock.calls[0][0];

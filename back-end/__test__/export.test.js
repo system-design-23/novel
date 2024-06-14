@@ -29,8 +29,10 @@ describe("Export test", function () {
   }
 
   beforeAll(async () => {
+    require("dotenv").config();
+
     mongoose
-      .connect("mongodb://127.0.0.1:27017/novel")
+      .connect(process.env.DB_HOST)
       .then(() => console.log("Novel database connected"))
       .catch((err) => console.error(err));
     await novelManager.initiated;
@@ -71,7 +73,7 @@ describe("Export test", function () {
       req.body = {
         format_name: "docx",
         dependency: "docx",
-        payload: fs.readFileSync("./src/format/zzzzz/docx.js", "utf8"),
+        payload: fs.readFileSync("./src/format/zzzzz/docx.docx.js", "utf8"),
       };
       res.setHeader = jest.fn();
       await addFormatter(req, res);

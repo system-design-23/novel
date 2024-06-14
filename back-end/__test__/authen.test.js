@@ -11,7 +11,7 @@ describe("Authentication test", function () {
   beforeAll(async () => {
     require("dotenv").config();
     mongoose
-      .connect("mongodb://127.0.0.1:27017/novel")
+      .connect(process.env.DB_HOST)
       .then(() => console.log("Novel database connected"))
       .catch((err) => console.error(err));
     await deleteOldMock();
@@ -30,7 +30,7 @@ describe("Authentication test", function () {
     };
     req = {};
   });
-  test("Try to SignUp with Admin account.", async () => {
+  test("Try to SignUp with an Admin account.", async () => {
     req.body = {
       username: "admin_auth",
       password: "admin_auth",

@@ -32,7 +32,7 @@ async function deleteOldMock() {
 async function clean() {
   require("dotenv").config();
   mongoose
-    .connect("mongodb://127.0.0.1:27017/novel")
+    .connect(process.env.DB_HOST)
     .then(() => console.log("Novel database connected"))
     .catch((err) => console.log(err));
   await novelManager.initiated;
