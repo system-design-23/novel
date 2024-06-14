@@ -123,7 +123,7 @@ class FormatterManager {
         "./src/format/plug-in/" +
           format_name +
           "." +
-          this.dependencies(format_name) +
+          this.dependencies.get(format_name) +
           ".js",
         "utf8"
       );
