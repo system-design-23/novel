@@ -4,6 +4,7 @@
   "scripts": {
     "start": "node src/index.js",
     "db": "node src/db/init.js",
+    "undo-plugin": "node undo-plugin.js",
     "dev": "nodemon src/index.js",
     "test": "jest --runInBand --silent=false --verbose",
     "vcl": "node src/db/plug-in/truyenfull.vn.js"
