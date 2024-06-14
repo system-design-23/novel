@@ -132,7 +132,7 @@ class FormatterManager {
     return null;
   }
   findAll() {
-    return this.plugins.keys();
+    return [...this.plugins.keys()];
   }
 }
 const formatManager = new FormatterManager();

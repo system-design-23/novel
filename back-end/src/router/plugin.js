@@ -17,6 +17,7 @@ pluginRouter.get("/supplier", getAllSuppliers);
 pluginRouter.post("/supplier", addSupplier);
 pluginRouter.get("/supplier/:domain_name", getImplementOfSuplier);
 pluginRouter.delete("/supplier/:domain_name", removeSupplier);
+
 pluginRouter.get("/format", getAllFormat);
 pluginRouter.post("/format", addFormatter);
 pluginRouter.get("/format/:format_name", getImplementOfFormatter);
