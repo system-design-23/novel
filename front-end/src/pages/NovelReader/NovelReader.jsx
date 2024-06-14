@@ -18,7 +18,6 @@ const NovelReader = () => {
   const [searchParams, _] = useSearchParams();
   const fetching = useRef(false);
   const { novelId = '', chapterId = '' } = useParams();
-  const domainName = searchParams.get('domain_name');
 
   useEffect(() => {
     const getChapterDetail = async () => {
@@ -27,7 +26,9 @@ const NovelReader = () => {
         setChapterDetail(result);
       }
     };
+    const domainName = searchParams.get('domain_name');
     if (fetching.current === false) {
+      setChapterDetail((prev) => ({ ...prev, content: undefined }));
       fetching.current = true;
       getChapterDetail();
     }
@@ -35,7 +36,7 @@ const NovelReader = () => {
     return () => {
       fetching.current = false;
     };
-  }, [novelId, chapterId, domainName]);
+  }, [novelId, chapterId, searchParams]);
 
   const handleFontChange = (value) => {
     setPreferences((prev) => {
@@ -136,15 +137,24 @@ const NovelReader = () => {
           className='h-full w-full overflow-y-auto text-wrap rounded-lg p-4 px-[10%] pb-20'
           style={convertPreferenceToStyle(preferences)}
         >
-          {chapterDetail.content ? <p>{chapterDetail.content}</p> : <LoadingSpinner></LoadingSpinner>}
+          {chapterDetail.content ? (
+            <p>{chapterDetail.content}</p>
+          ) : (
+            <LoadingSpinner className='mx-auto my-auto self-center'></LoadingSpinner>
+          )}
         </pre>
       </section>
-      <ChapterSection chapterDetail={chapterDetail}></ChapterSection>
+      <ChapterSection
+        chapterDetail={chapterDetail}
+        onChapterChange={() => {
+          setChapterDetail({});
+        }}
+      ></ChapterSection>
     </div>
   );
 };
 
-const ChapterSection = ({ chapterDetail }) => {
+const ChapterSection = ({ chapterDetail, onChapterChange }) => {
   const [isListOpen, setListOpen] = useState(false);
   const { novelId = '' } = useParams();
   const [_, setSearchParams] = useSearchParams();
@@ -158,6 +168,7 @@ const ChapterSection = ({ chapterDetail }) => {
   }, [chapterDetail]);
 
   const handleOptionSelect = (value) => {
+    onChapterChange();
     setSearchParams(createSearchParams({ domain_name: value }));
   };
 
@@ -189,7 +200,7 @@ const ChapterSection = ({ chapterDetail }) => {
           popupHeader='Select Novel Source'
         >
           <div
-            className='relative flex cursor-pointer flex-col justify-center px-4 align-middle'
+            className='relative flex min-w-[100px] cursor-pointer flex-col justify-center px-4 align-middle'
             role='combobox'
             aria-expanded={open}
           >

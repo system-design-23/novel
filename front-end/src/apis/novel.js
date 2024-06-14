@@ -1,7 +1,7 @@
 import axiosInstance from './axiosConfig';
 
 const getNovels = async (offset) => {
-  const result = await axiosInstance.get(`/novels${offset ? `?offset=${offset}` : ''}`);
+  const result = await axiosInstance.get(`/novels${offset ? `?offset=${offset * 20}` : ''}`);
   if (result.status === 200) {
     return result.data;
   }
