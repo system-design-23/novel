@@ -36,6 +36,7 @@ async function exportWithFormat(req, res) {
       });
     const helper = new Helper(chapter, supplier);
     let tempfile = await formatter.format(helper);
+    let filename = chapter.title + "." + file_format;
     let paths = tempfile.split("/");
     res.send({
       tempfile: paths[paths.length - 1],
@@ -58,7 +59,8 @@ function deleteTempfile(tempfile) {
 }
 async function downloadTempfile(req, res) {
   const { tempfile } = req.query;
-  if (!fs.existsSync(tempfile)) {
+  let filePath = "./src/format/temp/" + tempfile;
+  if (!fs.existsSync(filePath)) {
     res.status(400);
     res.send("The file is no longer exist");
     return;
@@ -68,7 +70,7 @@ async function downloadTempfile(req, res) {
       console.error(err);
     }
     try {
-      fs.unlink(tempfile);
+      fs.unlink(filePath);
     } catch (error) {}
   });
 }

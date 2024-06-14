@@ -6,7 +6,7 @@ import { AArrowDown, AArrowUp, ChevronLeft, ChevronRight, FileDown } from 'lucid
 import { Link, createSearchParams, useParams, useSearchParams } from 'react-router-dom';
 import { getChapterContent } from '../../apis/novel';
 import LineHeight from '../../components/LineHeight/LineHeight';
-import { exportByFormat, getFormats } from '../../apis/formats';
+import { downloadTempfile, exportByFormat, getFormats } from '../../apis/formats';
 
 const fontOptions = [
   { value: 'Merriweather', label: 'Serif' },
@@ -95,8 +95,9 @@ const NovelReader = () => {
 
   const handleExport = async (format) => {
     const result = await exportByFormat(format, chapterId, searchParams.get('domain_name'));
+    /* Spinner */
     if (result) {
-      window.open(result.tempfile, '_blank');
+      downloadTempfile(result.tempfile);
     }
   };
 

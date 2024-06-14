@@ -55,4 +55,19 @@ const exportByFormat = async (formatName, chapterId, domain) => {
   }
 };
 
-export { getFormats, getFormatCode, addNewFormat, removeFormat, exportByFormat };
+const downloadTempfile = async (tempfile) => {
+  let tempWin = window.open('', '_blank');
+
+  let link = document.createElement('a');
+  link.href = import.meta.env.VITE_SERVER_URL + '/export/download?tempfile=' + tempfile;
+  tempWin.document.body.appendChild(link);
+  link.click();
+  let cnt_focus = 0;
+  tempWin.addEventListener('focus', () => {
+    if (++cnt_focus == 3) {
+      tempWin.close();
+    }
+  });
+};
+
+export { getFormats, getFormatCode, addNewFormat, removeFormat, exportByFormat, downloadTempfile };
