@@ -60,9 +60,8 @@ async function getAllSuppliers(req, res) {
     });
   }
   res.status(200);
-  res.send(body)
+  res.send(body);
 }
-
 
 async function getImplementOfSuplier(req, res) {
   const { domain_name } = req.params;
@@ -114,10 +113,6 @@ async function removeFormatter(req, res) {
 
 async function getImplementOfFormatter(req, res) {
   const { format_name } = req.params;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> fc89e633 (dang test phan plugin export)
   try {
     let code = formatManager.findCode(format_name);
     if (code) {
@@ -129,22 +124,18 @@ async function getImplementOfFormatter(req, res) {
     }
   } catch (error) {
     console.error(error);
-<<<<<<< HEAD
-=======
-  if (await format_plugger.get(format_name)) {
-    let file = fs.readFileSync(
-      "./src/format/plug-in/" + format_name + ".js",
-      "utf8"
-    );
-    res.status(200);
-    res.send(file);
-  } else {
->>>>>>> 0febdf36 (refactor code)
-=======
->>>>>>> fc89e633 (dang test phan plugin export)
-    res.status(400);
-    res.send("Bad request");
   }
+  //   if (await format_plugger.get(format_name)) {
+  //     let file = fs.readFileSync(
+  //       "./src/format/plug-in/" + format_name + ".js",
+  //       "utf8"
+  //     );
+  //     res.status(200);
+  //     res.send(file);
+  //   } else {
+  //   res.status(400);
+  //   res.send("Bad request");
+  // }
 }
 module.exports = {
   addSupplier,
@@ -153,14 +144,6 @@ module.exports = {
   getImplementOfFormatter,
   addFormatter,
   removeFormatter,
-<<<<<<< HEAD
-<<<<<<< HEAD
   getAllSuppliers,
-=======
-  getAllSuppliers
->>>>>>> fc89e633 (dang test phan plugin export)
-=======
-  getAllSuppliers,
-  getAddingProgress
->>>>>>> a07962dc (server sent event)
+  getAddingProgress,
 };

@@ -1,4 +1,4 @@
-import { Button, Input } from '../../components';
+import { Button, Input, LoadingSpinner } from '../../components';
 import { cn } from '../../utils/utils';
 import logo from '../../assets/novel.png';
 import { Navigate, useNavigate } from 'react-router-dom';
@@ -6,7 +6,7 @@ import useAuth from '../../hooks/useAuth';
 
 const LogIn = ({ props }) => {
   const navigate = useNavigate();
-  const { user, login } = useAuth();
+  const { user, login, isLogginIn } = useAuth();
   if (user) {
     return <Navigate to='/home' />;
   }
@@ -29,7 +29,7 @@ const LogIn = ({ props }) => {
           <label className='my-2 block text-sm font-medium'>Password</label>
           <Input className='mb-4 w-full' type='password' placeholder='Password' name='password'></Input>
           <Button type='submit' className='mt-4 w-full'>
-            Log In
+            {isLogginIn ? <LoadingSpinner className='fill:white h-[1rem] w-[1rem]'></LoadingSpinner> : <p>Log In</p>}
           </Button>
           <Button
             variant='secondary'

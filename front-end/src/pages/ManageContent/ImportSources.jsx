@@ -102,7 +102,7 @@ const ImportSources = ({ className, ...rest }) => {
             );
           })
         ) : (
-          <div className='flex h-full items-center justify-center'>
+          <div className='flex h-full items-center justify-center self-center'>
             <LoadingSpinner />
           </div>
         )}

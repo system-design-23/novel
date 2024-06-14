@@ -6,6 +6,7 @@ const Chapter = require("./models/chapter.js");
 const Supplier = require("./models/supplier.js");
 const Category = require("./models/category.js");
 const { v4: uuidv4 } = require("uuid");
+const { default: mongoose } = require("mongoose");
 
 class NovelManager {
   constructor() {
