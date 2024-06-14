@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../utils/utils';
 import { Button, Input, LoadingSpinner } from '../../components';
-import { addNewPlugin, getPluginCode, getPlugins, removePlugin, statusPolling } from '../../apis/plugins';
+import { addNewFormat, getFormatCode, getFormats, removeFormat } from '../../apis/formats';
 import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-clike';
@@ -11,24 +11,25 @@ import { FilePlus, Trash } from 'lucide-react';
 import getNewSampleCode from './emptyCodeClass';
 import addFileImage from '../../assets/add_file.png';
 import { Popover, PopoverContent, PopoverTrigger } from '../../components/Popover/Popover';
+import getNewExportCode from './emptyExportCodeClass';
 
 const failedFetch = 'Failed to fetch code.';
 
-const ImportSources = ({ className, ...rest }) => {
-  const [visiblePlugins, setVisiblePlugins] = useState([]);
-  const [pluginLoading, setPluginLoading] = useState(null);
+const ExportSources = ({ className, ...rest }) => {
+  const [visibleFormats, setVisibleFormats] = useState([]);
+  const [formatLoading, setFormatLoading] = useState(null);
   const [code, setCode] = useState(null);
   const [isCreatingNewCodeFile, setCreateNewCodeFile] = useState(false);
   const isFetching = useRef(false);
-  const currentlyEditingDomain = useRef(null);
+  const currentlyEditingFormat = useRef(null);
 
   useEffect(() => {
     if (isFetching.current) return;
     const fetchSuppliers = async () => {
       isFetching.current = true;
-      const result = await getPlugins();
+      const result = await getFormats();
       if (result) {
-        setVisiblePlugins(result.map((supplier) => ({ supplier: supplier.domain_name })));
+        setVisibleFormats(result);
       }
     };
     fetchSuppliers();
@@ -38,30 +39,33 @@ const ImportSources = ({ className, ...rest }) => {
     };
   }, []);
 
-  const handleLoadSourceCode = async (domain) => {
-    const result = await getPluginCode(domain);
+  const handleLoadSourceCode = async (format) => {
+    const result = await getFormatCode(format);
     if (result) {
-      currentlyEditingDomain.current = domain;
+      currentlyEditingFormat.current = format;
       setCode(result);
     } else {
-      currentlyEditingDomain.current = null;
+      currentlyEditingFormat.current = null;
       setCode(failedFetch);
     }
-    setPluginLoading(null);
+    setFormatLoading(null);
   };
 
   const handleGetNewSourceCode = (e) => {
     e.preventDefault();
-    const url = e.target[0].value;
-    currentlyEditingDomain.current = url;
-    setCode(getNewSampleCode(url));
+    const dependency = e.target[1].value;
+    currentlyEditingFormat.current = {
+      format_name: e.target[0].value,
+      dependency: dependency
+    };
+    setCode(getNewExportCode(dependency));
     setCreateNewCodeFile(false);
   };
 
-  const handleDeleleteSourceCode = async (sourceDomain) => {
-    const result = await removePlugin(sourceDomain);
+  const handleDeleleteSourceCode = async (sourceFormat) => {
+    const result = await removeFormat(sourceFormat);
     if (result) {
-      setVisiblePlugins((prev) => prev.filter((supplier) => supplier.supplier !== sourceDomain));
+      setVisibleFormats((prev) => prev.filter((format) => format !== sourceFormat));
       setCode(null);
     }
   };
@@ -69,21 +73,18 @@ const ImportSources = ({ className, ...rest }) => {
   const handleUploadNewSourceCode = async (e) => {
     // disable the button
     e.target.disabled = true;
-    const result = await addNewPlugin(currentlyEditingDomain.current, code);
+    const result = await addNewFormat(
+      currentlyEditingFormat.current.format_name,
+      currentlyEditingFormat.current.dependency,
+      code
+    );
     if (result) {
-      statusPolling(result, handlePollChecking);
+      const currentFormat = currentlyEditingFormat.current.format_name;
+      setVisibleFormats((prev) => [...prev, currentFormat]);
+      setCode(null);
+      currentlyEditingFormat.current = null;
     }
     e.target.disabled = false;
-  };
-
-  const handlePollChecking = (result) => {
-    console.log(result);
-    if (result === 100) {
-      const currentDomain = currentlyEditingDomain.current;
-      setVisiblePlugins((prev) => [...prev, { supplier: currentDomain }]);
-      setCode(null);
-      currentlyEditingDomain.current = null;
-    }
   };
 
   return (
@@ -91,28 +92,28 @@ const ImportSources = ({ className, ...rest }) => {
       className={cn('mx-auto hidden h-fit max-h-full w-4/5 flex-grow rounded-lg bg-slate-50 p-6', className ?? '')}
       {...rest}
     >
-      <h2 className='mb-2 text-lg font-semibold'>Novel Supply Sources</h2>
-      <p className='text-sm text-slate-600'>Edit or add new novel supplier plugin into the system.</p>
+      <h2 className='mb-2 text-lg font-semibold'>Export Formats</h2>
+      <p className='text-sm text-slate-600'>Edit or add new export format plugin into the system.</p>
       <section className='justify-left mt-5 flex max-w-full space-x-4 overflow-x-auto'>
-        {visiblePlugins.length > 0 ? (
-          visiblePlugins &&
-          visiblePlugins.map((supplier) => {
+        {visibleFormats.length > 0 ? (
+          visibleFormats &&
+          visibleFormats.map((format) => {
             return (
               <button
-                key={supplier.supplier}
+                key={format}
                 className={cn(
                   'h-12 min-w-fit rounded bg-slate-100',
                   'border-2 border-slate-200 font-normal text-slate-800',
                   'flex select-none items-center justify-between overflow-hidden px-8'
                 )}
                 onClick={() => {
-                  setPluginLoading(supplier.supplier);
-                  handleLoadSourceCode(supplier.supplier);
+                  setFormatLoading(format);
+                  handleLoadSourceCode(format);
                 }}
               >
                 <div className='flex space-x-2 align-middle'>
-                  {pluginLoading === supplier.supplier && <LoadingSpinner className='w-4' />}
-                  <p className='self-center text-nowrap text-sm'> {supplier.supplier} </p>
+                  {formatLoading === format && <LoadingSpinner className='w-4' />}
+                  <p className='self-center text-nowrap text-sm'> {format} </p>
                 </div>
               </button>
             );
@@ -136,10 +137,11 @@ const ImportSources = ({ className, ...rest }) => {
                 <p className='self-center text-nowrap text-sm'> Add New Source</p>
               </button>
             </PopoverTrigger>
-            <PopoverContent sideOffset='1' className='w-fit rounded-lg bg-slate-50 p-0 align-middle'>
+            <PopoverContent sideOffset='1' className='w-fit min-w-[400px] rounded-lg bg-slate-50 p-0 align-middle'>
               <form className='px- h-fit w-full space-y-4 p-4' onSubmit={handleGetNewSourceCode}>
                 <h1 className='text-base font-semibold'>Add Domain URL</h1>
-                <Input className='w-full' placeholder='https://example.com' name='url'></Input>
+                <Input className='w-full' placeholder='pdf' name='format_name'></Input>
+                <Input className='w-full' placeholder='Additional dependency. Ex: pdfkit.' name='dependency'></Input>
                 <div className='my-2 flex justify-end'>
                   <Button type='submit' className='w-full'>
                     Create Template
@@ -175,39 +177,36 @@ const ImportSources = ({ className, ...rest }) => {
         ) : (
           <div className='my-4 flex h-full flex-col items-center justify-center'>
             <img src={addFileImage} className='w-[200px]' alt='Add New File' />
-            <p className='-mt-4 text-sm text-slate-500'>Choose a source file to edit or add new source.</p>
+            <p className='-mt-4 text-sm text-slate-500'>Choose a source file to edit or add new format.</p>
           </div>
         )}
       </section>
       <section className={cn('mt-4 flex justify-end space-x-2', (code === null || code === failedFetch) && 'hidden')}>
         <Button
           variant='destructive'
-          className={cn('ml-0 mr-auto flex space-x-2 align-middle')}
+          className='ml-0 mr-auto flex space-x-2 align-middle'
           onClick={() => {
-            if (currentlyEditingDomain.current) {
-              handleDeleleteSourceCode(currentlyEditingDomain.current);
+            if (currentlyEditingFormat.current) {
+              handleDeleleteSourceCode(currentlyEditingFormat.current);
             }
           }}
         >
           <Trash size='1rem' className='self-center text-white' />
-          <p className='self-center text-nowrap text-sm'> Delete Source </p>
+          <p className='self-center text-nowrap text-sm'> Delete Format</p>
         </Button>
         <Button
           variant='secondary'
-          className={cn(currentlyEditingDomain.current == null && 'hidden')}
           onClick={() => {
-            currentlyEditingDomain.current = null;
+            currentlyEditingFormat.current = null;
             setCode(null);
           }}
         >
           Cancel
         </Button>
-        <Button className={cn(currentlyEditingDomain.current == null && 'hidden')} onClick={handleUploadNewSourceCode}>
-          Update
-        </Button>
+        <Button onClick={handleUploadNewSourceCode}>Update</Button>
       </section>
     </section>
   );
 };
 
-export default ImportSources;
+export default ExportSources;

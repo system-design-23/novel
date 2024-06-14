@@ -2,10 +2,11 @@ import { useState, useContext, useRef, useEffect, useMemo } from 'react';
 import { PreferencesContext } from '../../contexts/Preferences';
 import { Button, ColorPicker, DropDown, LoadingSpinner, Select } from '../../components';
 import { cn, convertPreferenceToStyle } from '../../utils/utils';
-import { AArrowDown, AArrowUp, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Link, createSearchParams, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { AArrowDown, AArrowUp, ChevronLeft, ChevronRight, FileDown } from 'lucide-react';
+import { Link, createSearchParams, useParams, useSearchParams } from 'react-router-dom';
 import { getChapterContent } from '../../apis/novel';
 import LineHeight from '../../components/LineHeight/LineHeight';
+import { exportByFormat, getFormats } from '../../apis/formats';
 
 const fontOptions = [
   { value: 'Merriweather', label: 'Serif' },
@@ -14,6 +15,7 @@ const fontOptions = [
 
 const NovelReader = () => {
   const [chapterDetail, setChapterDetail] = useState({});
+  const [exportFormat, setExportFormat] = useState([]);
   const [preferences, setPreferences] = useContext(PreferencesContext);
   const [searchParams, _] = useSearchParams();
   const fetching = useRef(false);
@@ -26,11 +28,19 @@ const NovelReader = () => {
         setChapterDetail(result);
       }
     };
+
+    const getExportFormat = async () => {
+      const result = await getFormats();
+      if (result) {
+        setExportFormat(result.map((format) => ({ value: format, label: `Export to ${format.toUpperCase()}` })));
+      }
+    };
     const domainName = searchParams.get('domain_name');
     if (fetching.current === false) {
       setChapterDetail((prev) => ({ ...prev, content: undefined }));
       fetching.current = true;
       getChapterDetail();
+      getExportFormat();
     }
 
     return () => {
@@ -83,6 +93,13 @@ const NovelReader = () => {
     });
   };
 
+  const handleExport = async (format) => {
+    const result = await exportByFormat(format, chapterId, searchParams.get('domain_name'));
+    if (result) {
+      window.open(result.tempfile, '_blank');
+    }
+  };
+
   return (
     <div className='relative flex h-screen w-screen flex-col bg-slate-200'>
       <section className='max-w-screen flex justify-between overflow-x-auto overflow-y-hidden p-4'>
@@ -95,6 +112,16 @@ const NovelReader = () => {
             <h2 className='text-lg font-bold'>{chapterDetail.novel_name ?? 'Unknown'}</h2>
             <p className='text-sm'>{chapterDetail.author ?? 'unknown'}</p>
           </div>
+          <DropDown
+            contentClassName='w-[200px] text-sm font-medium'
+            options={exportFormat}
+            onOptionSelect={handleExport}
+          >
+            <Button variant='secondary' className='flex justify-center space-x-2 rounded-full align-middle'>
+              <FileDown size='0.8rem'></FileDown>
+              <p className='text-sm'>Export</p>
+            </Button>
+          </DropDown>
         </div>
         {/* preferences section */}
         <div className='flex min-w-[50%] flex-nowrap justify-end space-x-2 overflow-x-auto'>

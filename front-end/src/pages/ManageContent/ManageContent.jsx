@@ -4,6 +4,7 @@ import { BookUp2, FileDown, LibraryBig } from 'lucide-react';
 import ArrangeSources from './ArrangeSources';
 import useAuth from '../../hooks/useAuth';
 import ImportSources from './ImportSources';
+import ExportSources from './ExportSources';
 
 const ManageContent = () => {
   const [page, setPage] = useState('sourceArrange');
@@ -92,14 +93,7 @@ const ManageContent = () => {
         </section>
         <ArrangeSources className={page === 'sourceArrange' && 'block'}></ArrangeSources>
         <ImportSources className={page === 'importSource' && 'block'}></ImportSources>
-        <section
-          className={cn(
-            'mx-auto hidden w-4/5 flex-grow rounded-lg bg-slate-50 p-6',
-            page === 'exportSource' && 'block'
-          )}
-        >
-          <h2 className='text-lg font-semibold'>Export Source</h2>
-        </section>
+        <ExportSources className={page === 'exportSource' && 'block'}></ExportSources>
       </div>
     </div>
   );

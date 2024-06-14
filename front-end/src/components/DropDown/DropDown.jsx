@@ -2,11 +2,20 @@ import * as React from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '../Popover/Popover';
 import { cn } from '../../utils/utils';
 
-export default function DropDown({ onOptionSelect, options, children, isOpen, onOpenChange, popupHeader, ...rest }) {
+export default function DropDown({
+  onOptionSelect,
+  options,
+  children,
+  isOpen,
+  onOpenChange,
+  popupHeader,
+  contentClassName,
+  ...rest
+}) {
   return (
     <Popover open={isOpen} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent {...rest} className={cn('rounded-lg bg-slate-50 p-0', rest ? rest.className ?? '' : '')}>
+      <PopoverContent {...rest} className={cn('rounded-lg bg-slate-50 p-0', contentClassName ?? '')}>
         {popupHeader && <h1 className='p-4 pb-0 text-base font-semibold'>{popupHeader}</h1>}
         {options.map((option) => (
           <div
