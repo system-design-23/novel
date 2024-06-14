@@ -5,6 +5,7 @@ import { getNovels } from '../../apis/novel';
 
 const Homepage = ({ ...props }) => {
   const [novelList, setNovelList] = useState(null);
+  const [searchOption, setSearchOption] = useState('title');
   const lastFetchedPageIndex = useRef(-1);
   const isFetching = useRef(false);
   const [pageOffset, setPageOffset] = useState(0);
@@ -35,7 +36,7 @@ const Homepage = ({ ...props }) => {
       }
     };
 
-    if (lastFetchedPageIndex.current < pageOffset && (!novelList || pageOffset < novelList.total_pages)) {
+    if (lastFetchedPageIndex.current < pageOffset || lastFetchedPageIndex.current === -1) {
       getNovelList(pageOffset);
     }
 
@@ -43,7 +44,7 @@ const Homepage = ({ ...props }) => {
       isMounted = false;
       isFetching.current = false;
     };
-  }, [pageOffset]);
+  }, [pageOffset, searchOption]);
 
   const handleIntersection = useCallback(
     (entries) => {
@@ -79,14 +80,31 @@ const Homepage = ({ ...props }) => {
   }, [handleIntersection]);
 
   const handleSearchFilterChange = (value) => {
-    console.log(value);
-    // handle search
+    setSearchOption(value);
   };
 
-  const handleSearchTermChange = (value) => {
-    console.log(value);
-    // handle search
+  const debounce = (func, delay) => {
+    let timer;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        func.apply(null, args);
+      }, delay);
+    };
   };
+
+  const handleSearchTermChange = debounce(async (value) => {
+    setNovelList(null);
+    if (value === '' || value === null) {
+      lastFetchedPageIndex.current = -1;
+      setPageOffset(0);
+      return;
+    }
+    const result = await getNovels(0, value, searchOption);
+    if (result) {
+      setNovelList(result);
+    }
+  }, 500);
 
   return (
     <div {...props} className={cn('h-full', props ? props.className ?? '' : '')}>

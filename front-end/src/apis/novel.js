@@ -1,7 +1,9 @@
 import axiosInstance from './axiosConfig';
 
-const getNovels = async (offset) => {
-  const result = await axiosInstance.get(`/novels${offset ? `?offset=${offset * 20}` : ''}`);
+const getNovels = async (offset, searchTerm, fromType) => {
+  const result = await axiosInstance.get(
+    `/novels?offset=${offset && (!searchTerm || searchTerm == '') ? offset * 20 : '0'}${fromType ? `&${fromType}=${searchTerm}` : ''}`
+  );
   if (result.status === 200) {
     return result.data;
   }

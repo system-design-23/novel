@@ -1,4 +1,5 @@
 import axiosInstance from './axiosConfig';
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 const getPlugins = async () => {
   const result = await axiosInstance.get('/admin/plugins/supplier');
@@ -43,13 +44,20 @@ const addNewPlugin = async (domainName, plugin) => {
   }
   const filteredDomainName = domainName.split('/')[2];
   const result = await axiosInstance.post('/admin/plugins/supplier', {
-    domain_name: filteredDomainName,
+    domain_name: filteredDomainName ?? domainName,
     payload: plugin
   });
 
   if (result.status === 200) {
     return result.data;
   }
+};
+
+const statusPolling = async (id, handler) => {
+  const evtSource = new EventSource(`${SERVER_URL}/admin/plugins/supplier/progress?progress_id=${id}`);
+  evtSource.onmessage = (event) => {
+    handler(event);
+  };
 };
 
 const removePlugin = async (domainName) => {
@@ -60,4 +68,4 @@ const removePlugin = async (domainName) => {
   }
 };
 
-export { getPlugins, addNewPlugin, removePlugin, getPluginCode, getPluginsOrder, updatePluginsOrder };
+export { getPlugins, addNewPlugin, removePlugin, getPluginCode, getPluginsOrder, updatePluginsOrder, statusPolling };

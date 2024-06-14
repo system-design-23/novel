@@ -8,7 +8,13 @@ import { Popover, PopoverContent, PopoverTrigger } from '../../components/Popove
 const SearchBar = ({ onSearchFilterChange, onSearchValueChange, ...rest }) => {
   return (
     <div className='relative'>
-      <Input {...rest} className={cn('rounded-lg pl-40', rest ? rest.className ?? '' : '')}></Input>
+      <Input
+        {...rest}
+        className={cn('rounded-lg pl-40', rest ? rest.className ?? '' : '')}
+        onChange={(e) => {
+          onSearchValueChange(e.target.value);
+        }}
+      ></Input>
       <Search size={'1rem'} className='absolute right-4 top-1/2 -translate-y-1/2'></Search>
       <div className='rounded-large absolute left-0 top-1/2 -translate-y-1/2 rounded-r-none'>
         <SearchFilter onSearchFilterChange={onSearchFilterChange} />
@@ -19,15 +25,15 @@ const SearchBar = ({ onSearchFilterChange, onSearchValueChange, ...rest }) => {
 
 const options = [
   {
-    value: 'novel_name',
+    value: 'title',
     label: 'Novel Name'
   },
   {
-    value: 'writer',
+    value: 'author',
     label: 'Writer Name'
   },
   {
-    value: 'category',
+    value: 'genre',
     label: 'Category'
   }
 ];

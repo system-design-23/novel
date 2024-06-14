@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../utils/utils';
 import { Button, Input, LoadingSpinner } from '../../components';
-import { addNewPlugin, getPluginCode, getPlugins, removePlugin } from '../../apis/plugins';
+import { addNewPlugin, getPluginCode, getPlugins, removePlugin, statusPolling } from '../../apis/plugins';
 import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-clike';
@@ -71,12 +71,19 @@ const ImportSources = ({ className, ...rest }) => {
     e.target.disabled = true;
     const result = await addNewPlugin(currentlyEditingDomain.current, code);
     if (result) {
+      statusPolling(result, handlePollChecking);
+    }
+    e.target.disabled = false;
+  };
+
+  const handlePollChecking = (result) => {
+    console.log(result);
+    if (result === 100) {
       const currentDomain = currentlyEditingDomain.current;
       setVisiblePlugins((prev) => [...prev, { supplier: currentDomain }]);
       setCode(null);
       currentlyEditingDomain.current = null;
     }
-    e.target.disabled = false;
   };
 
   return (
@@ -92,6 +99,7 @@ const ImportSources = ({ className, ...rest }) => {
           visiblePlugins.map((supplier) => {
             return (
               <button
+                key={supplier.supplier}
                 className={cn(
                   'h-12 min-w-fit rounded bg-slate-100',
                   'border-2 border-slate-200 font-normal text-slate-800',
