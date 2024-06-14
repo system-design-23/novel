@@ -27,8 +27,8 @@ const options = [
     label: 'Writer Name'
   },
   {
-    value: 'year',
-    label: 'Publish Year'
+    value: 'category',
+    label: 'Category'
   }
 ];
 

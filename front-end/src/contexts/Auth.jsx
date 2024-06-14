@@ -8,27 +8,20 @@ const AuthContextProvider = ({ children }) => {
   const [isLogginIn, setIsLogginIn] = useState(false);
 
   useEffect(() => {
-    if (localStorage.getItem('accessToken')) {
-      const result = validate(localStorage.getItem('accessToken'));
-      if (result) {
-        setUser({ username: result.username, isAdmin: result.role === 'admin' });
-      } else {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        setUser(null);
+    const revalidate = async () => {
+      if (localStorage.getItem('accessToken')) {
+        const result = await validate(localStorage.getItem('accessToken'));
+        if (result) {
+          setUser({ username: result.fullname, isAdmin: result.role === 'admin' });
+        } else {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          setUser(null);
+        }
       }
-    }
-  }, []);
+    };
 
-  useEffect(() => {
-    // const validate = async () => {
-    //   const token = localStorage.getItem('token');
-    //   if (token) {
-    //     const user = await validateToken(token);
-    //     setUser(user);
-    //   }
-    // };
-    // validate();
+    revalidate();
   }, []);
 
   const login = async (user) => {
@@ -47,11 +40,6 @@ const AuthContextProvider = ({ children }) => {
     }
     return true;
   };
-
-  // const validateToken = async (token) => {
-  //   // TODO: Implement token validation logic
-  //   return { id: '1', username: token, isAdmin: true };
-  // };
 
   const logout = async () => {
     setUser(null);

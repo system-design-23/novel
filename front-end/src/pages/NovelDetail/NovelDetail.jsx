@@ -50,7 +50,9 @@ const NovelDetail = ({ ...props }) => {
           className='mr-4 aspect-card h-[200px] rounded-lg bg-cover bg-no-repeat'
         ></div>
         <div className='flex-grow'>
-          <div className='mt-4 text-3xl font-bold text-primary'>{novelDetail.name}</div>
+          <div className='mt-4 max-w-[calc(100%-200px)] text-wrap text-3xl font-bold text-primary'>
+            {novelDetail.name}
+          </div>
           <div className='opacity-90'>{novelDetail.author}</div>
           <div className='my-4 flex flex-nowrap space-x-2'>
             {novelDetail.categories &&

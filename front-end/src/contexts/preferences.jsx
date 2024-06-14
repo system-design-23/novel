@@ -4,9 +4,9 @@ export const PreferencesContext = createContext(null);
 
 const PreferencesContextProvider = ({ children }) => {
   const [preferences, setPreferences] = useState({
-    fontFamily: 'Inter',
-    fontSize: 13,
-    lineHeight: '1.5rem',
+    fontFamily: 'Merriweather',
+    fontSize: 18,
+    lineHeight: '2.5rem',
     backgroundColor: '#ffffff',
     color: '#000000'
   });

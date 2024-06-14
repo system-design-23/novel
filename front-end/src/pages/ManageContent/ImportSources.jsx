@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../utils/utils';
 import { Button, Input, LoadingSpinner } from '../../components';
-import { addNewPlugin, getPluginCode, getPlugins } from '../../apis/plugins';
+import { addNewPlugin, getPluginCode, getPlugins, removePlugin } from '../../apis/plugins';
 import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/themes/prism.css';
-import { FilePlus } from 'lucide-react';
+import { FilePlus, Trash } from 'lucide-react';
 import getNewSampleCode from './emptyCodeClass';
 import addFileImage from '../../assets/add_file.png';
 import { Popover, PopoverContent, PopoverTrigger } from '../../components/Popover/Popover';
@@ -28,7 +28,7 @@ const ImportSources = ({ className, ...rest }) => {
       isFetching.current = true;
       const result = await getPlugins();
       if (result) {
-        setVisiblePlugins(result);
+        setVisiblePlugins(result.map((supplier) => ({ supplier: supplier.domain_name })));
       }
     };
     fetchSuppliers();
@@ -56,6 +56,14 @@ const ImportSources = ({ className, ...rest }) => {
     currentlyEditingDomain.current = url;
     setCode(getNewSampleCode(url));
     setCreateNewCodeFile(false);
+  };
+
+  const handleDeleleteSourceCode = async (sourceDomain) => {
+    const result = await removePlugin(sourceDomain);
+    if (result) {
+      setVisiblePlugins((prev) => prev.filter((supplier) => supplier.supplier !== sourceDomain));
+      setCode(null);
+    }
   };
 
   const handleUploadNewSourceCode = async (e) => {
@@ -164,6 +172,18 @@ const ImportSources = ({ className, ...rest }) => {
         )}
       </section>
       <section className={cn('mt-4 flex justify-end space-x-2', (code === null || code === failedFetch) && 'hidden')}>
+        <Button
+          variant='destructive'
+          className='ml-0 mr-auto flex space-x-2 align-middle'
+          onClick={() => {
+            if (currentlyEditingDomain.current) {
+              handleDeleleteSourceCode(currentlyEditingDomain.current);
+            }
+          }}
+        >
+          <Trash size='1rem' className='self-center text-white' />
+          <p className='self-center text-nowrap text-sm'> Delete Source </p>
+        </Button>
         <Button
           variant='secondary'
           onClick={() => {

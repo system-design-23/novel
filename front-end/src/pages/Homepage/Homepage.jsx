@@ -83,6 +83,11 @@ const Homepage = ({ ...props }) => {
     // handle search
   };
 
+  const handleSearchTermChange = (value) => {
+    console.log(value);
+    // handle search
+  };
+
   return (
     <div {...props} className={cn('h-full', props ? props.className ?? '' : '')}>
       <section className='relative h-full overflow-y-auto px-4 pb-12 pt-4'>
@@ -91,13 +96,15 @@ const Homepage = ({ ...props }) => {
             className='mx-auto w-full '
             placeholder='Search for a novel'
             onSearchFilterChange={handleSearchFilterChange}
+            onSearchValueChange={handleSearchTermChange}
           />
         </div>
         <div className='relative flex flex-col-reverse lg:flex-row'>
           <div className='flex-grow basis-3/5'>
             <div className='flex flex-wrap'>
               {novelList
-                ? novelList.novels && novelList.novels.map((novel) => (
+                ? novelList.novels &&
+                  novelList.novels.map((novel) => (
                     <NovelCard
                       key={novel.id}
                       id={novel.id}

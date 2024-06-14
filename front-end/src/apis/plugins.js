@@ -1,8 +1,25 @@
 import axiosInstance from './axiosConfig';
 
 const getPlugins = async () => {
-  const result = await axiosInstance.get('/admin/plugins');
+  const result = await axiosInstance.get('/admin/plugins/supplier');
 
+  if (result.status === 200) {
+    return result.data;
+  }
+};
+
+const getPluginsOrder = async () => {
+  const result = await axiosInstance.get('/u/preference');
+
+  if (result.status === 200) {
+    return result.data;
+  }
+};
+
+const updatePluginsOrder = async (suppliers) => {
+  const result = await axiosInstance.post('/u/preference', {
+    domain_names: suppliers
+  });
   if (result.status === 200) {
     return result.data;
   }
@@ -10,9 +27,8 @@ const getPlugins = async () => {
 
 const getPluginCode = async (domainName) => {
   // domainName might be "https://" or something, so we need to filter and take host part only
-  const filteredDomainName = domainName.split('/')[2];
   try {
-    const result = await axiosInstance.get(`/admin/plugins/${filteredDomainName}`);
+    const result = await axiosInstance.get(`/admin/plugins/supplier/${domainName}`);
     if (result.status === 200) {
       return result.data;
     }
@@ -26,7 +42,7 @@ const addNewPlugin = async (domainName, plugin) => {
     return null;
   }
   const filteredDomainName = domainName.split('/')[2];
-  const result = await axiosInstance.post('/admin/plugins/plug', {
+  const result = await axiosInstance.post('/admin/plugins/supplier', {
     domain_name: filteredDomainName,
     payload: plugin
   });
@@ -37,11 +53,11 @@ const addNewPlugin = async (domainName, plugin) => {
 };
 
 const removePlugin = async (domainName) => {
-  const result = await axiosInstance.delete(`/admin/plugins/unplug/${domainName}`);
+  const result = await axiosInstance.delete(`/admin/plugins/supplier/${domainName}`);
 
   if (result.status === 200) {
     return result.data;
   }
 };
 
-export { getPlugins, addNewPlugin, removePlugin, getPluginCode };
+export { getPlugins, addNewPlugin, removePlugin, getPluginCode, getPluginsOrder, updatePluginsOrder };
