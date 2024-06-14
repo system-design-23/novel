@@ -37,18 +37,28 @@ async function findNovelsByAuthor(req, res, next) {
     return;
   }
   try {
-    const author = await Author.findOne({ name: authorName });
-    if (!author) {
+    const authors = await Author.find({
+      name: { $regex: authorName, $options: "i" },
+    });
+    if (!authors) {
       res.status(400);
       res.send("Author does not exist.");
       return;
     }
-    const fetchedNovels = await Novel.find({ author: author.id }).populate(
-      "author"
-    );
-    const novels = await novelsToJson(fetchedNovels);
+    let novels = [];
+    for (let author of authors) {
+      const fetchedNovels = await Novel.find({ author: author.id }).populate(
+        "author"
+      );
+      let _novels = await novelsToJson(fetchedNovels);
+      novels = novels.concat(_novels);
+    }
     res.status(200);
-    res.send(novels);
+    res.send({
+      novels: novels,
+      total_pages: 1,
+      current_page: 1,
+    });
   } catch (err) {
     console.error(err);
     res.status(400);
@@ -64,8 +74,12 @@ async function findNovelsByCategory(req, res, next) {
   if (!offset) {
     offset = 0;
   }
+  offset = Number(offset);
   try {
-    const fetched = await Category.find({ name: genre })
+    let query = {
+      name: { $regex: genre, $options: "i" },
+    };
+    const fetched = await Category.find(query)
       .skip(offset)
       .limit(10)
       .populate({
@@ -77,7 +91,7 @@ async function findNovelsByCategory(req, res, next) {
     let body = {};
     body.novels = await novelsToJson(fetched.map((z) => z.novel));
     body.current_page = Math.floor((offset + fetched.length) / 20);
-    body.total_pages = Math.ceil((await Category.countDocuments({ name: genre })) / 20)
+    body.total_pages = Math.ceil((await Category.countDocuments(query)) / 20);
     res.status(200);
     res.send(body);
   } catch (err) {
@@ -94,6 +108,7 @@ async function findNovelsByName(req, res, next) {
   if (!offset) {
     offset = 0;
   }
+  offset = Number(offset);
   let query = {
     name: { $regex: title, $options: "i" },
   };
@@ -115,7 +130,8 @@ async function findNovelsByName(req, res, next) {
 }
 
 async function getRecommendation(req, res) {
-  const { offset } = req.query;
+  let { offset } = req.query;
+  offset = Number(offset);
   try {
     const fetchedNovels = await Novel.find()
       .sort({ views: -1 })
