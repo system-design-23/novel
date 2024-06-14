@@ -129,17 +129,6 @@ async function getImplementOfFormatter(req, res) {
   } catch (error) {
     console.error(error);
   }
-  //   if (await format_plugger.get(format_name)) {
-  //     let file = fs.readFileSync(
-  //       "./src/format/plug-in/" + format_name + ".js",
-  //       "utf8"
-  //     );
-  //     res.status(200);
-  //     res.send(file);
-  //   } else {
-  //   res.status(400);
-  //   res.send("Bad request");
-  // }
 }
 module.exports = {
   addSupplier,
