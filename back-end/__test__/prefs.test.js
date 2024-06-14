@@ -85,8 +85,9 @@ describe("Read novel by Preference flow", function () {
 
   let suppliers, novelId;
   test("Try to read Novel without Preferences", async () => {
-    let novel = await Novel.findOne({ $where: 'this.suppliers.length > 1' })
-      .populate("suppliers.supplier");
+    let novel = await Novel.findOne({
+      $where: "this.suppliers.length > 1",
+    }).populate("suppliers.supplier");
     novelId = novel.id;
     suppliers = novel.suppliers.map((z) => z.supplier);
 
@@ -102,12 +103,10 @@ describe("Read novel by Preference flow", function () {
     req.params = {
       novelId: "666338c08ce7d80488b8e7ac",
     };
-    req.query = {
-    };
+    req.query = {};
     await getNovelDetail(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
   }, 10000);
-
 
   test("Try to read Novel with a specified domain", async () => {
     req.params = {
@@ -133,9 +132,6 @@ describe("Read novel by Preference flow", function () {
     await expectOnPrefs(1, suppliers[0].domain_name);
   }, 10000);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
   test("Try to delete a Preference.", async () => {
     req.params = {
       domain_name: suppliers[0].domain_name,
@@ -148,10 +144,7 @@ describe("Read novel by Preference flow", function () {
 
     await expectOnPrefs(0);
   }, 10000);
-=======
->>>>>>> fc89e633 (dang test phan plugin export)
 
->>>>>>> 0febdf36 (refactor code)
   test("Set 2 Preferences", async () => {
     req.body = {
       domain_names: [suppliers[1].domain_name, suppliers[0].domain_name],
@@ -171,17 +164,8 @@ describe("Read novel by Preference flow", function () {
     let novelDetail = res.send.mock.calls[0][0];
     expectSupplier(novelDetail.supplier, suppliers[1].domain_name);
   }, 10000);
-<<<<<<< HEAD
-<<<<<<< HEAD
 
   test("Swap 2 Preferences", async () => {
-=======
-  test("Swapt 2 Preferences", async () => {
->>>>>>> 0febdf36 (refactor code)
-=======
-
-  test("Swap 2 Preferences", async () => {
->>>>>>> 0b26abfa (tích hợp phần export vô plugin ok)
     req.body = {
       domain_names: [suppliers[0].domain_name, suppliers[1].domain_name],
     };
@@ -211,9 +195,5 @@ describe("Read novel by Preference flow", function () {
     let novelDetail = res.send.mock.calls[0][0];
 
     expectSupplier(novelDetail.supplier, suppliers[1].domain_name);
-<<<<<<< HEAD
-=======
-
->>>>>>> 0b26abfa (tích hợp phần export vô plugin ok)
   }, 10000);
 });

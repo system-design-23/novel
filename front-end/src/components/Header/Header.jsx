@@ -54,25 +54,23 @@ export function UserSettings({ user, isOpen, onOpenChange, className }) {
             className ?? ''
           )}
         >
-          {user.username.slice(0, user.username.indexOf('@'))}
+          {user && user.username?.slice(0, user.username.indexOf('@'))}
         </Button>
       </PopoverTrigger>
       <PopoverContent
         align='end'
         className='z-[1001] mt-0.5 w-[220px] rounded-lg bg-slate-50 p-0 align-middle text-[0.8rem]'
       >
-        {user.isAdmin && (
-          <div
-            className='space-4 m-2 flex h-fit cursor-pointer p-2 px-3 align-middle hover:bg-sky-200/20'
-            onClick={() => {
-              handleAdminPageOpen();
-              onOpenChange(false);
-            }}
-          >
-            <Settings className='mr-2 h-4 w-4 self-center' />
-            <p>Manage Content</p>
-          </div>
-        )}
+        <div
+          className='space-4 m-2 flex h-fit cursor-pointer p-2 px-3 align-middle hover:bg-sky-200/20'
+          onClick={() => {
+            handleAdminPageOpen();
+            onOpenChange(false);
+          }}
+        >
+          <Settings className='mr-2 h-4 w-4 self-center' />
+          <p>Manage Content</p>
+        </div>
         <div
           className='space-4 m-2 flex h-fit cursor-pointer p-2 px-3 align-middle hover:bg-sky-200/20'
           onClick={() => {

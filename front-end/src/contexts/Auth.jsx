@@ -5,6 +5,7 @@ export const AuthContext = createContext(null);
 
 const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [isLogginIn, setIsLogginIn] = useState(false);
 
   useEffect(() => {
     if (localStorage.getItem('accessToken')) {
@@ -31,12 +32,18 @@ const AuthContextProvider = ({ children }) => {
   }, []);
 
   const login = async (user) => {
-    // TODO: Implement login logic
-    const loginResponse = await apiLogin(user.username, user.password);
-    if (loginResponse) {
-      setUser({ username: user.username, isAdmin: loginResponse.authorization === 'admin' });
-      localStorage.setItem('accessToken', loginResponse.accessToken);
-      localStorage.setItem('refreshToken', loginResponse.refreshToken);
+    setIsLogginIn(true);
+    try {
+      const loginResponse = await apiLogin(user.username, user.password);
+      if (loginResponse) {
+        setUser({ username: user.username, isAdmin: loginResponse.authorization === 'admin' });
+        localStorage.setItem('accessToken', loginResponse.accessToken);
+        localStorage.setItem('refreshToken', loginResponse.refreshToken);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLogginIn(false);
     }
     return true;
   };
@@ -53,7 +60,7 @@ const AuthContextProvider = ({ children }) => {
     return true;
   };
 
-  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, login, logout, isLogginIn }}>{children}</AuthContext.Provider>;
 };
 
 export default AuthContextProvider;
