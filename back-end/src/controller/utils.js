@@ -33,7 +33,7 @@ async function parseNovelContent({ novel, user, domain_name }) {
   let url = novel.suppliers.find(
     (z) => z.supplier.domain_name === domain_name
   ).url;
-  let crawler = await crawlerFactory.get(domain_name);
+  let crawler = await crawlerFactory.create(domain_name);
   let desc = await crawler.crawlDesc(url);
   body.description = desc;
   body.supplier = domain_name;
@@ -62,7 +62,7 @@ async function parseChapterContent({ chapter, user, domain_name }) {
     domain_name = await defaultDomain(user ? user.id : undefined, suppliers);
   }
   /* Lấy crawler tương ứng nguồn được chọn*/
-  let crawler = await crawlerFactory.get(domain_name);
+  let crawler = await crawlerFactory.create(domain_name);
 
   /* Tìm url tương ứng nguồn được chọn và cào */
   let url = chapter.suppliers.find(

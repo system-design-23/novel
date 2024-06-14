@@ -12,7 +12,7 @@ class CrawlerFactory {
     const { domain_name } = data;
     this.crawlers.delete(domain_name);
   }
-  async get(domain_name) {
+  async create(domain_name) {
     const Crawler = this.crawlers.get(domain_name);
     if (!Crawler) {
       return null;

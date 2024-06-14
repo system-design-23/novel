@@ -9,9 +9,9 @@ class Crawler {
 
   async crawlNovelType(url) {
     const page = await this.browser.newPage();
-  
+
     await page.goto(url, { waitUntil: "domcontentloaded" });
-  
+
     const dropdowns = await page.$$("a[title='Menu Thể loại']");
     for (let dropdown of dropdowns) {
       let get = await page.evaluate((dropdown) => {
@@ -20,7 +20,7 @@ class Crawler {
           let container = dropdown.nextElementSibling;
           let listItems = {};
           let links = container.querySelectorAll("a");
-  
+
           let limit = 5;
           for (let link of links) {
             listItems[link.textContent.trim()] = link.href;
@@ -28,12 +28,12 @@ class Crawler {
               break;
             }
           }
-  
+
           return listItems;
         }
         return null;
       }, dropdown);
-  
+
       if (get != null) {
         await page.close();
         return get;
@@ -42,16 +42,16 @@ class Crawler {
     await page.close();
     return null;
   }
-  
+
   async crawlNovelsByType(url) {
     const page = await this.browser.newPage();
-  
+
     await page.goto(url, { waitUntil: "domcontentloaded" });
-  
+
     const res = await page.evaluate(() => {
       let res = [];
       let divs = document.querySelectorAll("div.w3-row.list-row-img");
-  
+
       const limit = 10;
       for (let d of divs) {
         let h3 = d.querySelector("h3");
@@ -66,12 +66,12 @@ class Crawler {
       }
       return res;
     });
-  
+
     await page.close();
     return res;
   }
-  
-  
+
+
   async crawlChapter(page, limit) {
     const chapDivs = await page.$$("#divtab.list-chapter ul.w3-ul");
     let chaps = {};
@@ -84,7 +84,7 @@ class Crawler {
           for (li of lis) {
             let a = li.querySelector("a");
             let content = a.textContent;
-            
+
             const match = content.match(/\d+/);
             let numChap;
             let pos_sep;
@@ -105,44 +105,44 @@ class Crawler {
     }
     return chaps;
   }
-  
-  
+
+
   async crawlDesc(url) {
-      const page = await this.browser.newPage();
-      await page.goto(url, { waitUntil: "domcontentloaded" });
-  
-      const div = await page.$("div.w3-justify");
-      if (!div) {
-          console.log(url);
-          console.log(this.url);
-      }
-      const res = await page.evaluate((div) => {
-          return div.textContent;
-      }, div);
-      page.close();
-      return res;
+    const page = await this.browser.newPage();
+    await page.goto(url, { waitUntil: "domcontentloaded" });
+
+    const div = await page.$("div.w3-justify");
+    if (!div) {
+      console.log(url);
+      console.log(this.url);
+    }
+    const res = await page.evaluate((div) => {
+      return div.textContent;
+    }, div);
+    page.close();
+    return res;
   }
-  
+
   async crawlChapterContent(url) {
-      const browser = await puppeteer.launch();
-      const page = await browser.newPage();
-      await page.goto(url, { waitUntil: "domcontentloaded" });
-  
-      let res = await page.evaluate(() => {
-        const contentElement = document.querySelector(".chapter-content"); 
-        return contentElement ? contentElement.innerText : '';
-      });
-      page.close();
-      return res;
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.goto(url, { waitUntil: "domcontentloaded" });
+
+    let res = await page.evaluate(() => {
+      const contentElement = document.querySelector(".chapter-content");
+      return contentElement ? contentElement.innerText : '';
+    });
+    page.close();
+    return res;
   }
-  
+
   async crawlNovel(url) {
     const page = await this.browser.newPage();
     await page.goto(url, { waitUntil: "domcontentloaded" });
-  
-    
+
+
     const infoDoc = await page.$("div.w3-row.detail");
-  
+
     const res = await page.evaluate((info) => {
       let name = info.querySelector("div.detail-right h1 a").textContent;
 
@@ -160,7 +160,7 @@ class Crawler {
       let categories = Array.from(infoDiv[1].querySelectorAll("a")).map(
         (a) => a.textContent
       );
-  
+
       return {
         name: name,
         author: author,
@@ -168,11 +168,11 @@ class Crawler {
         categories: categories,
       };
     }, infoDoc);
-  
+
     if (res == null) {
       return null;
     }
-  
+
     /* crawl all chapters */
     let listChap = {};
     const limit = 10;
@@ -201,7 +201,7 @@ class Crawler {
       if (nextPage == null) {
         break;
       }
-  
+
       await page.goto(nextPage, {
         waitUntil: "domcontentloaded",
       });

@@ -32,10 +32,5 @@ class Helper {
     let body = { ...chapInfo, ...chapContent };
     return body;
   }
-
-  onProgress(p) {
-    let z = Math.floor(p * 100);
-    this.response.write(z);
-  }
 }
 module.exports = { Helper };

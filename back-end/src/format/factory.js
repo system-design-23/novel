@@ -11,7 +11,7 @@ class FormatterFactory {
     const { format_name } = data;
     this.formatters.delete(format_name);
   }
-  get(format_name) {
+  create(format_name) {
     const Formatter = this.formatters.get(format_name);
     if (!Formatter) {
       return null;

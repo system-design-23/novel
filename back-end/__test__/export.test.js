@@ -64,9 +64,11 @@ describe("Export test", function () {
       });
 
     const helper = new Helper(chapter, "truyenfull.vn");
-    let formatter = formatFactory.get("pdf");
+    let formatter = formatFactory.create("pdf");
     await formatter.format(helper);
-  }, 60000);
+  },
+    60000
+  );
   test(
     "Plug Docx",
     async () => {
@@ -81,22 +83,23 @@ describe("Export test", function () {
     },
     10 * 60000
   );
-  test("Export Docx", async () => {
-    let chapter = await Chapter.findOne({
-      _id: "666338c08ce7d80488b8e7c6",
-    })
-      .populate("suppliers.supplier")
-      .populate({
-        path: "novel",
-        populate: {
-          path: "author",
-        },
-      });
+  test(
+    "Export Docx",
+    async () => {
+      let chapter = await Chapter.findOne()
+        .populate("suppliers.supplier")
+        .populate({
+          path: "novel",
+          populate: {
+            path: "author",
+          },
+        });
 
-    const helper = new Helper(chapter, "truyenfull.vn");
-    let formatter = formatFactory.get("docx");
-    await formatter.format(helper);
-  }, 60000);
+      const helper = new Helper(chapter, "truyenfull.vn");
+      let formatter = formatFactory.create("docx");
+      await formatter.format(helper);
+    }, 60000
+  );
 
   test(
     "Calling unplug on 'docx'",
