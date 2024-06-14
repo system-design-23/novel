@@ -15,6 +15,7 @@ const { getNovelDetail } = require("../src/controller/novel");
 const Novel = require("../src/db/models/novel");
 const Supplier = require("../src/db/models/supplier");
 const { novelManager } = require("../src/db/manager");
+const Chapter = require("../src/db/models/chapter");
 
 describe("Read novel by Preference flow", function () {
   async function deleteOldMock() {
@@ -137,6 +138,7 @@ describe("Read novel by Preference flow", function () {
       req.params = {
         novelId: novel.id,
       };
+      console.log(novel.id);
       await getNovelDetail(req, res);
       expect(res.status).toHaveBeenCalledWith(200);
 

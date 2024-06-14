@@ -7,6 +7,32 @@ const Supplier = require("./models/supplier.js");
 const Category = require("./models/category.js");
 const { v4: uuidv4 } = require("uuid");
 const { default: mongoose } = require("mongoose");
+class Progress {
+  constructor() {
+    this.end = false;
+    this.logger = console.log;
+  }
+  onLog(logger) {
+    this.logger = logger;
+  }
+  log(message) {
+    if (message == "End") {
+      this.end = true;
+      if (this.endCallBack) {
+        this.endCallBack();
+      }
+      return;
+    }
+    this.logger(message);
+  }
+  onEnd(endCallBack) {
+    if (this.end) {
+      endCallBack();
+      return;
+    }
+    this.endCallBack = endCallBack;
+  }
+}
 
 class NovelManager {
   constructor() {
@@ -59,11 +85,16 @@ class NovelManager {
       _includeToDb(new Crawler(await browser), prog)
         .then(() => {
           this.update(plugin);
+          setTimeout(() => {
+            this.progress_store.delete(progress_id);
+          }, 30 * 1000);
         })
         .catch((error) => {
           console.error(error);
         });
-      return prog;
+      let progress_id = uuidv4();
+      this.progress_store.set(progress_id, prog);
+      return progress_id;
     } catch (error) {
       console.error(error);
     }
@@ -92,14 +123,18 @@ class NovelManager {
       try {
         fs.unlinkSync("./src/db/plug-in/" + domain_name + ".js");
       } catch (error) {}
-      let prog = {
-        log: console.log,
-        onLog: function (x) {
-          this.log = x;
-        },
-      };
-      _excludeFromDb(domain_name, prog);
-
+      let prog = new Progress();
+      _excludeFromDb(domain_name, prog)
+        .then(() => {
+          setTimeout(() => {
+            this.progress_store.delete(progress_id);
+          }, 30 * 1000);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      let progress_id = uuidv4();
+      this.progress_store.set(progress_id, prog);
       return progress_id;
     } catch (error) {
       console.error(error);
@@ -142,7 +177,6 @@ async function _includeToDb(crawler, prog) {
   for (let [key, value] of Object.entries(cates)) {
     let this_prog = (step++ / total) * 100;
     prog.log(Math.floor(this_prog));
-    console.log(Math.floor(this_prog));
     let getNovelUrls = await crawler.crawlNovelsByType(value);
     for (let i = 0; i < getNovelUrls.length; i++) {
       this_prog += (1 / getNovelUrls.length / total) * 100;
