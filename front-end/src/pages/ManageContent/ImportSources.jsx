@@ -58,7 +58,7 @@ const ImportSources = ({ className, ...rest }) => {
     e.preventDefault();
     let url = e.target[0].value;
     if (url.indexOf((x) => x === '/') == -1) {
-      url = 'https://' + url; // bad hard code
+      url = url; // bad hard code
     }
     setCurrentDomain(url);
     setCode(getNewSampleCode(url));
