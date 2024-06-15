@@ -12,9 +12,7 @@ const authenRouter = Router();
 async function fitler(req, res, next) {
   console.log(req.originalUrl);
   const header = req.headers["authorization"];
-  const headerToken = header ? header.split(" ")[1] : undefined;
-  const queryToken = req.query.authorization;
-  const token = headerToken || queryToken;
+  const token = header ? header.split(" ")[1] : undefined;
   try {
     req.auth = await new Promise((resolve, reject) => {
       jwt.verify(token, process.env.SECRET, (err, user) => {
