@@ -80,8 +80,9 @@ const ImportSources = ({ className, ...rest }) => {
   };
 
   const handlePollChecking = (result) => {
-    console.log(result);
-    if (parseInt(result) != NaN) {
+    result = result.slice(1, result.length - 1);
+    result = parseInt(result);
+    if (result != NaN) {
       setIsUploading(result);
     }
     if (result === 100) {

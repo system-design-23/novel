@@ -176,11 +176,11 @@ async function _includeToDb(crawler, prog) {
   let total = Object.keys(cates).length;
   for (let [key, value] of Object.entries(cates)) {
     let this_prog = (step++ / total) * 100;
-    prog.log(Math.floor(this_prog));
+    prog.log(Math.floor(this_prog).toString());
     let getNovelUrls = await crawler.crawlNovelsByType(value);
     for (let i = 0; i < getNovelUrls.length; i++) {
       this_prog += (1 / getNovelUrls.length / total) * 100;
-      prog.log(Math.floor(this_prog));
+      prog.log(Math.floor(this_prog).toString());
       let novelUrl = getNovelUrls[i];
       if (cached.has(novelUrl)) {
         continue;
@@ -190,6 +190,7 @@ async function _includeToDb(crawler, prog) {
     }
     await supplier.save();
   }
+  prog.log("100");
   prog.log("End");
 }
 
@@ -264,7 +265,7 @@ async function _excludeFromDb(domain_name, prog) {
     } else {
       await novel.save();
     }
-    prog.log("" + Math.floor((++p / total) * 100));
+    prog.log(Math.floor((++p / total) * 100).toString());
   }
 
   for (let chapter of chapters) {
@@ -280,9 +281,10 @@ async function _excludeFromDb(domain_name, prog) {
     } else {
       await chapter.save();
     }
-    prog.log("" + Math.floor((++p / total) * 100));
+    prog.log(Math.floor((++p / total) * 100).toString());
   }
   await supplier.deleteOne();
+  prog.log("100");
   prog.log("End");
 }
 const novelManager = new NovelManager();

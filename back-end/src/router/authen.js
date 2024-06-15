@@ -22,7 +22,6 @@ async function fitler(req, res, next) {
           if (err) {
             console.log(req.headers);
             console.log(err);
-            console.log(err);
             reject("Un-Authorzied");
             return;
           }

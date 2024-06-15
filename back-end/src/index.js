@@ -7,6 +7,7 @@ const pluginRouter = require("./router/plugin.js");
 const exportRouter = require("./router/export.js");
 const cors = require("cors");
 const browser = require("./db/domain/browser.js");
+const { getProgress } = require("./controller/plugin.js");
 
 process.on("SIGINT", async function () {
   await (await browser).close();
@@ -35,3 +36,4 @@ app.use("/auth", authenRouter);
 app.use("/novels", novelRouter);
 app.use("/admin/plugins", pluginRouter);
 app.use("/export", exportRouter);
+app.get("/progress", getProgress);

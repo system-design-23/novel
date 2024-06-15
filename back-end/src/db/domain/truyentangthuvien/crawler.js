@@ -12,7 +12,7 @@ class Crawler {
     let get = await page.evaluate((link) => {
       let crawled = {};
       let as = link.querySelectorAll("a");
-      let limit = 5;
+      let limit = 2;
       for (a of as) {
         let type = a.querySelector("i").textContent;
         if (type == "Tất cả") {
@@ -45,7 +45,7 @@ class Crawler {
       let res = [];
       let lis = div.querySelectorAll("li");
 
-      const limit = 10;
+      const limit = 5;
       for (li of lis) {
         let a = li.querySelector("div.book-mid-info").querySelector("a");
         res.push(a.href);

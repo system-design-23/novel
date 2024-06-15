@@ -7,12 +7,10 @@ const {
   getImplementOfFormatter,
   addFormatter,
   removeFormatter,
-  getAddingProgress,
 } = require("../controller/plugin.js");
 const { getAllFormat } = require("../controller/export.js");
 const pluginRouter = Router();
 
-pluginRouter.get("/supplier/progress", getAddingProgress);
 pluginRouter.get("/supplier", getAllSuppliers);
 pluginRouter.post("/supplier", addSupplier);
 pluginRouter.get("/supplier/:domain_name", getImplementOfSuplier);

@@ -6,7 +6,7 @@ const fs = require("fs");
 const { novelManager } = require("../db/manager.js");
 const { formatManager } = require("../format/manager.js");
 
-async function getAddingProgress(req, res) {
+async function getProgress(req, res) {
   const { progress_id } = req.query;
   let prog = await novelManager.findProgress(progress_id);
   if (!prog) {
@@ -19,10 +19,13 @@ async function getAddingProgress(req, res) {
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
   res.flushHeaders();
+
   prog.onLog((s) => {
-    res.write(s);
+    res.write("data: {" + s + "}\n\n");
+    console.log(s);
   });
   prog.onEnd(() => {
+    console.log("End");
     res.end();
   });
 }
@@ -138,5 +141,5 @@ module.exports = {
   addFormatter,
   removeFormatter,
   getAllSuppliers,
-  getAddingProgress,
+  getProgress,
 };

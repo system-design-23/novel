@@ -21,6 +21,7 @@ const updatePluginsOrder = async (suppliers) => {
   const result = await axiosInstance.post('/u/preference', {
     domain_names: suppliers
   });
+  window.alert('Success');
   if (result.status === 200) {
     return result.data;
   }
@@ -58,11 +59,9 @@ const statusPolling = async (id, handler) => {
   if (accessToken === null) {
     return;
   }
-  const evtSource = new EventSource(
-    `${SERVER_URL}/admin/plugins/supplier/progress?progress_id=${id}&authorization=${accessToken}`
-  );
+  const evtSource = new EventSource(`${SERVER_URL}/progress?progress_id=${id}`);
   evtSource.onmessage = (event) => {
-    handler(event);
+    handler(event.data);
   };
   evtSource.onerror = (error) => {
     console.error('EventSource failed:', error);
