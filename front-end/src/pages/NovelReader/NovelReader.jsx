@@ -63,7 +63,10 @@ const NovelReader = () => {
     setPreferences((prev) => {
       return {
         ...prev,
-        fontSize: prev.fontSize + (increase ? 1 : -1)
+        fontSize:
+          typeof prev.fontSize === 'number'
+            ? prev.fontSize + (increase ? 1 : -1)
+            : parseInt(prev.fontSize) + (increase ? 1 : -1) || 18
       };
     });
   };

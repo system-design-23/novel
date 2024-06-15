@@ -1,4 +1,4 @@
-import { cn } from '../../utils/utils';
+import { cn, debounce } from '../../utils/utils';
 import { NovelCard, SearchBar, RecentItems, CardLayout } from '../../components';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { getNovels } from '../../apis/novel';
@@ -82,16 +82,6 @@ const Homepage = ({ ...props }) => {
 
   const handleSearchFilterChange = (value) => {
     setSearchOption(value);
-  };
-
-  const debounce = (func, delay) => {
-    let timer;
-    return (...args) => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        func.apply(null, args);
-      }, delay);
-    };
   };
 
   const handleSearchTermChange = debounce(async (value) => {

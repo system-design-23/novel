@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { cn } from '../../utils/utils';
+import { cn, debounce } from '../../utils/utils';
 import { DragDropContext, Draggable } from 'react-beautiful-dnd';
 import { Button, LoadingSpinner, StrictModeDroppable } from '../../components';
 import { getPluginsOrder, updatePluginsOrder } from '../../apis/plugins';
@@ -44,16 +44,6 @@ const ArrangeSources = ({ className, ...rest }) => {
       newVisiblePlugins.prefs.push(supplier);
     }
     setVisiblePlugins(newVisiblePlugins);
-  };
-
-  const debounce = (func, delay) => {
-    let timer;
-    return (...args) => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        func.apply(null, args);
-      }, delay);
-    };
   };
 
   const handleUpdateStage = debounce(async (stage) => {

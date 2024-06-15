@@ -13,9 +13,22 @@ export function delay(miliseconds) {
 }
 
 export function convertPreferenceToStyle(preferences) {
+  if (!preferences) {
+    return {};
+  }
   return {
     ...preferences,
-    fontSize: preferences.fontSize.toString() + 'px',
-    lineHeight: preferences.lineHeight,
+    fontSize: preferences.fontSize ? preferences.fontSize.toString() + 'px' : '16px',
+    lineHeight: preferences.lineHeight ?? '1.5rem',
   };
 }
+
+export function debounce(func, delay) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func.apply(null, args);
+    }, delay);
+  };
+};

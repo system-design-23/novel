@@ -54,10 +54,22 @@ const addNewPlugin = async (domainName, plugin) => {
 };
 
 const statusPolling = async (id, handler) => {
-  const evtSource = new EventSource(`${SERVER_URL}/admin/plugins/supplier/progress?progress_id=${id}`);
+  const accessToken = localStorage.getItem('accessToken');
+  if (accessToken === null) {
+    return;
+  }
+  const evtSource = new EventSource(
+    `${SERVER_URL}/admin/plugins/supplier/progress?progress_id=${id}&authorization=${accessToken}`
+  );
   evtSource.onmessage = (event) => {
     handler(event);
   };
+  evtSource.onerror = (error) => {
+    console.error('EventSource failed:', error);
+    evtSource.close();
+  };
+
+  return () => evtSource.close();
 };
 
 const removePlugin = async (domainName) => {

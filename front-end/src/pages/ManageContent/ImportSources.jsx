@@ -19,8 +19,10 @@ const ImportSources = ({ className, ...rest }) => {
   const [pluginLoading, setPluginLoading] = useState(null);
   const [code, setCode] = useState(null);
   const [isCreatingNewCodeFile, setCreateNewCodeFile] = useState(false);
+  const [isUploading, setIsUploading] = useState(-1);
   const isFetching = useRef(false);
   const currentlyEditingDomain = useRef(null);
+  const eventSourceRef = useRef(null);
 
   useEffect(() => {
     if (isFetching.current) return;
@@ -71,18 +73,26 @@ const ImportSources = ({ className, ...rest }) => {
     e.target.disabled = true;
     const result = await addNewPlugin(currentlyEditingDomain.current, code);
     if (result) {
-      statusPolling(result, handlePollChecking);
+      const closeConnection = statusPolling(result, handlePollChecking);
+      eventSourceRef.current = closeConnection;
     }
     e.target.disabled = false;
   };
 
   const handlePollChecking = (result) => {
     console.log(result);
+    if (parseInt(result) != NaN) {
+      setIsUploading(result);
+    }
     if (result === 100) {
       const currentDomain = currentlyEditingDomain.current;
       setVisiblePlugins((prev) => [...prev, { supplier: currentDomain }]);
       setCode(null);
       currentlyEditingDomain.current = null;
+      if (eventSourceRef.current) {
+        eventSourceRef.current();
+        eventSourceRef.current = null;
+      }
     }
   };
 
@@ -206,6 +216,9 @@ const ImportSources = ({ className, ...rest }) => {
           Update
         </Button>
       </section>
+      {isUploading >= 0 && isUploading <= 100 && (
+        <div style={{ width: `${isUploading}%` }} className='relative h-[3px] w-full rounded-full bg-primary'></div>
+      )}
     </section>
   );
 };
