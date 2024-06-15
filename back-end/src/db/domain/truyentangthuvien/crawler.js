@@ -88,6 +88,12 @@ class Crawler {
           if (child.textContent.includes("-------")) {
             break;
           }
+          if (child.textContent.includes("=======")) {
+            break;
+          }
+          if (child.textContent.includes("bank")) {
+            break;
+          }
           content.push(child.textContent);
         }
         child = child.nextSibling;
