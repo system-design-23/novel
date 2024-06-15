@@ -3,7 +3,7 @@ import { Button, Select, Skeleton } from '../../components';
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { getNovelDetail } from '../../apis/novel';
 import { createSearchParams, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
+import { BookOpen, ChevronRight } from 'lucide-react';
 
 const NovelDetail = ({ ...props }) => {
   const [novelDetail, setNovelDetail] = useState(null);
@@ -46,26 +46,31 @@ const NovelDetail = ({ ...props }) => {
   return (
     <div {...props} className={cn('space-y-4 p-4', props ? props.className ?? '' : '')}>
       {novelDetail ? (
-        <section className='relative mx-auto flex max-w-[70%] flex-nowrap space-x-4 overflow-auto rounded-lg bg-slate-50 p-4 align-middle shadow-xl shadow-slate-300/20'>
-          <div
-            style={{ backgroundImage: `url(${novelDetail.url})` }}
-            className='mr-4 aspect-card h-[200px] rounded-lg bg-cover bg-no-repeat'
-          ></div>
-          <div className='flex-grow'>
-            <div className='mt-4 max-w-[calc(100%-200px)] text-wrap text-3xl font-bold text-primary'>
-              {novelDetail.name}
+        <section className='relative mx-auto max-w-[70%] overflow-auto rounded-lg bg-slate-50 p-6 align-middle shadow-xl shadow-slate-300/20'>
+          <div className='flex space-x-4'>
+            <div
+              style={{ backgroundImage: `url(${novelDetail.url})` }}
+              className='mr-4 min-w-[200px] rounded-lg bg-cover bg-no-repeat'
+            ></div>
+            <div className='flex-grow'>
+              <div className='max-w-[calc(100%-200px)] text-wrap text-3xl font-bold text-primary'>
+                {novelDetail.name}
+              </div>
+              <div className='opacity-90'>{novelDetail.author}</div>
+              <div className='my-4 flex w-full flex-wrap'>
+                {novelDetail.categories &&
+                  novelDetail.categories.map((category) => (
+                    <div
+                      key={category}
+                      className='my-1 mr-2 h-fit max-w-full text-nowrap rounded-full border-[1px] border-primary/60 p-2 px-4 text-sm'
+                    >
+                      {category}
+                    </div>
+                  ))}
+              </div>
             </div>
-            <div className='opacity-90'>{novelDetail.author}</div>
-            <div className='my-4 flex flex-nowrap space-x-2'>
-              {novelDetail.categories &&
-                novelDetail.categories.map((category) => (
-                  <div key={category} className='h-fit rounded-full border-[1px] border-primary/60 p-2 px-4 text-sm'>
-                    {category}
-                  </div>
-                ))}
-            </div>
-            <div className=''>{novelDetail.description}</div>
           </div>
+          <div className='mt-3 text-[0.8rem] text-primary'>{novelDetail.description}</div>
           {supplyOptions && supplyOptions.length > 0 && (
             <Select
               className='absolute right-4 top-4'
@@ -80,7 +85,7 @@ const NovelDetail = ({ ...props }) => {
       )}
 
       {novelDetail ? (
-        <section className='mx-auto max-w-[70%] rounded-lg bg-slate-50 p-6'>
+        <section className='mx-auto flex max-w-[70%] flex-wrap rounded-lg bg-slate-50 p-6'>
           {novelDetail?.chapters
             ? novelDetail.chapters.map((chapter) => <ChapterItem chapter={chapter}></ChapterItem>)
             : Array.from({ length: 10 }, (_, i) => <ChapterSkeleton key={i}></ChapterSkeleton>)}
@@ -96,23 +101,28 @@ const ChapterItem = ({ chapter, ...rest }) => {
   const { novelId } = useParams();
   const navigate = useNavigate();
   return (
-    <div key={chapter.id} className='my-2 flex flex-nowrap justify-between rounded-lg bg-slate-100 pl-4' {...rest}>
-      <div className='font-semimbold self-center text-primary'>{chapter.title}</div>
-      <div className='flex space-x-2'>
-        {/* <div className='h-fit content-center self-center rounded-full border-2 border-slate-200 px-2 py-1 text-[0.7rem]'>
-        Supplier1
-      </div>
-      <div className='h-fit content-center self-center rounded-full border-2 border-slate-200 px-2 py-1 text-[0.7rem]'>
-        Supplier2
-      </div> */}
+    <div
+      key={chapter.id}
+      className={cn(
+        'my-1 flex basis-[calc(50%-0.5rem)] flex-nowrap rounded-lg border-[1px] border-slate-300/50 bg-slate-100 py-1 pl-4 shadow-none transition-all duration-100  odd:mr-4',
+        'cursor-pointer hover:-translate-y-1 hover:bg-slate-100/70 hover:shadow-lg hover:shadow-slate-200/50'
+      )}
+      {...rest}
+      onClick={() => {
+        navigate(`/${novelId}/read/${chapter.id}`);
+      }}
+    >
+      <BookOpen size='1rem' className='mr-4 self-center opacity-60' />
+      <div className='self-center text-sm font-medium text-primary'>{chapter.title}</div>
+      <div className='mx-auto mr-0 flex space-x-2'>
         <Button
           variant='secondary'
-          className='space-x-2 self-center rounded-lg'
+          className='mr-2 aspect-square space-x-2 self-center rounded-full bg-transparent p-0 hover:bg-slate-200/60'
           onClick={() => {
             navigate(`/${novelId}/read/${chapter.id}`);
           }}
         >
-          <ChevronRight size='0.8rem'></ChevronRight>
+          <ChevronRight size='1.2rem'></ChevronRight>
         </Button>
       </div>
     </div>

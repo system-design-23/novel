@@ -56,7 +56,10 @@ const ImportSources = ({ className, ...rest }) => {
 
   const handleGetNewSourceCode = (e) => {
     e.preventDefault();
-    const url = e.target[0].value;
+    let url = e.target[0].value;
+    if (url.indexOf((x) => x === '/') == -1) {
+      url = 'https://' + url; // bad hard code
+    }
     setCurrentDomain(url);
     setCode(getNewSampleCode(url));
     setCreateNewCodeFile(false);

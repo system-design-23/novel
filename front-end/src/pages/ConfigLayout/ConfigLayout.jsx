@@ -5,7 +5,7 @@ const ConfigLayout = () => {
   return (
     <>
       <Header></Header>
-      <div className='flex h-screen flex-col pt-14'>
+      <div className='flex min-h-screen flex-col pt-14'>
         <Outlet></Outlet>
       </div>
     </>

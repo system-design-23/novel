@@ -98,7 +98,7 @@ const ArrangeSources = ({ className, ...rest }) => {
                                   <div
                                     className={cn(
                                       'h-12 w-full rounded bg-slate-100 active:shadow-lg active:shadow-slate-600/10',
-                                      'border-2 border-slate-200 text-slate-800',
+                                      'border-2 border-slate-200 font-medium text-slate-800',
                                       'flex select-none items-center justify-between overflow-hidden pl-2 pr-4 hover:cursor-move'
                                     )}
                                   >
