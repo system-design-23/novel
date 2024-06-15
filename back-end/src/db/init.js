@@ -5,7 +5,7 @@ const { _includeNovel, _includeToDb } = require("./manager.js");
 const TruyenfullCrawler = require("./domain/truyenfull/crawler.js");
 const { default: mongoose } = require("mongoose");
 const User = require("./models/user.js");
-
+require("dotenv").config();
 mongoose
   .connect(process.env.DB_HOST)
   .then(() => {
