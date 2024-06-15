@@ -170,7 +170,7 @@ class Crawler {
     await page.click("#j-bookCatalogPage");
     div = await page.$("#max-volume");
     let listChap = {};
-    const limit = 10;
+    const limit = 5;
     while (true) {
       listChap = {
         ...listChap,
