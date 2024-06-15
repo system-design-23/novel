@@ -7,6 +7,7 @@ const Supplier = require("./models/supplier.js");
 const Category = require("./models/category.js");
 const { v4: uuidv4 } = require("uuid");
 const { default: mongoose } = require("mongoose");
+const Prefs = require("./models/preference.js");
 class Progress {
   constructor() {
     this.end = false;
@@ -248,6 +249,7 @@ async function _excludeFromDb(domain_name, prog) {
   }
   let novels = await Novel.find({ "suppliers.supplier": supplier.id });
   let chapters = await Chapter.find({ "suppliers.supplier": supplier.id });
+  await Prefs.deleteMany({ supplier: supplier.id });
   let total = novels.length + chapters.length;
   let p = 0;
   prog.log("0");

@@ -36,7 +36,6 @@ async function exportWithFormat(req, res) {
       });
     const helper = new Helper(chapter, supplier);
     let tempfile = await formatter.format(helper);
-    let filename = chapter.title + "." + file_format;
     let paths = tempfile.split("/");
     res.send({
       tempfile: paths[paths.length - 1],
