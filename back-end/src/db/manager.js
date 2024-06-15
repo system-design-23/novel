@@ -266,6 +266,7 @@ async function _excludeFromDb(domain_name, prog) {
     if (novel.suppliers.length == 0) {
       await novel.deleteOne();
       await UserRead.deleteMany({ novel: novel.id });
+      await Category.deleteMany({ novel: novel.id });
     } else {
       await novel.save();
     }
