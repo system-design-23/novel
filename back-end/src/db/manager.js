@@ -8,6 +8,7 @@ const Category = require("./models/category.js");
 const { v4: uuidv4 } = require("uuid");
 const { default: mongoose } = require("mongoose");
 const Prefs = require("./models/preference.js");
+const UserRead = require("./models/userread.js");
 class Progress {
   constructor() {
     this.end = false;
@@ -264,6 +265,7 @@ async function _excludeFromDb(domain_name, prog) {
     }
     if (novel.suppliers.length == 0) {
       await novel.deleteOne();
+      await UserRead.deleteMany({ novel: novel.id });
     } else {
       await novel.save();
     }

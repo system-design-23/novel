@@ -39,7 +39,7 @@ async function getPref(req, res) {
       if (supplier) {
         prefs.push(supplier.domain_name);
       } else {
-        z.deleteOne();
+        await z.deleteOne();
       }
     }
     let domain_names = novelManager.findAll();
@@ -49,7 +49,6 @@ async function getPref(req, res) {
         others.push(domain_name);
       }
     }
-    console.log(prefs);
     res.status(200);
     res.send({
       prefs: prefs,
