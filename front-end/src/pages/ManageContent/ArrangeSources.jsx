@@ -76,10 +76,7 @@ const ArrangeSources = ({ className, ...rest }) => {
   };
 
   return (
-    <section
-      className={cn('mx-auto hidden h-fit w-4/5 flex-grow rounded-lg bg-slate-50 p-6', className ?? 'block')}
-      {...rest}
-    >
+    <section className={cn('mx-auto h-fit w-4/5 flex-grow rounded-lg bg-slate-50 p-6', className ?? 'block')} {...rest}>
       <h2 className='mb-2 text-lg font-semibold'>Arrange Sources</h2>
       <p className='text-sm text-slate-600'>
         Drag and drop the items to arrange the prioritized order of novel sources.{' '}

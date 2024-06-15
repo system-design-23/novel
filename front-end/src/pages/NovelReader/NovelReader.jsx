@@ -15,6 +15,8 @@ const fontOptions = [
 
 const NovelReader = () => {
   const [chapterDetail, setChapterDetail] = useState({});
+  const [isExporting, setIsExporting] = useState(false);
+  const [isExportOpen, setIsExportOpen] = useState(false);
   const [exportFormat, setExportFormat] = useState([]);
   const [preferences, setPreferences] = useContext(PreferencesContext);
   const [searchParams, _] = useSearchParams();
@@ -94,11 +96,17 @@ const NovelReader = () => {
   };
 
   const handleExport = async (format) => {
+    setIsExporting(true);
     const result = await exportByFormat(format, chapterId, searchParams.get('domain_name'));
-    /* Spinner */
+
     if (result) {
-      downloadTempfile(result.tempfile);
+      try {
+        await downloadTempfile(result.tempfile);
+      } catch (error) {
+        console.log(error);
+      }
     }
+    setIsExporting(false);
   };
 
   return (
@@ -116,10 +124,21 @@ const NovelReader = () => {
           <DropDown
             contentClassName='w-[200px] text-sm font-medium'
             options={exportFormat}
+            isOpen={isExportOpen}
+            onOpenChange={setIsExportOpen}
             onOptionSelect={handleExport}
           >
-            <Button variant='secondary' className='flex justify-center space-x-2 rounded-full align-middle'>
-              <FileDown size='0.8rem'></FileDown>
+            <Button
+              variant='secondary'
+              disabled={isExporting}
+              className='flex justify-center space-x-2 rounded-full align-middle'
+              onClick={() => setIsExportOpen(true)}
+            >
+              {isExporting ? (
+                <LoadingSpinner className='h-4 w-4'></LoadingSpinner>
+              ) : (
+                <FileDown size='0.8rem'></FileDown>
+              )}
               <p className='text-sm'>Export</p>
             </Button>
           </DropDown>

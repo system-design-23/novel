@@ -54,11 +54,7 @@ export function UserSettings({ user, isOpen, onOpenChange, className }) {
             className ?? ''
           )}
         >
-          {user &&
-            user.username?.slice(
-              0,
-              user.username.indexOf('@') !== -1 ? user.username.indexOf('@') : user.username.length
-            )}
+          {user && user.username?.slice(0, user.username.indexOf('@'))}
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -79,8 +75,8 @@ export function UserSettings({ user, isOpen, onOpenChange, className }) {
           className='space-4 m-2 flex h-fit cursor-pointer p-2 px-3 align-middle hover:bg-sky-200/20'
           onClick={() => {
             logout();
-            onOpenChange(false);
             navigate('/home');
+            onOpenChange(false);
           }}
         >
           <LogOut className='mr-2 h-4 w-4 self-center' />

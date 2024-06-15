@@ -88,7 +88,7 @@ const ImportSources = ({ className, ...rest }) => {
 
   return (
     <section
-      className={cn('mx-auto hidden h-fit max-h-full w-4/5 flex-grow rounded-lg bg-slate-50 p-6', className ?? '')}
+      className={cn('mx-auto h-fit max-h-full w-4/5 flex-grow rounded-lg bg-slate-50 p-6', className ?? '')}
       {...rest}
     >
       <h2 className='mb-2 text-lg font-semibold'>Novel Supply Sources</h2>
