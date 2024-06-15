@@ -11,6 +11,7 @@ import { FilePlus, Trash } from 'lucide-react';
 import getNewSampleCode from './emptyCodeClass';
 import addFileImage from '../../assets/add_file.png';
 import { Popover, PopoverContent, PopoverTrigger } from '../../components/Popover/Popover';
+import { useToast } from '../../hooks/useToast';
 
 const failedFetch = 'Failed to fetch code.';
 
@@ -21,7 +22,8 @@ const ImportSources = ({ className, ...rest }) => {
   const [isCreatingNewCodeFile, setCreateNewCodeFile] = useState(false);
   const [isUploading, setIsUploading] = useState(-1);
   const isFetching = useRef(false);
-  const currentlyEditingDomain = useRef(null);
+  const { toast } = useToast();
+  const [currentlyEditingDomain, setCurrentDomain] = useState(null);
   const eventSourceRef = useRef(null);
 
   useEffect(() => {
@@ -43,10 +45,10 @@ const ImportSources = ({ className, ...rest }) => {
   const handleLoadSourceCode = async (domain) => {
     const result = await getPluginCode(domain);
     if (result) {
-      currentlyEditingDomain.current = domain;
+      setCurrentDomain(domain);
       setCode(result);
     } else {
-      currentlyEditingDomain.current = null;
+      setCurrentDomain(null);
       setCode(failedFetch);
     }
     setPluginLoading(null);
@@ -55,7 +57,7 @@ const ImportSources = ({ className, ...rest }) => {
   const handleGetNewSourceCode = (e) => {
     e.preventDefault();
     const url = e.target[0].value;
-    currentlyEditingDomain.current = url;
+    setCurrentDomain(url);
     setCode(getNewSampleCode(url));
     setCreateNewCodeFile(false);
   };
@@ -65,18 +67,17 @@ const ImportSources = ({ className, ...rest }) => {
     if (result) {
       setVisiblePlugins((prev) => prev.filter((supplier) => supplier.supplier !== sourceDomain));
       setCode(null);
+      toast({ title: 'Success', description: 'Successfully deleted the sources.' });
     }
   };
 
   const handleUploadNewSourceCode = async (e) => {
-    // disable the button
-    e.target.disabled = true;
-    const result = await addNewPlugin(currentlyEditingDomain.current, code);
+    setIsUploading(0);
+    const result = await addNewPlugin(currentlyEditingDomain, code);
     if (result) {
-      const closeConnection = statusPolling(result, handlePollChecking);
+      const closeConnection = await statusPolling(result, handlePollChecking);
       eventSourceRef.current = closeConnection;
     }
-    e.target.disabled = false;
   };
 
   const handlePollChecking = (result) => {
@@ -86,12 +87,16 @@ const ImportSources = ({ className, ...rest }) => {
       setIsUploading(result);
     }
     if (result === 100) {
-      const currentDomain = currentlyEditingDomain.current;
-      setVisiblePlugins((prev) => [...prev, { supplier: currentDomain }]);
       setCode(null);
-      currentlyEditingDomain.current = null;
+      const currentDomain = currentlyEditingDomain.split('/')[2];
+      if (visiblePlugins.find((x) => x.supplier === currentDomain) == undefined && eventSourceRef.current) {
+        setVisiblePlugins((prev) => [...prev, { supplier: currentDomain }]);
+        toast({ title: 'Success', description: 'Successfully uploaded the sources.' });
+      }
+      setCurrentDomain(null);
       if (eventSourceRef.current) {
-        eventSourceRef.current();
+        const closeConnection = eventSourceRef.current;
+        closeConnection();
         eventSourceRef.current = null;
       }
     }
@@ -193,10 +198,13 @@ const ImportSources = ({ className, ...rest }) => {
       <section className={cn('mt-4 flex justify-end space-x-2', (code === null || code === failedFetch) && 'hidden')}>
         <Button
           variant='destructive'
-          className={cn('ml-0 mr-auto flex space-x-2 align-middle')}
+          className={cn(
+            'ml-0 mr-auto flex space-x-2 align-middle',
+            visiblePlugins.find((x) => x.supplier === currentlyEditingDomain) == null && 'hidden'
+          )}
           onClick={() => {
-            if (currentlyEditingDomain.current) {
-              handleDeleleteSourceCode(currentlyEditingDomain.current);
+            if (currentlyEditingDomain) {
+              handleDeleleteSourceCode(currentlyEditingDomain);
             }
           }}
         >
@@ -205,20 +213,35 @@ const ImportSources = ({ className, ...rest }) => {
         </Button>
         <Button
           variant='secondary'
-          className={cn(currentlyEditingDomain.current == null && 'hidden')}
+          className={cn(currentlyEditingDomain == null && 'hidden')}
+          disabled={isUploading >= 0 && isUploading < 100}
           onClick={() => {
-            currentlyEditingDomain.current = null;
+            setCurrentDomain(null);
             setCode(null);
           }}
         >
           Cancel
         </Button>
-        <Button className={cn(currentlyEditingDomain.current == null && 'hidden')} onClick={handleUploadNewSourceCode}>
-          Update
+
+        <Button
+          className={cn(
+            'hidden justify-center space-x-2 align-middle',
+            visiblePlugins.find((x) => x.supplier === currentlyEditingDomain) == null && 'flex'
+          )}
+          disabled={isUploading >= 0 && isUploading < 100}
+          onClick={handleUploadNewSourceCode}
+        >
+          {isUploading >= 0 && isUploading < 100 && <LoadingSpinner className='w-4 fill-white stroke-white' />}
+          <p>Update</p>
         </Button>
       </section>
-      {isUploading >= 0 && isUploading <= 100 && (
-        <div style={{ width: `${isUploading}%` }} className='relative h-[3px] w-full rounded-full bg-primary'></div>
+      {isUploading >= 0 && isUploading < 100 && (
+        <div className='relative my-2 h-[5px] w-full overflow-hidden rounded-full bg-slate-200'>
+          <div
+            style={{ transform: `scaleX(${isUploading / 100.0})` }}
+            className='absolute bottom-0 left-0 top-0 h-[5px] w-full origin-left rounded-full bg-primary transition-all duration-200'
+          ></div>
+        </div>
       )}
     </section>
   );

@@ -5,11 +5,13 @@ import { Button, LoadingSpinner, StrictModeDroppable } from '../../components';
 import { getPluginsOrder, updatePluginsOrder } from '../../apis/plugins';
 import { GripVertical, Minus, Plus } from 'lucide-react';
 import emptyImage from '../../assets/empty.png';
+import { useToast } from '../../hooks/useToast';
 
 const ArrangeSources = ({ className, ...rest }) => {
   const [visiblePlugins, setVisiblePlugins] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const plugins = useRef(null);
+  const { toast } = useToast();
   const isFetching = useRef(false);
 
   useEffect(() => {
@@ -50,7 +52,11 @@ const ArrangeSources = ({ className, ...rest }) => {
     setIsUpdating(true);
     try {
       const result = await updatePluginsOrder(stage);
+      if (result) {
+        toast({ title: 'Success', description: 'Successfully updated the sources.' });
+      }
     } catch (error) {
+      toast({ title: 'Error', description: 'Failed to update the sources.' });
       console.log(error);
     } finally {
       setIsUpdating(false);

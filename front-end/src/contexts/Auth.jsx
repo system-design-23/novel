@@ -5,7 +5,7 @@ export const AuthContext = createContext(null);
 
 const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [isLogginIn, setIsLogginIn] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   useEffect(() => {
     const revalidate = async () => {
@@ -25,20 +25,23 @@ const AuthContextProvider = ({ children }) => {
   }, []);
 
   const login = async (user) => {
-    setIsLogginIn(true);
+    setIsLoggingIn(true);
     try {
       const loginResponse = await apiLogin(user.username, user.password);
       if (loginResponse) {
         setUser({ username: user.username, isAdmin: loginResponse.authorization === 'admin' });
         localStorage.setItem('accessToken', loginResponse.accessToken);
         localStorage.setItem('refreshToken', loginResponse.refreshToken);
+        return true;
+      } else {
+        return false;
       }
     } catch (error) {
       console.log(error);
     } finally {
-      setIsLogginIn(false);
+      setIsLoggingIn(false);
+      return true;
     }
-    return true;
   };
 
   const logout = async () => {
@@ -48,7 +51,7 @@ const AuthContextProvider = ({ children }) => {
     return true;
   };
 
-  return <AuthContext.Provider value={{ user, login, logout, isLogginIn }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, login, logout, isLoggingIn }}>{children}</AuthContext.Provider>;
 };
 
 export default AuthContextProvider;

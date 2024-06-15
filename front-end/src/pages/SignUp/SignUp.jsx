@@ -3,15 +3,23 @@ import { cn } from '../../utils/utils';
 import logo from '../../assets/novel.png';
 import { useNavigate } from 'react-router-dom';
 import { signup } from '../../apis/auth';
+import { useToast } from '../../hooks/useToast';
 
 const SignUp = ({ props }) => {
   const navigate = useNavigate();
-
+  const { toast } = useToast();
   const handleSignUp = async (e) => {
     e.preventDefault();
     const result = await signup(e.target[0].value, e.target[2].value, e.target[1].value);
     if (result) {
+      toast({ title: 'Success', description: 'Successfully signed up.' });
       navigate('/login');
+    } else {
+      toast({
+        title: 'Error',
+        description: 'Failed to sign up.',
+        variant: 'destructive'
+      });
     }
   };
 
@@ -39,7 +47,8 @@ const SignUp = ({ props }) => {
           <Button
             variant='secondary'
             className='mt-4 w-full bg-transparent'
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
               navigate('/login');
             }}
           >

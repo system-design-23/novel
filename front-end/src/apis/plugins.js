@@ -21,7 +21,6 @@ const updatePluginsOrder = async (suppliers) => {
   const result = await axiosInstance.post('/u/preference', {
     domain_names: suppliers
   });
-  window.alert('Success');
   if (result.status === 200) {
     return result.data;
   }
@@ -63,12 +62,13 @@ const statusPolling = async (id, handler) => {
   evtSource.onmessage = (event) => {
     handler(event.data);
   };
-  evtSource.onerror = (error) => {
-    console.error('EventSource failed:', error);
+  evtSource.onerror = (_) => {
     evtSource.close();
   };
 
-  return () => evtSource.close();
+  return () => {
+    evtSource.close();
+  };
 };
 
 const removePlugin = async (domainName) => {

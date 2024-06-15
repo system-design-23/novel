@@ -5,6 +5,7 @@ import App from './App.jsx';
 import './index.css';
 import PreferencesContextProvider from './contexts/Preferences.jsx';
 import AuthContextProvider from './contexts/Auth.jsx';
+import { Toaster } from './contexts/Toaster.jsx';
 
 async function enableMocking() {
   if (process.env.NODE_ENV === 'development') {
@@ -20,6 +21,7 @@ enableMocking().then(() => {
         <PreferencesContextProvider>
           <BrowserRouter>
             <App />
+            <Toaster />
           </BrowserRouter>
         </PreferencesContextProvider>
       </AuthContextProvider>

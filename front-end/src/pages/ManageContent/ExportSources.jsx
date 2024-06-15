@@ -12,6 +12,7 @@ import getNewSampleCode from './emptyCodeClass';
 import addFileImage from '../../assets/add_file.png';
 import { Popover, PopoverContent, PopoverTrigger } from '../../components/Popover/Popover';
 import getNewExportCode from './emptyExportCodeClass';
+import { useToast } from '../../hooks/useToast';
 
 const failedFetch = 'Failed to fetch code.';
 
@@ -21,6 +22,7 @@ const ExportSources = ({ className, ...rest }) => {
   const [code, setCode] = useState(null);
   const [isCreatingNewCodeFile, setCreateNewCodeFile] = useState(false);
   const isFetching = useRef(false);
+  const { toast } = useToast();
   const currentlyEditingFormat = useRef(null);
 
   useEffect(() => {
@@ -67,6 +69,7 @@ const ExportSources = ({ className, ...rest }) => {
     if (result) {
       setVisibleFormats((prev) => prev.filter((format) => format !== sourceFormat));
       setCode(null);
+      toast({ title: 'Success', description: 'Successfully deleted the sources.' });
     }
   };
 
@@ -83,6 +86,7 @@ const ExportSources = ({ className, ...rest }) => {
       setVisibleFormats((prev) => [...prev, currentFormat]);
       setCode(null);
       currentlyEditingFormat.current = null;
+      toast({ title: 'Success', description: 'Successfully added the export format.' });
     }
     e.target.disabled = false;
   };

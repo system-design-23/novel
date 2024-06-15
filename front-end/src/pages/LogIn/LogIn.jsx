@@ -1,20 +1,27 @@
 import { Button, Input, LoadingSpinner } from '../../components';
 import { cn } from '../../utils/utils';
 import logo from '../../assets/novel.png';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
+import { useToast } from '../../hooks/useToast';
 
 const LogIn = ({ props }) => {
   const navigate = useNavigate();
-  const { user, login, isLogginIn } = useAuth();
-  if (user) {
-    return <Navigate to='/home' />;
-  }
+  const { toast } = useToast();
+  const { login, isLoggingIn } = useAuth();
+
   const handleLogIn = async (e) => {
     e.preventDefault();
     const result = await login({ username: e.target[0].value, password: e.target[1].value });
     if (result) {
+      toast({ title: 'Success', description: 'Successfully logged in.' });
       navigate('/home');
+    } else {
+      toast({
+        title: 'Error',
+        description: 'Failed to log in. Please check your credentials.',
+        variant: 'destructive'
+      });
     }
   };
 
@@ -28,13 +35,17 @@ const LogIn = ({ props }) => {
           <Input className='mb-4 w-full' placeholder='Username' name='username'></Input>
           <label className='my-2 block text-sm font-medium'>Password</label>
           <Input className='mb-4 w-full' type='password' placeholder='Password' name='password'></Input>
-          <Button type='submit' className='mt-4 w-full'>
-            {isLogginIn ? <LoadingSpinner className='fill:white h-[1rem] w-[1rem]'></LoadingSpinner> : <p>Log In</p>}
+          <Button type='submit' className='mt-4 flex w-full space-x-2'>
+            <LoadingSpinner
+              className={cn('fill:white hidden h-[1rem] w-[1rem]', isLoggingIn ?? 'block')}
+            ></LoadingSpinner>
+            <p>Log In</p>
           </Button>
           <Button
             variant='secondary'
             className='mt-4 w-full bg-transparent'
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
               navigate('/signup');
             }}
           >
